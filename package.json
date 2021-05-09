@@ -10,9 +10,13 @@
   "license": "MIT",
   "dependencies": {
     "@koa/router": "^10.0.0",
+    "@prisma/client": "^2.22.1",
     "koa": "^2.13.1",
     "koa-ejs": "^4.3.0",
     "koa-logger": "^3.2.1",
     "koa-session": "^6.2.0"
+  },
+  "devDependencies": {
+    "prisma": "^2.22.1"
   }
 }
