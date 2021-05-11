@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css"> 
+	<title>VISUABUSTERS</title>
+</head>
+<body>
+    <div class="main">
+        <div class="maincol">
+            <!-- Header -->
+            <% include partials/_header.ejs %>
+            <%- body %>
+
+            <!-- Footer-->
+            <% include partials/_footer.ejs %>
+        </div>
+
+        <!-- Sidenav-->
+        <% include partials/_sidenav.ejs %>
+    </div>
+</body>
+</html>

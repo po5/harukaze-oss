@@ -10,8 +10,26 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum Role {
+  USER
+  CONTRIBUTOR
+  ADMIN
+}
+
 model User {
-  id  Int @default(autoincrement()) @id
-  name String @unique
-  isCool Boolean @default(false)
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  isCool    Boolean @default(false)
+  role      Role    @default(USER)
+  password  String
+  posts     Post[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @db.VarChar(255)
+  authorId  Int
+  author    User @relation(fields: [authorId], references: [id])
 }
