@@ -17,12 +17,12 @@ enum Role {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  name      String  @unique
-  isCool    Boolean @default(false)
-  role      Role    @default(USER)
-  password  String
-  posts     Post[]
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String
+  role        Role    @default(USER)
+  password    String
+  posts       Post[]
 }
 
 model Post {
@@ -31,5 +31,7 @@ model Post {
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(255)
   authorId  Int
+  content   String   @db.Text
+  slug      String
   author    User @relation(fields: [authorId], references: [id])
 }

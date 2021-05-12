@@ -1,12 +1,8 @@
-<div class="sidenav">
-    <div class="iconz">
-        <img src="img/testicon.png"><div class="nameperson"><a href="do whatever you shall with this, seth">placehold</a></div>
-        <div class="sidedesc">GAY GAY GAY DISNEY GAY HOMO GAY SEEEEX</div>
+<% contributors.forEach(function(contributor) { %>
+    <div class="sidenav">
+        <div class="iconz">
+            <img src="/static/img/testicon.png"><div class="nameperson"><a href="do whatever you shall with this, seth"><%= contributor.name %></a></div>
+            <div class="sidedesc"><%=contributor.description%></div>
+        </div>
     </div>
-</div>
-<div class="sidenav2">
-    <div class="iconz">
-        <img src="img/testicon.png"><div class="nameperson"><a href="do whatever you shall with this, seth">placehold</a></div>
-        <div class="sidedesc">GAY GAY GAY DISNEY GAY HOMO GAY SEEEEX</div>
-    </div>
-</div>
+<% }) %>

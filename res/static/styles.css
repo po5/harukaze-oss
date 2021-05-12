@@ -1,5 +1,5 @@
 body {
-  background-image: url("src/bg.png");
+  background-image: url("/static/img/bg.png");
   background-repeat: repeat-x;
   margin: 0 auto;
   width: 891px;
