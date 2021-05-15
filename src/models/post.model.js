@@ -2,32 +2,6 @@ const prisma = require('../db.js');
 const slugify = require('slugify');
 
 /**
- * Fetches all posts
- * @param {number} offset The offset to return results
- * @param {number} limit The amount of results to return
- */
-async function fetchPosts(offset, limit) {
-    return await prisma.post.findMany({
-        include: {
-            author: {
-                // manually select author object contents as to not expose any sensitive information
-                select: {
-                    name: true
-                }
-            }
-        } // Not actually sure if this is a thing you can do in prisma, but yeah this is what you need to do however they do it
-    }).offset(offset).limit(limit);
-}
-
-/**
- * Fetches a post by it's slug
- * @param {string} slug
- */
-async function fetchPostBySlug(slug) {
-    return await prisma.post.findFirst({where:{slug: slug}, include:{author:{select:{name: true}}}});
-}
-
-/**
  * Creates a post
  * @param {number} authorId 
  * @param {string} title 
@@ -48,6 +22,45 @@ async function createPost(authorId, title, content) {
     console.log(post);
 }
 
+/**
+ * Fetches all posts
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @return {Array<import('@prisma/client').Post>} All posts
+ */
+async function fetchPosts(offset, limit) {
+    return await prisma.post.findMany({
+        include: {
+            author: {
+                // manually select author object contents as to not expose any sensitive information
+                select: {
+                    name: true
+                }
+            }
+        },
+        skip: offset,
+        take: limit
+    })
+}
+
+/**
+ * Fetches a post by it's slug
+ * @param {string} slug
+ */
+async function fetchPostBySlug(slug) {
+    return await prisma.post.findFirst({where:{slug: slug}, include:{author:{select:{name: true}}}});
+}
+
+/**
+ * Returns the total amount of posts
+ * @returns {number} The total amount of posts
+ */
+async function fetchPostsCount() {
+    return await prisma.post.count()
+}
+
+/* Export functions */
+module.exports.createPost = createPost;
 module.exports.fetchPosts = fetchPosts;
 module.exports.fetchPostBySlug = fetchPostBySlug;
-module.exports.createPost = createPost;
+module.exports.fetchPostsCount = fetchPostsCount;
