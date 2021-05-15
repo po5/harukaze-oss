@@ -1,8 +1,6 @@
 // TODO: Make these routes use contained controller functions, and perhaps move data queries to their own files
 
 module.exports = function(router) {
-    console.log('Ding');
-
     // Require controllers
     const homeController = require('./controller/home.controller');
 
