@@ -109,6 +109,7 @@ a:hover {
 	font-size: 14px;
 	color: #555;
 	margin-bottom:4px;
+	white-space: pre-wrap;
 }
 .blogdate {
 	margin-left: 4px;

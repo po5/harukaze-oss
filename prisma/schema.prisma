@@ -35,3 +35,10 @@ model Post {
   slug      String
   author    User @relation(fields: [authorId], references: [id])
 }
+
+model File {
+  id        String @id @default(cuid())
+  hash      String
+  filename  String
+  mime      String
+}

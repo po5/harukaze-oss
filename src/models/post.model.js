@@ -1,4 +1,5 @@
 const prisma = require('../db.js');
+const slugify = require('slugify');
 
 /**
  * Fetches all posts.
@@ -24,5 +25,27 @@ async function fetchPostBySlug(slug) {
     return await prisma.post.findFirst({where:{slug: slug}, include:{author:{select:{name: true}}}});
 }
 
+/**
+ * Creates a post
+ * @param {number} authorId 
+ * @param {string} title 
+ * @param {string} content 
+ */
+async function createPost(authorId, title, content) {
+    const post = await prisma.post.create({
+        data: {
+            title: title,
+            slug: slugify(title),
+            content: content,
+            author: {
+                connect: { id: authorId }
+            }
+        }
+    });
+
+    console.log(post);
+}
+
 module.exports.fetchPosts = fetchPosts;
 module.exports.fetchPostBySlug = fetchPostBySlug;
+module.exports.createPost = createPost;

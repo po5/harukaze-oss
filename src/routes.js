@@ -5,7 +5,6 @@ module.exports = function(router) {
     router.get('/', async ctx => {
         await ctx.render('index', {contributors: await require('./models/user.model').fetchContributors(), posts: await require('./models/post.model').fetchPosts()});
     });
-
     router.get('/blog/:slug', async ctx => {
         await ctx.render('blog', {contributors: await require('./models/user.model').fetchContributors(), post: await require('./models/post.model').fetchPostBySlug(ctx.params.slug)});
     });

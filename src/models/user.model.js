@@ -9,4 +9,8 @@ async function fetchContributors() {
     return contributors.concat(admins);
 }
 
+async function createUser(name, password, description, role) {
+
+}
+
 module.exports.fetchContributors = fetchContributors;
