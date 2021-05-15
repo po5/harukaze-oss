@@ -12,3 +12,9 @@ No space after `if`, first curly bracket starts on same line as condition. This 
  - while
  - for
  - switch
+
+## Variables
+Unless required for scope reasons, `let` should be the preferred variable type.
+
+## Anonymous functions
+Unless required for scope, arrow functions should be used over standard anonymous functions.
