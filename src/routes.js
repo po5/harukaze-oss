@@ -1,15 +1,20 @@
 // TODO: Make these routes use contained controller functions, and perhaps move data queries to their own files
 
 module.exports = function(router) {
+    console.log('Ding');
+
     // Require controllers
     const homeController = require('./controller/home.controller');
 
+    /* Redirects */
+    router.get('/', async ctx => await ctx.redirect('/home'));
+
     /* Pages */
-    router.get('/', async ctx => {
+    router.get('/home', async ctx => {
         await homeController.getHome(ctx);
         await ctx.render('index', ctx.state);
     });
-    router.get('/:page', async ctx => {
+    router.get('/home/:page', async ctx => {
         await homeController.getHome(ctx);
         await ctx.render('index', ctx.state);
     })
