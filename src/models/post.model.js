@@ -2,9 +2,11 @@ const prisma = require('../db.js');
 const slugify = require('slugify');
 
 /**
- * Fetches all posts.
+ * Fetches all posts
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
  */
-async function fetchPosts() {
+async function fetchPosts(offset, limit) {
     return await prisma.post.findMany({
         include: {
             author: {
@@ -13,8 +15,8 @@ async function fetchPosts() {
                     name: true
                 }
             }
-        }
-    });
+        } // Not actually sure if this is a thing you can do in prisma, but yeah this is what you need to do however they do it
+    }).offset(offset).limit(limit);
 }
 
 /**
