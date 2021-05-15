@@ -9,7 +9,7 @@ module.exports.getBlog = async (ctx, next) => {
     // Fetch contributors
     ctx.state.contributors = await userModel.fetchContributors();
     // Fetch post
-    ctx.state.posts = await postModel.fetchPostBySlug(ctx.params.slug);
+    ctx.state.post = await postModel.fetchPostBySlug(ctx.params.slug);
 
     // TODO Fetch post and check for null (that it doesn't exist), and call next() to pass to not found
 }
