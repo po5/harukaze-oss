@@ -3,6 +3,7 @@
 module.exports = function(router) {
     // Require controllers
     const homeController = require('./controller/home.controller');
+    const blogController = require('./controller/blog.controller');
 
     /* Redirects */
     router.get('/', async ctx => await ctx.redirect('/home'));
@@ -15,11 +16,11 @@ module.exports = function(router) {
     router.get('/home/:page', async ctx => {
         await homeController.getHome(ctx);
         await ctx.render('index', ctx.state);
-    })
+    });
 
     router.get('/blog/:slug', async ctx => {
-        // Haven't converted this one, but do it like home
-        await ctx.render('blog', {contributors: await require('./models/user.model').fetchContributors(), post: await require('./models/post.model').fetchPostBySlug(ctx.params.slug)});
+        await blogController.getBlog(ctx);
+        await ctx.render('blog', ctx.state);
     });
 
     /* API */
