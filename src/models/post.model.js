@@ -46,9 +46,17 @@ async function fetchPosts(offset, limit) {
 /**
  * Fetches a post by it's slug
  * @param {string} slug
+ * @returns {import('@prisma/client').Post} The post
  */
 async function fetchPostBySlug(slug) {
-    return await prisma.post.findFirst({where:{slug: slug}, include:{author:{select:{name: true}}}});
+    return await prisma.post.findFirst({
+        where: { slug: slug },
+        include: {
+            author: {
+                select: { name: true }
+            }
+        }
+    });
 }
 
 /**
