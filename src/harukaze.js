@@ -27,4 +27,5 @@ app.use(koaJson());
 app.use(koaMount('/static', koaStatic(path.join(__dirname, '../res/static'))));
 app.use(router.routes()).use(router.allowedMethods());
 
-app.listen(config.server.port);
+app.listen(config.server.port, config.server.host);
+console.log(`Listening at ${config.server.host}:${config.server.port}`)
