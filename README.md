@@ -12,7 +12,7 @@ Install dependencies by running `npm install`.
 
 Once you've done that, copy `example.env` to `.env`, and set the MySQL connection string.
 
-Next, run `npm install @prisma/client` to setup database stuff.
+Next, run `npm install @prisma/client` then `npx prisma migrate deploy` to setup database stuff.
 
 ## Code Style
 See `CODESTYLE.md`.
