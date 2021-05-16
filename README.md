@@ -15,6 +15,8 @@ Copy `config.example.json` to `config.json` and configure the server to your lik
 
 Next, run `npm install @prisma/client` then `npx prisma migrate deploy` to setup database stuff.
 
+For development purposes, you can run `npx prisma db seed --preview-feature` to seed the database with example data.
+
 ## Running
 Once everything is setup and configured, simply run `node .` in the same directory as the project, and it should be running!
 
