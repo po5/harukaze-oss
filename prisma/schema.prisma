@@ -10,12 +10,16 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Roles users of the site can have, users only have permission to make comments on posts,
+// while contributors can create and delete posts, and manage comments on their posts, as well as make
+// comments on posts. Admins can do all the above, but also manage the posts of contributors.
 enum Role {
   USER
   CONTRIBUTOR
   ADMIN
 }
 
+// A user of the site. 
 model User {
   id          Int     @id @default(autoincrement())
   name        String  @unique
@@ -23,22 +27,44 @@ model User {
   role        Role    @default(USER)
   password    String
   posts       Post[]
+  comments    Comment[]
 }
 
+// Blog posts, or otherwise content submitted to the site.
 model Post {
   id        Int      @id @default(autoincrement())
+  // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   title     String   @db.VarChar(255)
+  // The user who created the post
+  author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
+  // bbcode content of the post
   content   String   @db.Text
+  // The title field ran through a slug function to form nice URLs for posts
   slug      String
-  author    User @relation(fields: [authorId], references: [id])
+  // Comments left on the post by users
+  comments  Comment[]
 }
 
+// Files uploaded to the site for use in posts or the booru by contributors.
 model File {
-  id        String @id @default(cuid())
+  id        String   @id @default(cuid())
   hash      String
   filename  String
   mime      String
+}
+
+// Comments left on posts
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  content   String   @db.Text
+  // The author of the post
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  // The post the comment was left on
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
 }

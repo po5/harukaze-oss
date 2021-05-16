@@ -1,6 +1,6 @@
 # Harukaze
 
-Harukaze is a CMS written in JavaScript, utilizing Koa, Prisma, and other libraries for maximum awesome!!! Comissioned by Gutsybird!!
+Harukaze is a CMS written in JavaScript, utilizing Koa, Prisma, and other libraries for maximum awesome (and maximum bloat)!!! Comissioned by Gutsybird!!
 
 ## Requirements
  - Node.js
@@ -17,6 +17,8 @@ Next, run `npm install @prisma/client` then `npx prisma migrate deploy` to setup
 
 ## Running
 Once everything is setup and configured, simply run `node .` in the same directory as the project, and it should be running!
+
+For production deployments, you'll probably want to run Harukaze through something like pm2.
 
 ## Code Style
 See `CODESTYLE.md`.

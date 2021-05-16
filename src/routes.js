@@ -1,18 +1,17 @@
-// TODO: Make these routes use contained controller functions, and perhaps move data queries to their own files
-
-module.exports = function(router) {
-    // Require controllers
+module.exports = router => {
+    // Controller imports
     const homeController = require('./controller/home.controller');
     const blogController = require('./controller/blog.controller');
 
-    /* Redirects */
-    router.get('/', async ctx => await ctx.redirect('/home'));
+    // Redirects
+    router.get('/', async ctx => await ctx.redirect('/home')); // /? index? that shit is for the birds, man. /home? now that's where it's at. simple, clean, efficient, fast, linux lacks these, which makes it trash.
 
-    /* Pages */
+    // Views
     router.get('/home', async ctx => {
         await homeController.getHome(ctx);
         await ctx.render('index', ctx.state);
     });
+    
     router.get('/home/:page', async ctx => {
         await homeController.getHome(ctx);
         await ctx.render('index', ctx.state);
