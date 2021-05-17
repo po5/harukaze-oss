@@ -10,6 +10,8 @@ module.exports.getBlog = async (ctx, next) => {
     ctx.state.contributors = await userModel.fetchContributors();
     // Fetch post
     ctx.state.post = await postModel.fetchPostBySlug(ctx.params.slug);
-
-    // TODO Fetch post and check for null (that it doesn't exist), and call next() to pass to not found
+    console.log(ctx.state.post);
+    if(ctx.state.post == null) {
+        // handle 404
+    }
 }

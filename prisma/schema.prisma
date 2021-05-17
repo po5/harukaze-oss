@@ -19,41 +19,41 @@ enum Role {
   ADMIN
 }
 
-// A user of the site. 
+// A user of the site.
 model User {
-  id          Int     @id @default(autoincrement())
-  name        String  @unique
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
   description String
-  role        Role    @default(USER)
+  role        Role      @default(USER)
   password    String
   posts       Post[]
   comments    Comment[]
 }
 
-// Blog posts, or otherwise content submitted to the site.
+// Blog posts, or otherwise content submitted to the site
 model Post {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  title     String    @db.VarChar(255)
   // The user who created the post
-  author    User     @relation(fields: [authorId], references: [id])
+  author    User      @relation(fields: [authorId], references: [id])
   authorId  Int
   // bbcode content of the post
-  content   String   @db.Text
+  content   String    @db.Text
   // The title field ran through a slug function to form nice URLs for posts
   slug      String
   // Comments left on the post by users
   comments  Comment[]
 }
 
-// Files uploaded to the site for use in posts or the booru by contributors.
+// Files uploaded to the site for use in posts or the booru by contributors
 model File {
-  id        String   @id @default(cuid())
-  hash      String
-  filename  String
-  mime      String
+  id       String @id @default(cuid())
+  hash     String
+  filename String
+  mime     String
 }
 
 // Comments left on posts

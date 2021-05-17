@@ -9,12 +9,12 @@ module.exports = router => {
     // Views
     router.get('/home', async ctx => {
         await homeController.getHome(ctx);
-        await ctx.render('index', ctx.state);
+        await ctx.render('home', ctx.state);
     });
     
     router.get('/home/:page', async ctx => {
         await homeController.getHome(ctx);
-        await ctx.render('index', ctx.state);
+        await ctx.render('home', ctx.state);
     });
 
     router.get('/blog/:slug', async ctx => {

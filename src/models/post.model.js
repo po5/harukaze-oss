@@ -54,7 +54,8 @@ async function fetchPostBySlug(slug) {
         include: {
             author: {
                 select: { name: true }
-            }
+            },
+            comments:{}
         }
     });
 }

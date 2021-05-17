@@ -1,8 +1,14 @@
-<% contributors.forEach(function(contributor) { %>
-    <div class="sidenav">
+<% for(var i = 0; i < contributors.length; i++) { %>
+    <% var contributor = contributors[i] %>
+    <%# to the layman, this might look retarded. that's because it is. thanks george epic css %>
+    <% if(i == 0) { %>
+        <div class="sidenav">
+    <% } else { %>
+        <div class="sidenav2">
+    <% } %>
         <div class="iconz">
-            <img src="/static/img/testicon.png"><div class="nameperson"><a href="do whatever you shall with this, seth"><%= contributor.name %></a></div>
+            <img src="/static/img/testicon.png"><div class="nameperson"><a href=/user/<%= contributor.name %>><%= contributor.name %></a></div>
             <div class="sidedesc"><%=contributor.description%></div>
         </div>
     </div>
-<% }) %>
+<% } %>
