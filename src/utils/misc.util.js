@@ -4,8 +4,8 @@
  * @returns {string} The processed path
  */
 function stripTrailingSlash(path) {
-    return path.endsWith('/') ? path.substring(0, path.length-1) : path;
+    return path.endsWith('/') ? path.substring(0, path.length-1) : path
 }
 
 /* Export functions */
-module.exports.stripTrailingSlash = stripTrailingSlash;
+module.exports.stripTrailingSlash = stripTrailingSlash

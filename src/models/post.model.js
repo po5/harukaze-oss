@@ -1,5 +1,5 @@
-const prisma = require('../db.js');
-const slugify = require('slugify');
+const prisma = require('../db.js')
+const slugify = require('slugify')
 
 /**
  * Creates a post
@@ -17,9 +17,9 @@ async function createPost(authorId, title, content) {
                 connect: { id: authorId }
             }
         }
-    });
+    })
 
-    console.log(post);
+    console.log(post)
 }
 
 /**
@@ -57,7 +57,7 @@ async function fetchPostBySlug(slug) {
             },
             comments:{}
         }
-    });
+    })
 }
 
 /**
@@ -69,7 +69,7 @@ async function fetchPostsCount() {
 }
 
 /* Export functions */
-module.exports.createPost = createPost;
-module.exports.fetchPosts = fetchPosts;
-module.exports.fetchPostBySlug = fetchPostBySlug;
-module.exports.fetchPostsCount = fetchPostsCount;
+module.exports.createPost = createPost
+module.exports.fetchPosts = fetchPosts
+module.exports.fetchPostBySlug = fetchPostBySlug
+module.exports.fetchPostsCount = fetchPostsCount

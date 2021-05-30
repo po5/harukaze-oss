@@ -1,5 +1,5 @@
 # Code Style
-Keeping this simple for now. The first thing to remember is that this codebase uses semicolons on the end of lines.
+Keeping this simple for now. The first thing to remember is that this codebase DOES NOT use semicolons on the end of lines.
 
 ## If statements
 ```js

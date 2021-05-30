@@ -1,6 +1,6 @@
-const config = require('../../config.json');
-const pageSize = config.pagination.pageSize;
-const utils = require('./misc.util');
+const config = require('../../config.json')
+const pageSize = config.pagination.pageSize
+const utils = require('./misc.util')
 
 /**
  * Returns information about this paginated route.
@@ -31,36 +31,36 @@ const utils = require('./misc.util');
  * @returns {Object} Information about the paginated route
  */
 function paginatedRouteInfo(ctx, itemCount) {
-    let page = 1;
-    let hasPageParam = false;
-    let totalPages = Math.max(1, Math.ceil(itemCount/pageSize));
+    let page = 1
+    let hasPageParam = false
+    let totalPages = Math.max(1, Math.ceil(itemCount/pageSize))
 
     // Get page number from route param if available
     if(!isNaN(ctx.params.page)) {
-        hasPageParam = true;
-        page = Math.max(1, ctx.params.page*1);
+        hasPageParam = true
+        page = Math.max(1, ctx.params.page*1)
     }
 
     // Correct page number
     if(page > totalPages)
-        page = Math.max(1, totalPages);
+        page = Math.max(1, totalPages)
 
     // Current path
-    let currentPath = utils.stripTrailingSlash(ctx.path);
+    let currentPath = utils.stripTrailingSlash(ctx.path)
     // Base path (path without page number)
-    let basePath = hasPageParam ? currentPath.substring(0, currentPath.length-(page.toString().length+1)) : currentPath;
+    let basePath = hasPageParam ? currentPath.substring(0, currentPath.length-(page.toString().length+1)) : currentPath
 
     // Figure out page paths
-    let lastPage = (page > 1) ? basePath+'/'+page-1 : null;
-    let nextPage = (page < totalPages) ? basePath+'/'+page+1 : null;
+    let lastPage = (page > 1) ? basePath+'/'+page-1 : null
+    let nextPage = (page < totalPages) ? basePath+'/'+page+1 : null
     if(ctx.querystring.length > 0) {
-        lastPage += '?'+ctx.querystring;
-        nextPage += '?'+ctx.querystring;
+        lastPage += '?'+ctx.querystring
+        nextPage += '?'+ctx.querystring
     }
 
     // Query offset and limits
-    let queryOffset = (page-1)*pageSize;
-    let queryLimit = pageSize;
+    let queryOffset = (page-1)*pageSize
+    let queryLimit = pageSize
 
     // Return everything
     return {
@@ -73,8 +73,8 @@ function paginatedRouteInfo(ctx, itemCount) {
         lastPage,
         queryOffset,
         queryLimit
-    };
+    }
 }
 
 /* Export functions */
-module.exports.paginatedRouteInfo = paginatedRouteInfo;
+module.exports.paginatedRouteInfo = paginatedRouteInfo
