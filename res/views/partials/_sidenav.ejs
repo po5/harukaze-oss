@@ -7,8 +7,17 @@
         <div class="sidenav2">
     <% } %>
         <div class="iconz">
-            <img src="/static/img/testicon.png"><div class="nameperson"><a href=/user/<%= contributor.name %>><%= contributor.name %></a></div>
-            <div class="sidedesc"><%=contributor.description%></div>
+            <img src="/static/img/testicon.png">
+            <div class="nameperson">
+                <a href=/user/<%= contributor.username %>><%= contributor.username %></a>
+            </div>
+            <div class="sidedesc">
+                <% if(contributor.bio) { %>
+                    <%= contributor.bio %>
+                <% } else { %>
+                    <i>No bio added...</i>
+                <% } %>
+            </div>
         </div>
     </div>
 <% } %>

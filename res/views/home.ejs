@@ -1,12 +1,40 @@
-<% posts.forEach(function(post) { %>
-    <div class="blogpost">
-        <div class="aligned"> 
-            <div class="blogicon"><img src="/static/img/iconthing.png" alt=""></div>
-            <div class="name2"><a href=/user/<%= post.author.name %>><span><%= post.author.name %></span></a></div>
-    </div> 
-        <div class="blogimage"><center><img src="/static/img/blogpostholder.png"></center></div>
-        <div class="blogpostpoppoppoppop"><a href=/blog/<%= post.slug %>><%= post.title %></a></div>
-        <div class="blogdesc"><%= post.content %></div>
-        <div class="blogdate"><span><%= post.createdAt %><span><span class="FUCKASS">comments (0)</div>
+<% if(posts.length > 0) { %>
+    <% for(post of posts) { %>
+        <div class="blogpost">
+            <div class="aligned"> 
+                <div class="blogicon">
+                    <img src="/static/img/iconthing.png" alt="Site icon">
+                </div>
+                <div class="name2">
+                    <a href=/user/<%= post.author.name %>>
+                        <span><%= post.author.name %></span>
+                    </a>
+                </div>
+            </div>
+            <div class="blogimage">
+                <center>
+                    <img src="/static/img/blogpostholder.png">
+                </center>
+            </div>
+            <div class="blogpostpoppoppoppop">
+                <a href="/blog/<%= post.slug %>">
+                    <%= post.title %></a>
+            </div>
+                <div class="blogdesc"><%= post.content %></div>
+                <div class="blogdate">
+                    <span><%= post.createdAt %><span>
+                    <span class="FUCKASS">comments (0)</span>
+                </div>
+            </div>
+        </div>
+    <% } %>
+<% } else { %>
+    <div id="no-blogs">
+        <i>There are no posts yet...</i>
+        <% if(authed && user.role > 0) { %>
+            <br><br>
+            <a href="/blogs/new">Create a new post!</a>
+        <% } %>
     </div>
-<% }) %>
+    <br>
+<% } %>
