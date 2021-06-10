@@ -1,9 +1,32 @@
 {
     "server": {
         "host": "localhost",
-        "port": 8080
+        "port": 8080,
+        "reverseProxy": false,
+        "reverseProxyHeader": "X-Forwarded-For",
+        "sessionSecret": "SomethingSuperRandom"
+    },
+    "site": {
+        "title": "VISUABUSTERS"
     },
     "pagination": {
         "pageSize": 10
+    },
+    "knex": {
+        "client": "mysql",
+        "connection": {
+            "database": "harukaze",
+            "user": "doremi",
+            "password": "drowssap",
+            "host": "127.0.0.1",
+            "port": 3306
+        },
+        "pool": {
+            "min": 1,
+            "max": 10
+        },
+        "migrations": {
+            "tableName": "knex_migrations"
+        }
     }
 }

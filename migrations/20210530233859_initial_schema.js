@@ -1,7 +1,7 @@
 exports.up = async function(knex) {
     await knex.raw(`
         CREATE TABLE \`users\` (
-            \`id\` BIGINT NOT NULL,
+            \`id\` BIGINT NOT NULL AUTO_INCREMENT,
             \`user_username\` VARCHAR(16) NOT NULL,
             \`user_bio\` VARCHAR(2048),
             \`user_hash\` TEXT NOT NULL,
@@ -27,7 +27,7 @@ exports.up = async function(knex) {
     `)
     await knex.raw(`
         CREATE TABLE \`posts\` (
-            \`id\` BIGINT NOT NULL,
+            \`id\` BIGINT NOT NULL AUTO_INCREMENT,
             \`post_author\` BIGINT NOT NULL,
             \`post_title\` VARCHAR(256) NOT NULL,
             \`post_slug\` VARCHAR(256) NOT NULL,
@@ -40,7 +40,7 @@ exports.up = async function(knex) {
     `)
     await knex.raw(`
         CREATE TABLE \`comments\` (
-            \`id\` BIGINT NOT NULL,
+            \`id\` BIGINT NOT NULL AUTO_INCREMENT,
             \`comment_post\` BIGINT NOT NULL,
             \`comment_author\` BIGINT NOT NULL,
             \`comment_content\` VARCHAR(2048) NOT NULL,

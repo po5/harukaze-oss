@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/styles.css"> 
-	<title>VISUABUSTERS</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <% if(pageTitle == null) { %>
+        <title><%= site.title %></title>
+    <% } else { %>
+        <title><%= pageTitle %> - <%= site.title %></title>
+    <% } %>
 </head>
 <body>
     <div class="main">

@@ -1,0 +1,18 @@
+<% if(error != null) { %>
+    <p class="form-error"><%= error %></p>
+    <br>
+<% } %>
+
+<form action="" method="POST">
+    <input type="hidden" name="next" value="<%= next %>">
+
+    <label for="username">Who're you?? (only letters, numbers, dashes and underscores)</label>
+    <br>
+    <input type="text" placeholder="Who...?" name="username" maxlength="16" id="username" value="<%= username %>">
+    <br><br>
+    <label for="password">Your password</label>
+    <br>
+    <input type="password" placeholder="Something good" name="password" maxlength="64" id="password">
+    <br><br>
+    <input type="submit" value="Sign up!">
+</form>

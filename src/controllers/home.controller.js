@@ -13,8 +13,6 @@ module.exports.getHome = async ctx => {
     // Get pagination info
     let pagination = paginationUtil.paginatedRouteInfo(ctx, totalPosts)
 
-    // Fetch contributors
-    ctx.state.contributors = await usersModel.fetchContributorInfos(pagination.queryOffset, pagination.queryLimit)
     // Fetch posts
     ctx.state.posts = await postsModel.fetchPostInfos(pagination.queryOffset, pagination.queryLimit)
     

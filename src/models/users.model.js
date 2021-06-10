@@ -38,8 +38,8 @@ async function createUser(username, bio, hash, role, avatarKey) {
             user_username: username,
             user_bio: bio,
             user_hash: hash,
-            role: role,
-            avatar_key: avatarKey
+            user_role: role,
+            user_avatar_key: avatarKey
         })
 }
 
@@ -76,7 +76,7 @@ async function fetchUserInfoById(id) {
 async function fetchUserByUsername(username) {
     return await knex('users')
         .select('*')
-        .where('user_username', username)
+        .where(knex.raw('LOWER(`user_username`)'), username.toLowerCase())
 }
 
 /**
@@ -87,7 +87,7 @@ async function fetchUserByUsername(username) {
 async function fetchUserInfoByUsername(username) {
     return processUserInfoRows(
         await userInfo()
-            .where('user_username', username)
+            .where(knex.raw('LOWER(`user_username`)'), username)
             .offset(offset)
             .limit(limit)
     )
@@ -109,6 +109,54 @@ async function fetchContributorInfos(offset, limit) {
     )
 }
 
+/**
+ * Fetches a user by its ID and a row containing when the provided IP was banned, or null if not banned
+ * @param {number} id The user's ID
+ * @param {string} ip The IP to check if banned
+ * @returns {Array<Object>} An array with the row containing the user or an empty array if none exists
+ */
+async function fetchUserAndIpBanById(id, ip) {
+    return await knex('users')
+        .select('*')
+        .select(knex.raw(`(
+            SELECT \`ban_created_on\`
+            FROM \`ipbans\`
+            WHERE \`ip\` = ?
+        ) as \`ban_created_on\``, [ip]))
+        .where('id', id)
+}
+
+/**
+ * Fetches a user by its username and a row containing when the provided IP was banned, or null if not banned
+ * @param {string} username The user's username
+ * @param {string} ip The IP to check if banned
+ * @returns {Array<Object>} An array with the row containing the user or an empty array if none exists
+ */
+async function fetchUserAndIpBanByUsername(username, ip) {
+    return await knex('users')
+        .select('*')
+        .select(knex.raw(`(
+            SELECT \`ban_created_on\`
+            FROM \`ipbans\`
+            WHERE \`ip\` = ?
+        ) as \`ban_created_on\``, [ip]))
+        .where('user_username', username)
+}
+
+/**
+ * Updates a user's password hash.
+ * To change a user's password, you should use changeUserPassword in users.util.js.
+ * @param {number} id The user's ID
+ * @param {string} hash The new password hash
+ */
+async function updateUserHashById(id, hash) {
+    return await knex('users')
+        .update({
+            user_hash: hash
+        })
+        .where('id', id)
+}
+
 /* Export functions */
 module.exports.createUser = createUser
 module.exports.fetchUserById = fetchUserById
@@ -116,3 +164,6 @@ module.exports.fetchUserInfoById = fetchUserInfoById
 module.exports.fetchUserByUsername = fetchUserByUsername
 module.exports.fetchUserInfoByUsername = fetchUserInfoByUsername
 module.exports.fetchContributorInfos = fetchContributorInfos
+module.exports.fetchUserAndIpBanById = fetchUserAndIpBanById
+module.exports.fetchUserAndIpBanByUsername = fetchUserAndIpBanByUsername
+module.exports.updateUserHashById = updateUserHashById

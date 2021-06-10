@@ -27,7 +27,7 @@ function processPostInfoRows(rows) {
 }
 
 /**
- * Creates a mew post
+ * Creates a new post
  * @param {number} author The author's ID
  * @param {string} title The title
  * @param {string} slug The post slug (used in URLs, like "/post/my-cool-post" if your title is "My Cool Post")
