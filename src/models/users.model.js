@@ -110,6 +110,21 @@ async function fetchContributorInfos(offset, limit) {
 }
 
 /**
+ * Fetches all admins' info
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @returns {Array<Object>} All admins' info
+ */
+async function fetchAdminInfos(offset, limit) {
+    return processUserInfoRows(
+        await userInfo()
+            .orWhere('user_role', Roles.ADMIN)
+            .offset(offset)
+            .limit(limit)
+    )
+}
+
+/**
  * Fetches a user by its ID and a row containing when the provided IP was banned, or null if not banned
  * @param {number} id The user's ID
  * @param {string} ip The IP to check if banned
@@ -164,6 +179,7 @@ module.exports.fetchUserInfoById = fetchUserInfoById
 module.exports.fetchUserByUsername = fetchUserByUsername
 module.exports.fetchUserInfoByUsername = fetchUserInfoByUsername
 module.exports.fetchContributorInfos = fetchContributorInfos
+module.exports.fetchAdminInfos = fetchAdminInfos
 module.exports.fetchUserAndIpBanById = fetchUserAndIpBanById
 module.exports.fetchUserAndIpBanByUsername = fetchUserAndIpBanByUsername
 module.exports.updateUserHashById = updateUserHashById

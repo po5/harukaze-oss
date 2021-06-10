@@ -1,3 +1,5 @@
+const read = require('read')
+
 /**
  * Strips the trailing slash from the provided string, if any
  * @param {string} path The path to process
@@ -35,7 +37,25 @@ function setToArray(set) {
     return set.split(',')
 }
 
+/**
+ * Reads a line from the terminal
+ * @param {string} prompt The prompt to print before the input is accepted
+ * @param {boolean} silent Whether to hide typed characters
+ * @returns {string} The line that was read
+ */
+function readLine(prompt, silent) {
+    return new Promise((res, rej) => {
+        read({ prompt, silent: silent ? true : false }, (err, ln) => {
+            if(err)
+                rej(err)
+            else
+                res(ln)
+        })
+    })
+}
+
 /* Export functions */
 module.exports.stripTrailingSlash = stripTrailingSlash
 module.exports.arrayToSet = arrayToSet
 module.exports.setToArray = setToArray
+module.exports.readLine = readLine
