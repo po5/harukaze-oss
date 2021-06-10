@@ -1,5 +1,6 @@
-const knexConfig = require('../knexfile')
-const knex = require('knex')(knexConfig)
+const usersModel = require('./models/users.model')
+const usersUtil = require('./utils/users.util')
+const utils = require('./utils/misc.util')
 
 const config = require('../config.json')
 const koa = require('koa')
@@ -13,11 +14,57 @@ const koaBody = require('koa-body')
 const koaMount = require('koa-mount')
 const path = require('path')
 
-async function main() {
-    
-    // Test database connection
+/**
+ * @param {Array<string>} args 
+ */
+async function main(args) {
+    // Check for special args
+    if(args.includes('--create-admin')) {
+        console.log('This is the administrator creation wizard. Press CTRL+C to exit at any time.')
+        
+        let username = null
+        
+        while(username == null) {
+            let name = (await utils.readLine('Username:')).trim()
+
+            // Make sure username is valid
+            if(usersUtil.isUsernameValid(name)) {
+                // Check for existing user with same name
+                let userRes = await usersModel.fetchUserByUsername(name)
+
+                if(userRes.length > 0)
+                    console.log('That username is already taken')
+                else
+                    username = name
+            } else {
+                console.log('Invalid username')
+            }
+        }
+
+        // Get password
+        let password = await utils.readLine('Password:', true)
+
+        // Confirm password
+        let confirm = await utils.readLine('Confirm password:', true)
+
+        if(password == confirm) {
+            // Create account
+            console.log('Creating account...')
+            await usersUtil.createUser(username, null, password, usersUtil.Roles.ADMIN, null)
+            console.log(`New administrator account "${username}" created, you may now start the server and log into it.`)
+        } else {
+            console.log('The passwords do not match')
+        }
+
+        process.exit(0)
+    }
+
+    // Check for administrator
     console.log('Connecting to database...')
-    await knex.select(0)
+    let admins = await usersModel.fetchAdminInfos(0, 1)
+
+    if(admins.length < 1)
+        console.warn('[!] There are no administrator accounts, run with --create-admin option to create one')
 
     // Setup Koa
     const app = new koa()
@@ -52,4 +99,4 @@ async function main() {
     console.log(`Listening at ${config.server.host}:${config.server.port}`)
 }
 
-main()
+main(process.argv.slice(2))
