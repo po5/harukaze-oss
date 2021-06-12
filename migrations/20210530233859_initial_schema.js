@@ -44,6 +44,7 @@ exports.up = async function(knex) {
         CREATE TABLE \`comments\` (
             \`id\` BIGINT NOT NULL AUTO_INCREMENT,
             \`comment_post\` BIGINT NOT NULL,
+            \`comment_parent\` BIGINT,
             \`comment_author\` BIGINT NOT NULL,
             \`comment_content\` VARCHAR(2048) NOT NULL,
             \`comment_mood\` INT NOT NULL DEFAULT 0,
