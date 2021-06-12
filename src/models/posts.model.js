@@ -1,7 +1,7 @@
 const config = require('../../knexfile')
 const knex = require('knex')(config)
 const utils = require('../utils/misc.util')
-const { Knex, Knex } = require('knex')
+const { Knex } = require('knex')
 
 /**
  * Orders post results can be returned in
