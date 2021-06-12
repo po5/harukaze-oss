@@ -22,8 +22,7 @@
     "koa-session": "^6.2.0",
     "koa-static": "^5.0.0",
     "mysql": "^2.18.1",
-    "read": "^1.0.7",
-    "slugify": "^1.5.3"
+    "read": "^1.0.7"
   },
   "devDependencies": {
     "prisma": "^2.22.1"

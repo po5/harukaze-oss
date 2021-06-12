@@ -1,6 +1,17 @@
 const Router = require('koa-router')
 
 /**
+ * Renders a template with the provided context
+ * @param {string} template The name of the template to render
+ * @param {import('koa').Context} ctx The context to render with
+ */
+async function render(template, ctx) {
+    // Don't do anything if noRender is true
+    if(!ctx.state.noRender)
+        await ctx.render(template, ctx.state)
+}
+
+/**
  * Sets up routes for the application
  * @param {Router} router The router to use
  */
@@ -15,6 +26,7 @@ module.exports = router => {
     const signupController = require('./controllers/signup.controller')
     const loginController = require('./controllers/login.controller')
     const logoutController = require('./controllers/logout.controller')
+    const newblogController = require('./controllers/newblog.controller')
 
     // Redirects
     router.get('/', async ctx => await ctx.redirect('/home')) // /? index? that shit is for the birds, man. /home? now that's where it's at. simple, clean, efficient, fast, linux lacks these, which makes it trash
@@ -24,41 +36,50 @@ module.exports = router => {
     router.use(authMiddleware)
 
     // Views
-    router.get('/home', async ctx => {
-        await homeController.getHome(ctx)
-        await ctx.render('home', ctx.state)
+    router.get('/home', async (ctx, next) => {
+        await homeController.getHome(ctx, next)
+        await render('home', ctx)
     })
     
-    router.get('/home/:page', async ctx => {
-        await homeController.getHome(ctx)
-        await ctx.render('home', ctx.state)
+    router.get('/home/:page', async (ctx, next) => {
+        await homeController.getHome(ctx, next)
+        await render('home', ctx)
     })
 
-    router.get('/blog/:slug', async ctx => {
-        await blogController.getBlog(ctx)
-        await ctx.render('blog', ctx.state)
+    router.get('/blog/:slug', async (ctx, next) => {
+        await blogController.getBlog(ctx, next)
+        await render('blog', ctx)
     })
 
-    router.get('/signup', async ctx => {
-        await signupController.getSignup(ctx)
-        await ctx.render('signup', ctx.state)
+    router.get('/signup', async (ctx, next) => {
+        await signupController.getSignup(ctx, next)
+        await render('signup', ctx)
     })
-    router.post('/signup', async ctx => {
-        await signupController.postSignup(ctx)
-        await ctx.render('signup', ctx.state)
-    })
-
-    router.get('/login', async ctx => {
-        await loginController.getLogin(ctx)
-        await ctx.render('login', ctx.state)
-    })
-    router.post('/login', async ctx => {
-        await loginController.postLogin(ctx)
-        await ctx.render('login', ctx.state)
+    router.post('/signup', async (ctx, next) => {
+        await signupController.postSignup(ctx, next)
+        await render('signup', ctx)
     })
 
-    router.get('/logout', async ctx => {
-        await logoutController.getLogout(ctx)
+    router.get('/login', async (ctx, next) => {
+        await loginController.getLogin(ctx, next)
+        await render('login', ctx)
+    })
+    router.post('/login', async (ctx, next) => {
+        await loginController.postLogin(ctx, next)
+        await render('login', ctx)
+    })
+
+    router.get('/logout', async (ctx, next) => {
+        await logoutController.getLogout(ctx, next)
+    })
+
+    router.get('/blogs/new', async (ctx, next) => {
+        await newblogController.getNewblog(ctx, next)
+        await render('newblog', ctx)
+    })
+    router.post('/blogs/new', async (ctx, next) => {
+        await newblogController.postNewblog(ctx, next)
+        await render('newblog', ctx)
     })
 
     /* API */

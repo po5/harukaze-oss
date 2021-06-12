@@ -14,6 +14,6 @@ module.exports = async (ctx, next) => {
 
     // Fetch contributors
     ctx.state.contributors = await usersModel.fetchContributorInfos(0, 99)
-        
+
     await next()
 }

@@ -10,12 +10,15 @@ const { Knex } = require('knex')
 function postInfo() {
     return knex('posts')
         .select(knex.ref('post_author').as('author'))
+        .select(knex.ref('user_username').as('author_username'))
         .select(knex.ref('post_title').as('title'))
         .select(knex.ref('post_slug').as('slug'))
         .select(knex.ref('post_tags').as('tags'))
         .select(knex.ref('post_enable_comments').as('enable_comments'))
+        .select(knex.ref('post_published').as('published'))
         .select(knex.ref('post_referenced_media').as('referenced_media'))
         .select(knex.ref('post_created_on').as('created_on'))
+        .leftJoin('users', 'post_author', 'users.id')
 }
 function processPostInfoRows(rows) {
     for(row of rows) {
@@ -34,9 +37,10 @@ function processPostInfoRows(rows) {
  * @param {string} content The content
  * @param {Array<string>} tags The post's tags
  * @param {boolean} enableComments Whether this post has comments enabled
+ * @param {boolean} published Whether the post is published
  * @param {Array<number>} referencedMedia The media IDs that were referenced/linked/embedded in the post
  */
-async function createPost(author, title, slug, content, tags, enableComments, referencedMedia) {
+async function createPost(author, title, slug, content, tags, enableComments, published, referencedMedia) {
     return await knex('posts')
         .insert({
             post_author: author,
@@ -45,7 +49,8 @@ async function createPost(author, title, slug, content, tags, enableComments, re
             post_content: content,
             post_tags: utils.arrayToSet(tags),
             post_enable_comments: enableComments,
-            post_referenced_media: referencedMedia
+            post_published: published,
+            post_referenced_media: utils.arrayToSet(referencedMedia)
         })
 }
 
@@ -107,6 +112,17 @@ async function fetchPostsCount() {
     return (await knex('posts').count('*', { as: 'count' }))[0].count
 }
 
+/**
+ * Fetches the amount of posts with a slug that matches the provided regular expression
+ * @param {string} slugRegex The regular expression
+ * @returns {number} The amount of posts that match the provided regular expression
+ */
+async function fetchPostCountBySlugRegex(slugRegex) {
+    return (await knex('posts')
+        .count('*', { as: 'count' })
+        .whereRaw('`post_slug` REGEXP ?', [slugRegex]))[0].count
+}
+
 /* Export functions */
 module.exports.createPost = createPost
 module.exports.fetchPosts = fetchPosts
@@ -114,3 +130,4 @@ module.exports.fetchPostInfos = fetchPostInfos
 module.exports.fetchPostBySlug = fetchPostBySlug
 module.exports.fetchPostInfoBySlug = fetchPostInfoBySlug
 module.exports.fetchPostsCount = fetchPostsCount
+module.exports.fetchPostCountBySlugRegex = fetchPostCountBySlugRegex

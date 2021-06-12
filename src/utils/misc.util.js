@@ -18,7 +18,8 @@ function arrayToSet(stringArray) {
     var res = []
 
     for(string of stringArray) {
-        var str = string
+        var str = (string+'')
+            .trim()
             .toLowerCase()
             .replace(/,/g, '')
 
@@ -54,8 +55,21 @@ function readLine(prompt, silent) {
     })
 }
 
+/**
+ * Converts a title to a slug
+ * @param {string} title The title to convert
+ * @returns {string} The resulting slug
+ */
+function titleToSlug(title) {
+    return title
+    .replace(/[ _]/g, '-')
+    .replace(/[`~@#\$%\^&\*\(\)+=\\\[\]'";:<>,\./\?!]/g, '')
+    .toLowerCase()
+}
+
 /* Export functions */
 module.exports.stripTrailingSlash = stripTrailingSlash
 module.exports.arrayToSet = arrayToSet
 module.exports.setToArray = setToArray
 module.exports.readLine = readLine
+module.exports.titleToSlug = titleToSlug

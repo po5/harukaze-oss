@@ -99,4 +99,8 @@ async function main(args) {
     console.log(`Listening at ${config.server.host}:${config.server.port}`)
 }
 
+process.on('uncaughtException', (error) => {
+    console.error('UNCAUGHT EXCEPTION: ', error)
+})
+
 main(process.argv.slice(2))

@@ -25,6 +25,7 @@ module.exports.getSignup = async ctx => {
 
     // Redirect if already logged in
     if(ctx.state.authed) {
+        ctx.state.noRender = true
         ctx.redirect(next)
         return
     }
@@ -46,12 +47,13 @@ module.exports.postSignup = async ctx => {
 
     // Redirect if already logged in
     if(ctx.state.authed) {
+        ctx.state.noRender = true
         ctx.redirect(next)
         return
     }
 
     // Collect data
-    let username = body.username.trim()
+    let username = body.username?.trim()
     let password = body.password
 
     // Fill in username
@@ -86,6 +88,7 @@ module.exports.postSignup = async ctx => {
                     }
 
                     // Redirect to next
+                    ctx.state.noRender = true
                     ctx.redirect(next)
                 }
             }

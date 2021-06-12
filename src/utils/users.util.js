@@ -32,7 +32,7 @@ async function createUser(username, bio, password, role, avatarKey) {
     let hash = await argon2.hash(password)
 
     // Create user DB entry
-    usersModel.createUser(username, bio, hash, role, avatarKey)
+    await usersModel.createUser(username, bio, hash, role, avatarKey)
 }
 
 /**

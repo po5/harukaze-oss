@@ -7,6 +7,7 @@ exports.up = async function(knex) {
             \`user_hash\` TEXT NOT NULL,
             \`user_role\` TINYINT NOT NULL DEFAULT 0,
             \`user_avatar_key\` VARCHAR(256),
+            \`user_character\` VARCHAR(256),
             \`user_banned\` TINYINT NOT NULL DEFAULT 0,
             \`user_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
             PRIMARY KEY (\`id\`));
@@ -34,6 +35,7 @@ exports.up = async function(knex) {
             \`post_content\` TEXT NOT NULL,
             \`post_tags\` VARCHAR(1024) NOT NULL DEFAULT '',
             \`post_enable_comments\` TINYINT NOT NULL DEFAULT 1,
+            \`post_published\` TINYINT NOT NULL DEFAULT 0,
             \`post_referenced_media\` VARCHAR(2048) NOT NULL DEFAULT '',
             \`post_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
             PRIMARY KEY (\`id\`));
@@ -44,6 +46,7 @@ exports.up = async function(knex) {
             \`comment_post\` BIGINT NOT NULL,
             \`comment_author\` BIGINT NOT NULL,
             \`comment_content\` VARCHAR(2048) NOT NULL,
+            \`comment_mood\` INT NOT NULL DEFAULT 0,
             \`comment_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
             PRIMARY KEY (\`id\`));
     `)

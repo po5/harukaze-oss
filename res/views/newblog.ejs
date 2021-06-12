@@ -1,0 +1,34 @@
+<link rel="stylesheet" href="/static/css/newblog.css">
+<link rel="stylesheet" href="/static/sceditor/minified/themes/default.min.css" id="theme-style">
+		  
+<script src="/static/sceditor/minified/sceditor.min.js"></script>
+<script src="/static/sceditor/minified/icons/monocons.js"></script>
+<script src="/static/sceditor/minified/formats/bbcode.js"></script>
+
+<h1>Create a new blog</h1>
+<% if(error != null) { %>
+    <p class="form-error"><%= error %></p>
+    <br>
+<% } %>
+<form action="" method="post">
+    <input type="text" required name="title" maxlength="256" placeholder="Blog title..." id="title" value="<%= title %>">
+    <textarea name="content" id="content"><%= content %></textarea>
+    <br>
+
+    <div id="options">
+        <label for="tags">Tags (comma-separated): </label>
+        <input type="text" name="tags" id="tags" value="<%= tags %>" placeholder="stuff, things, more_stuff">
+        <br>
+        <input type="checkbox" <%= publish ? 'checked' : ''%> name="publish" id="opt-publish">
+        <label for="opt-publish">Publish immediately?</label>
+        <br>
+        <input type="checkbox" <%= comments ? 'checked' : ''%> name="comments" id="opt-comments">
+        <label for="opt-comments">Enable comments?</label>
+        <br>
+    </div>
+    <br>
+
+    <input type="submit" value="Create Blog">
+</form>
+
+<script src="/static/js/newblog.js"></script>
