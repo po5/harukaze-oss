@@ -14,7 +14,7 @@ module.exports.getHome = async ctx => {
     let pagination = paginationUtil.paginatedRouteInfo(ctx, totalPosts)
 
     // Fetch posts
-    ctx.state.posts = await postsModel.fetchPostInfos(pagination.queryOffset, pagination.queryLimit, postsModel.Order.CREATED_DESC)
+    ctx.state.posts = await postsModel.fetchPublishedPostInfos(pagination.queryOffset, pagination.queryLimit, postsModel.Order.CREATED_DESC)
     
     // Put pagination information
     ctx.state.pagination = pagination

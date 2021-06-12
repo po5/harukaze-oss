@@ -113,6 +113,22 @@ async function fetchPosts(offset, limit, order) {
 }
 
 /**
+ * Fetches all published posts
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
+ * @return {Array<Object>} All published posts
+ */
+async function fetchPublishedPosts(offset, limit, order) {
+    return await knex('posts')
+        .select('*')
+        .where('post_published', true)
+        .offset(offset)
+        .limit(limit)
+        .orderByRaw(orderBy(order))
+}
+
+/**
  * Fetches info about all posts
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
@@ -122,6 +138,23 @@ async function fetchPosts(offset, limit, order) {
 async function fetchPostInfos(offset, limit, order) {
     return processPostInfoRows(
         await postInfo()
+            .offset(offset)
+            .limit(limit)
+            .orderByRaw(orderBy(order))
+    )
+}
+
+/**
+ * Fetches info about all published posts
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
+ * @returns {Array<Object>} All published posts' info
+ */
+async function fetchPublishedPostInfos(offset, limit, order) {
+    return processPostInfoRows(
+        await postInfo()
+            .where('post_published', true)
             .offset(offset)
             .limit(limit)
             .orderByRaw(orderBy(order))
@@ -173,7 +206,9 @@ async function fetchPostCountBySlugRegex(slugRegex) {
 /* Export functions */
 module.exports.createPost = createPost
 module.exports.fetchPosts = fetchPosts
+module.exports.fetchPublishedPosts = fetchPublishedPosts
 module.exports.fetchPostInfos = fetchPostInfos
+module.exports.fetchPublishedPostInfos = fetchPublishedPostInfos
 module.exports.fetchPostBySlug = fetchPostBySlug
 module.exports.fetchPostInfoBySlug = fetchPostInfoBySlug
 module.exports.fetchPostsCount = fetchPostsCount
