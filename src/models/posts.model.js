@@ -1,12 +1,31 @@
 const config = require('../../knexfile')
 const knex = require('knex')(config)
 const utils = require('../utils/misc.util')
-const { Knex } = require('knex')
+const { Knex, Knex } = require('knex')
+
+/**
+ * Orders post results can be returned in
+ */
+const Order = {
+    /**
+     * Creation time, ascending
+     */
+    CREATED_ASC: 0,
+    /**
+     * Creation time, descending
+     */
+    CREATED_DESC: 1,
+    /**
+     * Title alphabetically, ascending
+     */
+    TITLE_ASC: 2,
+    /**
+     * Title alphabetically, descending
+     */
+    TITLE_DESC: 3
+}
 
 /* Utility functions */
-/**
- * @return {Knex}
- */
 function postInfo() {
     return knex('posts')
         .select(knex.ref('post_author').as('author'))
@@ -18,8 +37,16 @@ function postInfo() {
         .select(knex.ref('post_published').as('published'))
         .select(knex.ref('post_referenced_media').as('referenced_media'))
         .select(knex.ref('post_created_on').as('created_on'))
+        .select(knex.raw(`(
+            SELECT COUNT(*)
+            FROM \`comments\`
+            WHERE \`comment_post\` = \`posts\`.\`id\`
+        ) AS \`comments\``))
         .leftJoin('users', 'post_author', 'users.id')
 }
+/**
+ * @param {Array<Object>} rows 
+ */
 function processPostInfoRows(rows) {
     for(row of rows) {
         row.tags = utils.setToArray(row.tags)
@@ -27,6 +54,22 @@ function processPostInfoRows(rows) {
         row.created_on = new Date(row.created_on)
     }
     return rows
+}
+/**
+ * @param {number} order 
+ * @returns {string}
+ */
+function orderBy(order) {
+    switch(order) {
+    case Order.CREATED_DESC:
+        return '`posts`.`post_created_on` DESC'
+    case Order.TITLE_ASC:
+        return '`posts`.`post_title` ASC'
+    case Order.TITLE_DESC:
+        return '`posts`.`post_title` DESC'
+    default:
+        return '`posts`.`post_created_on` ASC'
+    }
 }
 
 /**
@@ -58,26 +101,30 @@ async function createPost(author, title, slug, content, tags, enableComments, pu
  * Fetches all posts
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
  * @return {Array<Object>} All posts
  */
-async function fetchPosts(offset, limit) {
+async function fetchPosts(offset, limit, order) {
     return await knex('posts')
         .select('*')
         .offset(offset)
         .limit(limit)
+        .orderByRaw(orderBy(order))
 }
 
 /**
  * Fetches info about all posts
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
  * @returns {Array<Object>} All posts' info
  */
-async function fetchPostInfos(offset, limit) {
+async function fetchPostInfos(offset, limit, order) {
     return processPostInfoRows(
         await postInfo()
             .offset(offset)
             .limit(limit)
+            .orderByRaw(orderBy(order))
     )
 }
 
@@ -131,3 +178,6 @@ module.exports.fetchPostBySlug = fetchPostBySlug
 module.exports.fetchPostInfoBySlug = fetchPostInfoBySlug
 module.exports.fetchPostsCount = fetchPostsCount
 module.exports.fetchPostCountBySlugRegex = fetchPostCountBySlugRegex
+
+/* Export values */
+module.exports.Order = Order
