@@ -22,7 +22,8 @@
     "koa-session": "^6.2.0",
     "koa-static": "^5.0.0",
     "mysql": "^2.18.1",
-    "read": "^1.0.7"
+    "read": "^1.0.7",
+    "xbbcode-parser": "^0.1.2"
   },
   "devDependencies": {
     "prisma": "^2.22.1"
