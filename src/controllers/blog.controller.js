@@ -7,11 +7,15 @@ const postsModel = require('../models/posts.model')
  */
 module.exports.getBlog = async (ctx, next) => {
     // Fetch post
-    let postRes = await postsModel.fetchPostBySlug(ctx.params.slug)
+    let postRes = await postsModel.fetchPostInfoBySlug(ctx.params.slug)
     
     if(postRes.length > 0) {
-        ctx.state.post = postRes[0]
+        let post = postRes[0]
+
+        ctx.state.post = post
     } else {
-        // TODO Handle 404
+        // Not found
+        ctx.state.noRender = true
+        await next()
     }
 }
