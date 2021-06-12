@@ -1,5 +1,6 @@
 const config = require('../../config.json')
 const usersModel = require('../models/users.model')
+const { renderBBCode } = require('../utils/bbcode.util')
 
 /**
  * Middleware that fetches data required for rendering pages
@@ -14,6 +15,9 @@ module.exports = async (ctx, next) => {
 
     // Fetch contributors
     ctx.state.contributors = await usersModel.fetchContributorInfos(0, 99)
+
+    // Include BB code util
+    ctx.state.renderBBCode = renderBBCode
 
     await next()
 }

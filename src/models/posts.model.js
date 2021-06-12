@@ -26,8 +26,11 @@ const Order = {
 }
 
 /* Utility functions */
-function postInfo() {
-    return knex('posts')
+/**
+ * @param {boolean} withContent 
+ */
+function postInfo(withContent) {
+    let query = knex('posts')
         .select(knex.ref('post_author').as('author'))
         .select(knex.ref('user_username').as('author_username'))
         .select(knex.ref('post_title').as('title'))
@@ -43,6 +46,11 @@ function postInfo() {
             WHERE \`comment_post\` = \`posts\`.\`id\`
         ) AS \`comments\``))
         .leftJoin('users', 'post_author', 'users.id')
+
+    if(withContent)
+        query.select(knex.ref('post_content').as('content'))
+    
+    return query
 }
 /**
  * @param {Array<Object>} rows 
@@ -130,14 +138,15 @@ async function fetchPublishedPosts(offset, limit, order) {
 
 /**
  * Fetches info about all posts
+ * @param {boolean} withContent Whether to include post content
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
  * @returns {Array<Object>} All posts' info
  */
-async function fetchPostInfos(offset, limit, order) {
+async function fetchPostInfos(withContent, offset, limit, order) {
     return processPostInfoRows(
-        await postInfo()
+        await postInfo(withContent)
             .offset(offset)
             .limit(limit)
             .orderByRaw(orderBy(order))
@@ -146,14 +155,15 @@ async function fetchPostInfos(offset, limit, order) {
 
 /**
  * Fetches info about all published posts
+ * @param {boolean} withContent Whether to include post content
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
  * @returns {Array<Object>} All published posts' info
  */
-async function fetchPublishedPostInfos(offset, limit, order) {
+async function fetchPublishedPostInfos(withContent, offset, limit, order) {
     return processPostInfoRows(
-        await postInfo()
+        await postInfo(withContent)
             .where('post_published', true)
             .offset(offset)
             .limit(limit)
@@ -174,12 +184,13 @@ async function fetchPostBySlug(slug) {
 
 /**
  * Fetches a post's info by its slug
+ * @param {boolean} withContent Whether to include post content
  * @param {string} slug The post slug
  * @returns {Array<Object>} An array with the row containing the post's info or an empty array if none exists
  */
-async function fetchPostInfoBySlug(slug) {
+async function fetchPostInfoBySlug(withContent, slug) {
     return processPostInfoRows(
-        await postInfo()
+        await postInfo(withContent)
             .where('post_slug', slug)
     )
 }

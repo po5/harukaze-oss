@@ -20,10 +20,10 @@
                 <a href="/blog/<%= post.slug %>">
                     <%= post.title %></a>
             </div>
-                <div class="blogdesc"><%= post.content %></div>
+                <div class="blogdesc"><%- renderBBCode(post.content) %></div>
                 <div class="blogdate">
-                    <span><%= post.createdAt %><span>
-                    <span class="FUCKASS">comments (0)</span>
+                    <span><%= post.created_on %><span>
+                    <span class="FUCKASS">comments (<%= post.comments %>)</span>
                 </div>
             </div>
         </div>
