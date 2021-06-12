@@ -1,4 +1,5 @@
 const usersModel = require('../models/users.model')
+const userloginsModel = require('../models/userlogins.model')
 const usersUtil = require('../utils/users.util')
 const argon2 = require('argon2')
 
@@ -25,6 +26,7 @@ module.exports.getLogin = async ctx => {
 
     // Redirect if already logged in
     if(ctx.state.authed) {
+        ctx.state.noRender = true
         ctx.redirect(next)
         return
     }
@@ -46,12 +48,13 @@ module.exports.postLogin = async ctx => {
 
     // Redirect if already logged in
     if(ctx.state.authed) {
+        ctx.state.noRender = true
         ctx.redirect(next)
         return
     }
 
     // Collect data
-    let username = body.username.trim()
+    let username = body.username?.trim()
     let password = body.password
 
     // Fill in username
@@ -78,7 +81,11 @@ module.exports.postLogin = async ctx => {
                     // Set user ID in session
                     ctx.session.id = user.id
 
+                    // Create login record
+                    await userloginsModel.createLogin(user.id, ctx.ip)
+
                     // Redirect to next
+                    ctx.state.noRender = true
                     ctx.redirect(next)
                 } else {
                     ctx.state.error = 'Wrong username or password'
