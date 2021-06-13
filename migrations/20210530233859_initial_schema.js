@@ -36,6 +36,7 @@ exports.up = async function(knex) {
             \`post_tags\` VARCHAR(1024) NOT NULL DEFAULT '',
             \`post_enable_comments\` TINYINT NOT NULL DEFAULT 1,
             \`post_published\` TINYINT NOT NULL DEFAULT 0,
+            \`post_show_title\` TINYINT NOT NULL DEFAULT 1,
             \`post_referenced_media\` VARCHAR(2048) NOT NULL DEFAULT '',
             \`post_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
             PRIMARY KEY (\`id\`));

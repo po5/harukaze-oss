@@ -11,15 +11,11 @@
                     </a>
                 </div>
             </div>
-            <div class="blogimage">
-                <center>
-                    <img src="/static/img/blogpostholder.png">
-                </center>
-            </div>
-            <div class="blogpostpoppoppoppop">
-                <a href="/blog/<%= post.slug %>">
-                    <%= post.title %></a>
-            </div>
+            <% if(post.show_title) { %>
+                <div class="blog-title">
+                    <a href="/blog/<%= post.slug %>"><%= post.title %></a>
+                </div>
+            <% } %>
                 <div class="blogdesc"><%- renderBBCode(post.content) %></div>
                 <div class="blogdate">
                     <span><%= post.created_on %><span>

@@ -38,6 +38,7 @@ function postInfo(withContent) {
         .select(knex.ref('post_tags').as('tags'))
         .select(knex.ref('post_enable_comments').as('enable_comments'))
         .select(knex.ref('post_published').as('published'))
+        .select(knex.ref('post_show_title').as('show_title'))
         .select(knex.ref('post_referenced_media').as('referenced_media'))
         .select(knex.ref('post_created_on').as('created_on'))
         .select(knex.raw(`(
@@ -89,9 +90,10 @@ function orderBy(order) {
  * @param {Array<string>} tags The post's tags
  * @param {boolean} enableComments Whether this post has comments enabled
  * @param {boolean} published Whether the post is published
+ * @param {boolean} showTitle Whether the post title will be visible
  * @param {Array<number>} referencedMedia The media IDs that were referenced/linked/embedded in the post
  */
-async function createPost(author, title, slug, content, tags, enableComments, published, referencedMedia) {
+async function createPost(author, title, slug, content, tags, enableComments, published, showTitle, referencedMedia) {
     return await knex('posts')
         .insert({
             post_author: author,
@@ -101,6 +103,7 @@ async function createPost(author, title, slug, content, tags, enableComments, pu
             post_tags: utils.arrayToSet(tags),
             post_enable_comments: enableComments,
             post_published: published,
+            post_show_title: showTitle,
             post_referenced_media: utils.arrayToSet(referencedMedia)
         })
 }

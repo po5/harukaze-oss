@@ -11,6 +11,7 @@ function setupCtx(ctx) {
     ctx.state.comments = true
     ctx.state.publish = false
     ctx.state.tags = ''
+    ctx.state.showTitle = true
 }
 
 /**
@@ -46,6 +47,7 @@ module.exports.postNewblog = async ctx => {
     let body = ctx.request.body
     let enableComments = body.comments == 'on'
     let publish = body.publish == 'on'
+    let showTitle = body.showtitle == 'on'
     let title = body.title?.trim()
     let content = body.content?.trim()
     let tags = utils.setToArray(body.tags || '')
@@ -53,6 +55,7 @@ module.exports.postNewblog = async ctx => {
     // Set state
     ctx.state.comments = enableComments
     ctx.state.publish = publish
+    ctx.state.showTitle = showTitle
     ctx.state.title = title || ''
     ctx.state.content = content || ''
     ctx.state.tags = utils.arrayToSet(tags)
@@ -74,7 +77,7 @@ module.exports.postNewblog = async ctx => {
         //
 
         // Create post
-        await postsModel.createPost(ctx.state.user.id, title, slug, content, tags, enableComments, publish, [])
+        await postsModel.createPost(ctx.state.user.id, title, slug, content, tags, enableComments, publish, showTitle, [])
 
         // Redirect to post (even if it wasn't published)
         ctx.state.noRender = true
