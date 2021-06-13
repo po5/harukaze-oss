@@ -43,6 +43,20 @@ module.exports.getNewblog = async (ctx, next) => {
 module.exports.postNewblog = async ctx => {
     setupCtx(ctx)
 
+    // Deal with unauthenticated and unauthorized users
+    if(!ctx.state.authed) {
+        ctx.state.noRender = true
+        ctx.redirect('/login?next='+encodeURIComponent(ctx.path))
+        return
+    }
+
+    // Check if user is a contributor
+    if(ctx.state.user.role < usersUtil.Roles.CONTRIBUTOR) {
+        ctx.state.noRender = true
+        await next()
+        return
+    }
+
     // Collect data
     let body = ctx.request.body
     let enableComments = body.comments == 'on'
