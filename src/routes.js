@@ -27,6 +27,7 @@ module.exports = router => {
     const loginController = require('./controllers/login.controller')
     const logoutController = require('./controllers/logout.controller')
     const newblogController = require('./controllers/newblog.controller')
+    const editblogController = require('./controllers/editblog.controller')
 
     // Redirects
     router.get('/', async ctx => await ctx.redirect('/home')) // /? index? that shit is for the birds, man. /home? now that's where it's at. simple, clean, efficient, fast, linux lacks these, which makes it trash
@@ -80,6 +81,15 @@ module.exports = router => {
     router.post('/blogs/new', async (ctx, next) => {
         await newblogController.postNewblog(ctx, next)
         await render('newblog', ctx)
+    })
+
+    router.get('/blog/:slug/edit', async (ctx, next) => {
+        await editblogController.getEditblog(ctx, next)
+        await render('editblog', ctx)
+    })
+    router.post('/blog/:slug/edit', async (ctx, next) => {
+        await editblogController.postEditblog(ctx, next)
+        await render('editblog', ctx)
     })
 
     /* API */

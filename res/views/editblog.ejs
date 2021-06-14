@@ -1,0 +1,40 @@
+<link rel="stylesheet" href="/static/css/newblog.css">
+<link rel="stylesheet" href="/static/sceditor/minified/themes/default.min.css" id="theme-style">
+		  
+<script src="/static/sceditor/minified/sceditor.min.js"></script>
+<script src="/static/sceditor/minified/icons/monocons.js"></script>
+<script src="/static/sceditor/minified/formats/bbcode.js"></script>
+
+<h1>Edit "<%= title %>"</h1>
+<% if(error != null) { %>
+    <p class="form-error"><%= error %></p>
+    <br>
+<% } %>
+<form action="" method="post">
+    <input type="text" name="title" maxlength="256" placeholder="Blog title..." id="title" value="<%= title %>">
+    <textarea name="content" id="content"><%= content %></textarea>
+    <br>
+
+    <div id="options">
+        <label for="tags">Tags (comma-separated): </label>
+        <input type="text" name="tags" id="tags" value="<%= tags %>" placeholder="stuff, things, more_stuff">
+        <br>
+        <label for="slug">Slug (used in URLs): </label>
+        <input type="text" name="slug" id="slug" value="<%= slug %>" placeholder="my-blog-post">
+        <br>
+        <input type="checkbox" <%= published ? 'checked' : ''%> name="published" id="opt-published">
+        <label for="opt-published">Published?</label>
+        <br>
+        <input type="checkbox" <%= comments ? 'checked' : ''%> name="comments" id="opt-comments">
+        <label for="opt-comments">Enable comments?</label>
+        <br>
+        <input type="checkbox" <%= showTitle ? 'checked' : ''%> name="showtitle" id="opt-showtitle">
+        <label for="opt-showtitle">Show title?</label>
+        <br>
+    </div>
+    <br>
+
+    <input type="submit" value="Save Blog">
+</form>
+
+<script src="/static/js/newblog.js"></script>

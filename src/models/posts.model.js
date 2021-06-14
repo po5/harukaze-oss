@@ -217,6 +217,33 @@ async function fetchPostCountBySlugRegex(slugRegex) {
         .whereRaw('`post_slug` REGEXP ?', [slugRegex]))[0].count
 }
 
+/**
+ * Updates the post with the specified ID
+ * @param {number} id The ID of the post to update
+ * @param {string} title The post's new title
+ * @param {string} slug The post's new slug
+ * @param {string} content The post's new content
+ * @param {Array<string>} tags The post's new tags
+ * @param {boolean} enableComments Whether the post will now have comments enabled
+ * @param {boolean} published Whether the post will now be published
+ * @param {boolean} showTitle Whether the post will now show its title
+ * @param {Array<string>} referencedMedia All media that the post now references
+ */
+async function updatePostById(id, title, slug, content, tags, enableComments, published, showTitle, referencedMedia) {
+    return await knex('posts')
+        .update({
+            post_title: title,
+            post_slug: slug,
+            post_content: content,
+            post_tags: utils.arrayToSet(tags),
+            post_enable_comments: enableComments,
+            post_published: published,
+            post_show_title: showTitle,
+            post_referenced_media: utils.arrayToSet(referencedMedia)
+        })
+        .where('id', id)
+}
+
 /* Export functions */
 module.exports.createPost = createPost
 module.exports.fetchPosts = fetchPosts
@@ -227,6 +254,7 @@ module.exports.fetchPostBySlug = fetchPostBySlug
 module.exports.fetchPostInfoBySlug = fetchPostInfoBySlug
 module.exports.fetchPostsCount = fetchPostsCount
 module.exports.fetchPostCountBySlugRegex = fetchPostCountBySlugRegex
+module.exports.updatePostById = updatePostById
 
 /* Export values */
 module.exports.Order = Order
