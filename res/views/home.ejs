@@ -1,29 +1,29 @@
 <% if(posts.length > 0) { %>
-    <% for(post of posts) { %>
+    <% for(post of posts) { with(post) { %>
         <div class="blogpost">
             <div class="aligned"> 
-                <div class="blogicon">
+                <div class="blog-icon">
                     <img src="/static/img/iconthing.png" alt="Site icon">
                 </div>
                 <div class="name2">
-                    <a href=/user/<%= post.author.name %>>
-                        <span><%= post.author.name %></span>
+                    <a href="/contributor/<%= author_username %>">
+                        <span><%= author_username %></span>
                     </a>
                 </div>
             </div>
-            <% if(post.show_title) { %>
+            <% if(show_title) { %>
                 <div class="blog-title">
-                    <a href="/blog/<%= post.slug %>"><%= post.title %></a>
+                    <a href="/blog/<%= slug %>"><%= title %></a>
                 </div>
             <% } %>
-                <div class="blogdesc"><%- renderBBCode(post.content) %></div>
-                <div class="blogdate">
-                    <span><%= post.created_on %><span>
-                    <span class="FUCKASS">comments (<%= post.comments %>)</span>
-                </div>
+            <div class="blogdesc"><%- renderBBCode(content) %></div>
+            <div class="blog-view-button"><a href="/blog/<%= slug %>">View post</a></div>
+            <div class="blogdate">
+                <span><a href="/blog/<%= slug %>"><%= date(post.created_on) %></a><span>
+                <span class="right"><a href="/blog/<%= slug %>">comments (<%= comments %>)</a></span>
             </div>
         </div>
-    <% } %>
+    <% } } %>
 <% } else { %>
     <div id="no-blogs">
         <i>There are no posts yet...</i>

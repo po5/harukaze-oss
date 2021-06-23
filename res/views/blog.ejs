@@ -1,37 +1,107 @@
 <div class="blogpost">
     <div class="aligned"> 
-        <div class="blogicon"><img src="/static/img/iconthing.png" alt=""></div>
-        <div class="name2"><span><%= post.author.name %></span>
-    </div>
-</div> 
-    <div class="blogimage"><center><img src="/static/img/blogpostholder.png"></center></div>
-    <div class="blogpostpoppoppoppop"><%= post.title %></div>
-    <div class="blogdate"><span><%= post.createdAt %><span></div>
-    <div class="blogdesc"><%= post.content %></div>
+        <div class="blog-icon"><img src="/static/img/iconthing.png" alt=""></div>
+        <div class="name2">
+            <a href="/contributor/<%= post.author_username %>">
+                <span><%= post.author_username %></span>
+            </a>
+        </div>
 </div>
-<div class="comments">
-    <div class="aligned"> 
-        <div class="name2"><span>COMMENTS</span>
+    <% if(post.show_title) { %>
+        <div class="blog-title"><%= post.title %></div>
+    <% } %>
+    <% if(authed && user.role > 0) { %>
+        <div class="blog-edit-button">
+            <a href="/blog/<%= post.slug %>/edit">Edit post</a>
+        </div>
+    <% } %>
+    <span class="blogdate"><%= date(post.created_on) %></span>
+    <div class="blogdesc"><%- renderBBCode(post.content) %></div>
+</div>
+<div class="comments-area">
+    <div class="aligned">
+        <span class="name2">COMMENTS</span>
     </div>
-</div> 
-    <div class="cocknuts"><textarea id="commentbox" name="commentbox" rows="10" col="50">I PISS AND SHIT ALL OVER THE PLACE</textarea><br><input type="submit" value="go hit the showers"></div>
+    <div class="comment-box">
+        <% if(authed) { %>
+            <form action="" method="POST">
+                <% if(error != null) { %>
+                    <p class="form-error"><%= error %></p>
+                    <br>
+                <% } %>
+                <textarea placeholder="Type something..." id="comment-box" name="content" rows="10" col="50"></textarea>
+                <br>
+                <label for="comment-mood">Mood:</label>
+                <select id="comment-mood" name="mood">
+                    <% for(i in characterMoods) { %>
+                        <option value="<%= i %>"><%= characterMoods[i] %></option>
+                    <% } %>
+                </select>
+                <br>
+                <input type="submit" value="Post that!">
+            </form>
+        <% } else { %>
+            <a href="/login">Log in</a> to make a comment, or <a href="/signup">sign up</a>!
+        <% } %>
+    </div>
     <hr>
-    <div class="comment">
-                    <div class="aligned"> 
-        <div class="blogicon"><img src="/static/img/iconthing.png" alt=""></div>
-        <div class="name2"><span>TEST</span>
+    <div class="comments">
+        <% if(comments.length > 0) { %>
+            <% for(comment of comments) {%>
+                <div class="comment" id="comment-<%= comment.id %>">
+                    <div class="aligned">
+                        <div class="blog-icon">
+                            <img src="<%= characterMoodToUrl(comment.mood, comment.author_character) %>" alt="<%= characterMoods[comment.mood] %>" title="<%= characterMoods[comment.mood] %>">
+                        </div>
+                        <span class="name2"><%= comment.author_username %></span>
+                    </div>
+                    <div class="comment-content"><%= comment.content %></div>
+                    <div class="commentdate"><%= date(comment.created_on) %></div>
+                </div>
+                <div class="comment-replies">
+                    <% for(reply of replies) { %>
+                        <% if(reply.parent == comment.id) { %>
+                            <div class="comment-reply">
+                                <div class="alignedcom"> 
+                                    <div class="blog-icon">
+                                        <img src="<%= characterMoodToUrl(reply.mood, reply.author_character) %>" alt="<%= characterMoods[reply.mood] %>" title="<%= characterMoods[reply.mood] %>">
+                                    </div>
+                                    <div class="name2"><span><%= reply.author_username %></span></div>
+                                </div>
+                                <div class="comment-reply-content"><%= reply.content %></div>
+                                <div class="commentdate"><span><%= date(reply.created_on) %></span></div>
+                            </div>
+                        <% } %>
+                    <% } %>
+                    <% if(authed) { %>
+                        <div class="comment-reply-box">
+                            <form action="" method="POST">
+                                <% if(comment.id in replyErrors) { %>
+                                    <p class="form-error"><%= replyErrors[comment.id] %></p>
+                                    <br>
+                                <% } %>
+                                <input type="hidden" name="reply" value="<%= comment.id %>">
+                                <textarea placeholder="Reply something..." id="comment-box" name="content" rows="10" col="50"></textarea>
+                                <br>
+                                <label for="comment-mood">Mood:</label>
+                                <select id="comment-mood" name="mood">
+                                    <% for(i in characterMoods) { %>
+                                        <option value="<%= i %>"><%= characterMoods[i] %></option>
+                                    <% } %>
+                                </select>
+                                <br>
+                                <input type="submit" value="Post that!">
+                            </form>
+                            <br><br>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+        <% } else { %>
+            <i class="name2">Nobody has posted anything yet...</i>
+            <br>
+            <i class="name2">...yet...YET...</i>
+            <br><br>
+        <% } %>
     </div>
-</div>
-                <div class="commentdesc">Ojamajo Doremi firing on all cylinders—again (yawn). You should be thankful for Ojamajo Doremi, because there is nowhere else you can experience the intense beauty as shown and seen here. Go ahead, try, go to see precure, go see your favorite anime, it doesn’t rock like Ojamajo Doremi——we’ll smoke a joint together and you tell me that the shitty anime you like gets you off more than Ojamajo Doremi…. Luckily, for you, there is Ojamajo Doremi. This message was brought to you by Pastabowl. Because it's just that good. Ask your doctor——if you have a half hard dick for over three days then Ojamajo Doremi might not be right for you. Re:Zero maybe-----stinks like it......</div>
-                <div class="commentdate"><span>fuckin uhhh idk whenever<span></div>
-</div>
-    <div class="commentreply">
-                    <div class="alignedcom"> 
-        <div class="commentreplyicon"><img src="/static/img/iconthing.png" alt=""></div>
-        <div class="name2"><span>TEST</span>
-    </div>
-</div>
-                <div class="commentreplydesc">Ojamajo Doremi firing on all cylinders—again (yawn). You should be thankful for Ojamajo Doremi, because there is nowhere else you can experience the intense beauty as shown and seen here. Go ahead, try, go to see precure, go see your favorite anime, it doesn’t rock like Ojamajo Doremi——we’ll smoke a joint together and you tell me that the shitty anime you like gets you off more than Ojamajo Doremi…. Luckily, for you, there is Ojamajo Doremi. This message was brought to you by Pastabowl. Because it's just that good. Ask your doctor——if you have a half hard dick for over three days then Ojamajo Doremi might not be right for you. Re:Zero maybe-----stinks like it......</div>
-                <div class="commentdate"><span>fuckin uhhh idk whenever<span></div>
-</div>
 </div>

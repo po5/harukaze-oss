@@ -47,11 +47,6 @@ module.exports = router => {
         await render('home', ctx)
     })
 
-    router.get('/blog/:slug', async (ctx, next) => {
-        await blogController.getBlog(ctx, next)
-        await render('blog', ctx)
-    })
-
     router.get('/signup', async (ctx, next) => {
         await signupController.getSignup(ctx, next)
         await render('signup', ctx)
@@ -90,6 +85,23 @@ module.exports = router => {
     router.post('/blog/:slug/edit', async (ctx, next) => {
         await editblogController.postEditblog(ctx, next)
         await render('editblog', ctx)
+    })
+
+    router.get('/blog/:slug', async (ctx, next) => {
+        await blogController.getBlog(ctx, next)
+        await render('blog', ctx)
+    })
+    router.post('/blog/:slug', async (ctx, next) => {
+        await blogController.postBlog(ctx, next)
+        await render('blog', ctx)
+    })
+    router.get('/blog/:slug/:page', async (ctx, next) => {
+        await blogController.getBlog(ctx, next)
+        await render('blog', ctx)
+    })
+    router.post('/blog/:slug/:page', async (ctx, next) => {
+        await blogController.postBlog(ctx, next)
+        await render('blog', ctx)
     })
 
     /* API */

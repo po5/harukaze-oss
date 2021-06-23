@@ -78,6 +78,9 @@ xbbcode.addTags({
             if(content.includes('&'))
                 content = content.substring(0, content.indexOf('&'))
 
+            if(content.length == 11)
+                content = 'https://www.youtube.com/watch?v='+content
+
             if(/^https?:\/\/(www\.)?youtu((\.be\/)|(be\.com\/watch\?v=))([a-zA-Z0-9_-]{11})$/g.test(content)) {
                 var id = content.substring(content.length-11, content.length).replace(/'/g, '').replace(/"/g, '')
 

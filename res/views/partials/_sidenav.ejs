@@ -1,23 +1,17 @@
-<% for(var i = 0; i < contributors.length; i++) { %>
-    <% var contributor = contributors[i] %>
-    <%# to the layman, this might look retarded. that's because it is. thanks george epic css %>
-    <% if(i == 0) { %>
-        <div class="sidenav">
-    <% } else { %>
-        <div class="sidenav2">
-    <% } %>
-        <div class="iconz">
-            <img src="/static/img/testicon.png">
-            <div class="nameperson">
-                <a href=/contributor/<%= contributor.username %>><%= contributor.username %></a>
-            </div>
-            <div class="sidedesc">
-                <% if(contributor.bio) { %>
-                    <%= contributor.bio %>
-                <% } else { %>
-                    <i>No bio added...</i>
-                <% } %>
-            </div>
+<div id="contributors">
+<% for(contributor of contributors) { with(contributor) { %>
+    <div class="contributor">
+        <img class="contributor-avatar" src="/static/img/testicon.png">
+        <div class="contributor-name">
+            <a href="/contributor/<%= username %>"><%= username %></a>
+        </div>
+        <div class="contributor-bio">
+            <% if(bio) { %>
+                <%= bio %>
+            <% } else { %>
+                <i>No bio added...</i>
+            <% } %>
         </div>
     </div>
-<% } %>
+<% } } %>
+</div>

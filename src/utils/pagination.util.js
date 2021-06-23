@@ -50,13 +50,12 @@ function paginatedRouteInfo(ctx, itemCount) {
     // Base path (path without page number)
     let basePath = hasPageParam ? currentPath.substring(0, currentPath.length-(page.toString().length+1)) : currentPath
 
-    // Figure out page paths
-    let lastPage = (page > 1) ? basePath+'/'+page-1 : null
-    let nextPage = (page < totalPages) ? basePath+'/'+page+1 : null
-    if(ctx.querystring.length > 0) {
-        lastPage += '?'+ctx.querystring
-        nextPage += '?'+ctx.querystring
+    // Define page paths function
+    let pageLink = function(num) {
+        return basePath+'/'+num+(ctx.querystring.length > 0 ? '?'+ctx.querystring : '')
     }
+    let lastPage = (page > 1) ? pageLink(page-1) : null
+    let nextPage = (page < totalPages) ? pageLink(page+1) : null
 
     // Query offset and limits
     let queryOffset = (page-1)*pageSize
@@ -69,6 +68,7 @@ function paginatedRouteInfo(ctx, itemCount) {
         pageSize,
         itemCount,
         basePath,
+        pageLink,
         nextPage,
         lastPage,
         queryOffset,

@@ -1,7 +1,33 @@
 <hr>
-<div class="pagez">page: <a href="do whatever the fuck you do with this shit idk">1</a>,<a href="do whatever the fuck you do with this shit idk">2</a>,<a href="do whatever the fuck you do with this shit idk">3</a>,<a href="do whatever the fuck you do with this shit idk">...</a></div>
-<hr>
-<div class="footer">
-do u like memes, 2021
-</br>powered by <a href="https://git.termer.net/trigex/harukaze">Harukaze</a>
+<% if(typeof pagination != 'undefined') { with(pagination) { %>
+    <div id="pagination">
+        Page
+        <% for(let i = Math.max(page-2, 1); i <= Math.min(page+2, totalPages); i++) { %>
+            <% if(i == page) { %>
+                <b class="current-page"><%= i %></b>
+            <% } else { %>
+                <a href="<%= pageLink(i) %>"><%= i %></a>
+            <% } %>
+        <% } %>
+        <% if(page < totalPages-1) { %>
+            ... <a href="<%= pageLink(totalPages) %>"><%= totalPages %></a>
+        <% } %>
+    </div>
+    <hr>
+<% } } %>
+<div id="footer">
+    Powered by <a href="https://git.termer.net/trigex/harukaze">Harukaze</a> |
+    <% if(authed) { %>
+        <a href="/logout">Log out!</a>
+        <% if(user.role > 0) { %>
+            | <a href="/panel">Contributor Panel</a>
+            | <a href="/blogs/new">Make a new blog!</a>
+        <% } %>
+        <% if(user.role > 1) { %>
+            | <a href="/panel/admin">Administrator Panel</a>
+        <% } %>
+    <% } else { %>
+        <a href="/login">Log In!</a> |
+        <a href="/signup">Sign Up!</a>
+    <% } %>
 </div>

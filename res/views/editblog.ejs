@@ -34,7 +34,10 @@
     </div>
     <br>
 
-    <input type="submit" value="Save Blog">
+    <input type="submit" onclick="disableLeaveCheck()" value="Save Blog">
+    <% if(published) { %>
+        <a href="/blog/<%= slug %>">View blog</a>
+    <% } %>
 </form>
 
 <script src="/static/js/newblog.js"></script>

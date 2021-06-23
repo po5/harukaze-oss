@@ -1,4 +1,3 @@
-const usersModel = require('../models/users.model')
 const postsModel = require('../models/posts.model')
 const paginationUtil = require('../utils/pagination.util')
 

@@ -31,6 +31,7 @@ const Order = {
  */
 function postInfo(withContent) {
     let query = knex('posts')
+        .select('posts.id')
         .select(knex.ref('post_author').as('author'))
         .select(knex.ref('user_username').as('author_username'))
         .select(knex.ref('post_title').as('title'))
