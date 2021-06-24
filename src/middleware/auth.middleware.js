@@ -4,6 +4,7 @@ const usersUtil = require('../utils/users.util')
 /**
  * Middleware that authenticates requests based on session
  * @param {import("koa").Context} ctx The context
+ * @param {Function} next The next route to call
  */
 module.exports = async (ctx, next) => {
     // By default, requests are not authenticated

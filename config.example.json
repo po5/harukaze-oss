@@ -8,10 +8,15 @@
     },
     "site": {
         "title": "VISUABUSTERS",
-        "defaultCharacter": "defaultchan"
+        "defaultCharacter": "defaultchan",
+        "maxUploadSize": 500000000
     },
     "pagination": {
         "pageSize": 10
+    },
+    "ffmpeg": {
+        "ffmpegPath": "/usr/bin/ffmpeg",
+        "ffprobePath": "/usr/bin/ffprobe"
     },
     "knex": {
         "client": "mysql",

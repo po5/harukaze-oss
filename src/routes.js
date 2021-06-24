@@ -12,13 +12,35 @@ async function render(template, ctx) {
 }
 
 /**
+ * Renders an API response
+ * @param {import('koa').Context} ctx The context to render with
+ */
+function apiRes(ctx) {
+    if(!ctx.state.noRender)
+        ctx.body = ctx.state.json || { status: 'success' }
+}
+
+/**
+ * Modifies a context to show an API error
+ * @param {import('koa').Context} ctx The context to modify
+ * @param {Error} err The error to handle
+ */
+function apiError(ctx, err) {
+    console.error('Error occurred while handling API request:')
+    console.error(err)
+    ctx.status = 500
+    ctx.state.noRender = false
+    ctx.state.json = { status: 'internal_error' }
+}
+
+/**
  * Sets up routes for the application
  * @param {Router} router The router to use
  */
 module.exports = router => {
     // Middleware imports
     const renderdataMiddleware = require('./middleware/renderdata.middleware')
-    const authMiddleware = require('./middleware/auth.middleware')
+    const apiutilsMiddleware = require('./middleware/api/apiutils.middleware')
 
     // Controller imports
     const homeController = require('./controllers/home.controller')
@@ -28,13 +50,32 @@ module.exports = router => {
     const logoutController = require('./controllers/logout.controller')
     const newblogController = require('./controllers/newblog.controller')
     const editblogController = require('./controllers/editblog.controller')
+    const mediaController = require('./controllers/media.controller')
+    const assetsController = require('./controllers/assets.controller')
+
+    // API controller imports
+    const apiMediaController = require('./controllers/api/media.controller')
 
     // Redirects
     router.get('/', async ctx => await ctx.redirect('/home')) // /? index? that shit is for the birds, man. /home? now that's where it's at. simple, clean, efficient, fast, linux lacks these, which makes it trash
 
     // Middleware
     router.use(renderdataMiddleware)
-    router.use(authMiddleware)
+    router.use(apiutilsMiddleware)
+
+    /* Assets */
+    router.get('/assets/media/:id/:filename', async (ctx, next) => {
+        await assetsController.getMedia(ctx, next)
+    })
+    router.get('/assets/media/:id', async (ctx, next) => {
+        await assetsController.getMedia(ctx, next)
+    })
+    router.get('/assets/thumbnail/:id/:filename', async (ctx, next) => {
+        await assetsController.getThumbnail(ctx, next)
+    })
+    router.get('/assets/thumbnail/:id', async (ctx, next) => {
+        await assetsController.getThumbnail(ctx, next)
+    })
 
     // Views
     router.get('/home', async (ctx, next) => {
@@ -104,8 +145,30 @@ module.exports = router => {
         await render('blog', ctx)
     })
 
+    router.get('/media', async (ctx, next) => {
+        await mediaController.getMedia(ctx, next)
+        await render('media', ctx)
+    })
+    router.get('/media/:page', async (ctx, next) => {
+        await mediaController.getMedia(ctx, next)
+        await render('media', ctx)
+    })
+
     /* API */
-    // TODO HAHAHAHAHAHA WOOOOO HAHAHAH HOOOOOOOOOOOOO
-    // TODO This is pretty much just like normal routes except no view. Maybe API controllers return JSON?
-    // TODO To be determined
+    router.get('/api/media', async (ctx, next) => {
+        try {
+            await apiMediaController.getMedia(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/media/upload', async (ctx, next) => {
+        try {
+            await apiMediaController.postUpload(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
 }

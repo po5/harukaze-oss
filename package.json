@@ -11,6 +11,8 @@
   "dependencies": {
     "@koa/router": "^10.0.0",
     "argon2": "^0.26.0",
+    "file-type": "^16.5.0",
+    "formidable": "^1.2.2",
     "knex": "^0.95.6",
     "koa": "^2.13.1",
     "koa-body": "^4.2.0",

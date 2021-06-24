@@ -1,6 +1,7 @@
 const usersModel = require('./models/users.model')
 const usersUtil = require('./utils/users.util')
 const utils = require('./utils/misc.util')
+const fs = require('fs')
 
 const config = require('../config.json')
 const koa = require('koa')
@@ -12,6 +13,8 @@ const koaEjs = require('koa-ejs')
 const koaStatic = require('koa-static')
 const koaBody = require('koa-body')
 const koaMount = require('koa-mount')
+const authMiddleware = require('./middleware/auth.middleware')
+const protectMiddleware = require('./middleware/protect.middleware')
 const path = require('path')
 
 /**
@@ -59,6 +62,12 @@ async function main(args) {
         process.exit(0)
     }
 
+    // Create required files and directories
+    if(!fs.existsSync('media/'))
+        fs.mkdirSync('media/')
+    if(!fs.existsSync('media/thumbnails/'))
+        fs.mkdirSync('media/thumbnails/')
+
     // Check for administrator
     console.log('Connecting to database...')
     let admins = await usersModel.fetchAdminInfos(0, 1)
@@ -80,20 +89,31 @@ async function main(args) {
         cache: false,
         debug: false
     })
-    
-    // Routes
-    require('./routes.js')(router)
-    
-    // Koa Middleware
+
+    // Middleware
     app.use(koaLogger())
     app.use(koaSession({
         key: 'harukaze-sess',
         renew: true
     }, app))
+    app.use(authMiddleware)
+    app.use(protectMiddleware([
+        [/\/api\/.*/, usersUtil.Roles.CONTRIBUTOR],
+        [/\/api\/admin\/.*/, usersUtil.Roles.ADMIN]
+    ]))
     app.use(koaJson())
-    app.use(koaBody())
+    app.use(koaBody({
+        multipart: true,
+        formidable: {
+            hash: 'sha1',
+            keepExtensions: true
+        }
+    }))
     app.use(koaMount('/static', koaStatic(path.join(__dirname, '../res/static'))))
     app.use(router.routes()).use(router.allowedMethods())
+
+    // Routes
+    require('./routes.js')(router)
     
     app.listen(config.server.port, config.server.host)
     console.log(`Listening at ${config.server.host}:${config.server.port}`)

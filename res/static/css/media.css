@@ -1,0 +1,29 @@
+.container {
+    background: #eee;
+    border: 1px solid #aaa;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+.container-header {
+    text-align: center;
+    border-bottom: 1px solid #aaa;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    cursor: default;
+}
+.media-nav {
+    text-align: center;
+}
+
+#app {
+    font-family: sans-serif;
+}
+#loading {
+    text-align: center;
+}
+#media-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+}

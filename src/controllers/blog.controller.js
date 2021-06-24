@@ -25,26 +25,35 @@ function setupCtx(ctx) {
 
 // Fetches and puts page data (post, comments, etc) into the state
 async function fetchAndPutPageData(ctx, post) {
-    // Fetch total comments
-    let totalComments = await commentsModel.fetchCommentsCountByPost(post.id)
+    // Check if comments are enabled
+    let enableComments = post.enable_comments
+    
 
-    // Get pagination info
-    let pagination = paginationUtil.paginatedRouteInfo(ctx, totalComments)
+    if(enableComments) {
+        // Fetch total comments
+        let totalComments = await commentsModel.fetchCommentsCountByPost(post.id)
 
-    // Fetch comments
-    let comments = await commentsModel.fetchNormalCommentInfosByPost(post.id, pagination.queryOffset, pagination.queryLimit, commentsModel.Order.CREATED_DESC)
+        // Get pagination info
+        let pagination = paginationUtil.paginatedRouteInfo(ctx, totalComments)
 
-    // Fetch replies
-    let commentIds = new Array(comments.length)
-    for(i in comments)
-        commentIds[i] = comments[i].id
-    let replies = await commentsModel.fetchReplyCommentsByParentIds(commentIds)
+        // Fetch comments
+        let comments = await commentsModel.fetchNormalCommentInfosByPost(post.id, pagination.queryOffset, pagination.queryLimit, commentsModel.Order.CREATED_DESC)
+
+        // Fetch replies
+        let commentIds = new Array(comments.length)
+        for(i in comments)
+            commentIds[i] = comments[i].id
+        let replies = await commentsModel.fetchReplyCommentsByParentIds(commentIds)
+
+        // Put context data
+        ctx.state.comments = comments
+        ctx.state.replies = replies
+        ctx.state.pagination = pagination
+    }
 
     // Put context data
     ctx.state.post = post
-    ctx.state.comments = comments
-    ctx.state.replies = replies
-    ctx.state.pagination = pagination
+    ctx.state.enableComments = enableComments
 }
 
 /**
@@ -68,9 +77,6 @@ module.exports.postBlog = async (ctx, next) => {
 
         // Check if user is logged in
         if(ctx.state.authed) {
-            // TODO Redirect to first page on success (if not a reply)
-            // TODO Use pagination.pageLink(1)
-
             // Collect data
             let body = ctx.request.body
             let content = body.content ? body.content.trim() : null

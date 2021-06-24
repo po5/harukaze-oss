@@ -15,93 +15,96 @@
             <a href="/blog/<%= post.slug %>/edit">Edit post</a>
         </div>
     <% } %>
+    <hr>
     <span class="blogdate"><%= date(post.created_on) %></span>
     <div class="blogdesc"><%- renderBBCode(post.content) %></div>
 </div>
-<div class="comments-area">
-    <div class="aligned">
-        <span class="name2">COMMENTS</span>
-    </div>
-    <div class="comment-box">
-        <% if(authed) { %>
-            <form action="" method="POST">
-                <% if(error != null) { %>
-                    <p class="form-error"><%= error %></p>
-                    <br>
-                <% } %>
-                <textarea placeholder="Type something..." id="comment-box" name="content" rows="10" col="50"></textarea>
-                <br>
-                <label for="comment-mood">Mood:</label>
-                <select id="comment-mood" name="mood">
-                    <% for(i in characterMoods) { %>
-                        <option value="<%= i %>"><%= characterMoods[i] %></option>
+<% if(enableComments) { %>
+    <div class="comments-area">
+        <div class="aligned">
+            <span class="name2">COMMENTS</span>
+        </div>
+        <div class="comment-box">
+            <% if(authed) { %>
+                <form action="" method="POST">
+                    <% if(error != null) { %>
+                        <p class="form-error"><%= error %></p>
+                        <br>
                     <% } %>
-                </select>
-                <br>
-                <input type="submit" value="Post that!">
-            </form>
-        <% } else { %>
-            <a href="/login">Log in</a> to make a comment, or <a href="/signup">sign up</a>!
-        <% } %>
-    </div>
-    <hr>
-    <div class="comments">
-        <% if(comments.length > 0) { %>
-            <% for(comment of comments) {%>
-                <div class="comment" id="comment-<%= comment.id %>">
-                    <div class="aligned">
-                        <div class="blog-icon">
-                            <img src="<%= characterMoodToUrl(comment.mood, comment.author_character) %>" alt="<%= characterMoods[comment.mood] %>" title="<%= characterMoods[comment.mood] %>">
+                    <textarea placeholder="Type something..." id="comment-box" name="content" rows="10" col="50"></textarea>
+                    <br>
+                    <label for="comment-mood">Mood:</label>
+                    <select id="comment-mood" name="mood">
+                        <% for(i in characterMoods) { %>
+                            <option value="<%= i %>"><%= characterMoods[i] %></option>
+                        <% } %>
+                    </select>
+                    <br>
+                    <input type="submit" value="Post that!">
+                </form>
+            <% } else { %>
+                <a href="/login">Log in</a> to make a comment, or <a href="/signup">sign up</a>!
+            <% } %>
+        </div>
+        <hr>
+        <div class="comments">
+            <% if(comments.length > 0) { %>
+                <% for(comment of comments) {%>
+                    <div class="comment" id="comment-<%= comment.id %>">
+                        <div class="aligned">
+                            <div class="blog-icon">
+                                <img src="<%= characterMoodToUrl(comment.mood, comment.author_character) %>" alt="<%= characterMoods[comment.mood] %>" title="<%= characterMoods[comment.mood] %>">
+                            </div>
+                            <span class="name2"><%= comment.author_username %></span>
                         </div>
-                        <span class="name2"><%= comment.author_username %></span>
+                        <div class="comment-content"><%= comment.content %></div>
+                        <div class="commentdate"><%= date(comment.created_on) %></div>
                     </div>
-                    <div class="comment-content"><%= comment.content %></div>
-                    <div class="commentdate"><%= date(comment.created_on) %></div>
-                </div>
-                <div class="comment-replies">
-                    <% for(reply of replies) { %>
-                        <% if(reply.parent == comment.id) { %>
-                            <div class="comment-reply">
-                                <div class="alignedcom"> 
-                                    <div class="blog-icon">
-                                        <img src="<%= characterMoodToUrl(reply.mood, reply.author_character) %>" alt="<%= characterMoods[reply.mood] %>" title="<%= characterMoods[reply.mood] %>">
+                    <div class="comment-replies">
+                        <% for(reply of replies) { %>
+                            <% if(reply.parent == comment.id) { %>
+                                <div class="comment-reply">
+                                    <div class="alignedcom"> 
+                                        <div class="blog-icon">
+                                            <img src="<%= characterMoodToUrl(reply.mood, reply.author_character) %>" alt="<%= characterMoods[reply.mood] %>" title="<%= characterMoods[reply.mood] %>">
+                                        </div>
+                                        <div class="name2"><span><%= reply.author_username %></span></div>
                                     </div>
-                                    <div class="name2"><span><%= reply.author_username %></span></div>
+                                    <div class="comment-reply-content"><%= reply.content %></div>
+                                    <div class="commentdate"><span><%= date(reply.created_on) %></span></div>
                                 </div>
-                                <div class="comment-reply-content"><%= reply.content %></div>
-                                <div class="commentdate"><span><%= date(reply.created_on) %></span></div>
+                            <% } %>
+                        <% } %>
+                        <% if(authed) { %>
+                            <div class="comment-reply-box">
+                                <form action="" method="POST">
+                                    <% if(comment.id in replyErrors) { %>
+                                        <p class="form-error"><%= replyErrors[comment.id] %></p>
+                                        <br>
+                                    <% } %>
+                                    <input type="hidden" name="reply" value="<%= comment.id %>">
+                                    <textarea placeholder="Reply something..." id="comment-box" name="content" rows="10" col="50"></textarea>
+                                    <br>
+                                    <label for="comment-mood">Mood:</label>
+                                    <select id="comment-mood" name="mood">
+                                        <% for(i in characterMoods) { %>
+                                            <option value="<%= i %>"><%= characterMoods[i] %></option>
+                                        <% } %>
+                                    </select>
+                                    <br>
+                                    <input type="submit" value="Post that!">
+                                </form>
+                                <br><br>
                             </div>
                         <% } %>
-                    <% } %>
-                    <% if(authed) { %>
-                        <div class="comment-reply-box">
-                            <form action="" method="POST">
-                                <% if(comment.id in replyErrors) { %>
-                                    <p class="form-error"><%= replyErrors[comment.id] %></p>
-                                    <br>
-                                <% } %>
-                                <input type="hidden" name="reply" value="<%= comment.id %>">
-                                <textarea placeholder="Reply something..." id="comment-box" name="content" rows="10" col="50"></textarea>
-                                <br>
-                                <label for="comment-mood">Mood:</label>
-                                <select id="comment-mood" name="mood">
-                                    <% for(i in characterMoods) { %>
-                                        <option value="<%= i %>"><%= characterMoods[i] %></option>
-                                    <% } %>
-                                </select>
-                                <br>
-                                <input type="submit" value="Post that!">
-                            </form>
-                            <br><br>
-                        </div>
-                    <% } %>
-                </div>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <i class="name2">Nobody has posted anything yet...</i>
+                <br>
+                <i class="name2">...yet...YET...</i>
+                <br><br>
             <% } %>
-        <% } else { %>
-            <i class="name2">Nobody has posted anything yet...</i>
-            <br>
-            <i class="name2">...yet...YET...</i>
-            <br><br>
-        <% } %>
+        </div>
     </div>
-</div>
+<% } %>

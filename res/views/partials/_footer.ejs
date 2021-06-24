@@ -1,5 +1,5 @@
-<hr>
 <% if(typeof pagination != 'undefined') { with(pagination) { %>
+    <hr>
     <div id="pagination">
         Page
         <% for(let i = Math.max(page-2, 1); i <= Math.min(page+2, totalPages); i++) { %>

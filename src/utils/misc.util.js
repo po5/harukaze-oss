@@ -1,5 +1,7 @@
 const read = require('read')
 
+const alphanumericChars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
 /**
  * Strips the trailing slash from the provided string, if any
  * @param {string} path The path to process
@@ -67,9 +69,79 @@ function titleToSlug(title) {
     .toLowerCase()
 }
 
+/**
+ * Returns a psuedo-random between a minimum and maximum
+ * @param {number} min The minimum number to return
+ * @param {number} max The maximum number to return
+ * @returns {string} A random number between a minimum and maximum
+ */
+ function random(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min
+}
+
+/**
+ * Generates a new random alphanumeric string of the specified length
+ * @param {number} length The length of the string to generate
+ * @returns {string} A new random alphanumeric string of the specified length
+ */
+ function generateAlphanumericString(length) {
+    var str = ''
+
+    for(let i = 0; i < length; i++)
+        str += alphanumericChars[random(0, alphanumericChars.length-1)]
+
+    return str
+}
+
+/**
+ * Splits a filename into an array containing the base name, and the extension (if present)
+ * @param {string} filename The filename to split
+ * @returns {Array<string>} An array containing the base name, and the extension (if present)
+ */
+function splitFilename(filename) {
+    let index = filename.lastIndexOf('.')
+    
+    if(index > -1 && index < filename.length-1) {
+        let name = filename.substring(0, index)
+        let ext = filename.substring(index+1)
+
+        return [name, ext]
+    } else {
+        return [filename]
+    }
+}
+
+/**
+ * Formats a filename as a title, stripping out extension, trimming, and replacing underscores and dashes with spaces
+ * @param {string} filename The filename to format
+ * @returns {string} The filename formatted as a title
+ */
+function filenameToTitle(filename) {
+    let name = filename
+
+	// Cut off extension if present
+    let extIndex = filename.lastIndexOf('.')
+	if(extIndex > 0)
+		name = filename.substring(0, extIndex)
+
+	// Replace underscores and dashes with spaces
+	name = name
+			.replace('_', ' ')
+			.replace(/-(?! )/g, ' ')
+
+	// Capitalize first letter
+	name = name[0].toUpperCase() + name.substring(1)
+
+	return name.trim()
+}
+
 /* Export functions */
 module.exports.stripTrailingSlash = stripTrailingSlash
 module.exports.arrayToSet = arrayToSet
 module.exports.setToArray = setToArray
 module.exports.readLine = readLine
 module.exports.titleToSlug = titleToSlug
+module.exports.random = random
+module.exports.generateAlphanumericString = generateAlphanumericString
+module.exports.splitFilename = splitFilename
+module.exports.filenameToTitle = filenameToTitle

@@ -60,8 +60,12 @@ exports.up = async function(knex) {
             \`media_filename\` VARCHAR(256) NOT NULL,
             \`media_mime\` VARCHAR(129) NOT NULL,
             \`media_key\` VARCHAR(256) NOT NULL,
+            \`media_thumbnail_key\` VARCHAR(256),
             \`media_tags\` VARCHAR(2048) NOT NULL DEFAULT '',
             \`media_booru_visible\` TINYINT NOT NULL DEFAULT 1,
+            \`media_thumbnail_key\` VARCHAR(256) DEFAULT NULL,
+            \`media_size\` BIGINT NOT NULL,
+            \`media_hash\` TEXT NOT NULL,
             \`media_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
             PRIMARY KEY (\`id\`));
     `)
