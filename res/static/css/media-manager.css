@@ -1,0 +1,77 @@
+.container {
+    background: #eee;
+    border: 1px solid #aaa;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+.container-header {
+    text-align: center;
+    border-bottom: 1px solid #aaa;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    cursor: default;
+}
+.media-nav {
+    text-align: center;
+}
+.media-listing {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid gray;
+    display: inline-block;
+    width: 160px;
+    padding: 5px;
+    margin: 5px;
+    word-wrap: break-word;
+    text-align: center;
+}
+.media-listing:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+.media-listing:active {
+    background: rgb(0, 0, 100, 0.9) !important;
+}
+.media-thumbnail {
+    width: 150px;
+    height: 140px;
+}
+.media-thumbnail img {
+    height: 100%;
+    max-width: 100%;
+}
+.media-thumbnail-video {
+    border: 3px solid blue;
+}
+.media-thumbnail-video img {
+    width: 150px;
+    height: 140px;
+}
+.media-details {
+    font-size: 12px;
+}
+.media-selected {
+    background: rgb(0, 0, 100, 0.9);
+    color: white;
+}
+.media-selected:hover {
+    background: rgb(0, 0, 100, 0.7);
+}
+.media-selected a {
+    color: rgb(192, 192, 192);
+}
+.page-arrow {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#app {
+    font-family: sans-serif;
+}
+#loading {
+    text-align: center;
+}
+#media-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+}

@@ -120,3 +120,42 @@ module.exports.postUpload = async ctx => {
         ctx.apiError('no_file_provided')
     }
 }
+
+/**
+ * POST controller for media deletion
+ * @param {import('koa').Context} ctx The context
+ */
+module.exports.postDelete = async (ctx, next) => {
+    let body = ctx.request.body
+    
+    // Check for correct data
+    if(!isNaN(body.id) || body.ids) {
+        // Parse data
+        let idsRaw = body.id ? [body.id] : utils.setToArray(body.ids)
+        let ids = []
+        for(id of idsRaw)
+            if(!isNaN(id))
+                ids.push(id)
+        
+
+        // Fetch media entrie
+        let media = await mediaModel.fetchMediaByIds(ids)
+
+
+        // Handle each entry
+        for(file of media) {
+            // Delete files
+            await unlink('media/'+file.media_key)
+            if(file.media_thumbnail_key)
+                await unlink('media/thumbnails/'+file.media_thumbnail_key)
+            
+            // Delete entry
+            await mediaModel.deleteMediaById(file.id)
+        }
+
+        // Success
+        ctx.apiSuccess()
+    } else {
+        ctx.apiError('missing_id_or_ids')
+    }
+}

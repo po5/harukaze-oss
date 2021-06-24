@@ -126,7 +126,7 @@ function filenameToTitle(filename) {
 
 	// Replace underscores and dashes with spaces
 	name = name
-			.replace('_', ' ')
+			.replace(/_/g, ' ')
 			.replace(/-(?! )/g, ' ')
 
 	// Capitalize first letter

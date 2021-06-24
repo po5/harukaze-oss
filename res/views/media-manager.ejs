@@ -1,0 +1,98 @@
+<link rel="stylesheet" href="/static/css/media-manager.css">
+
+<div id="app">
+    <h1>Media Manager</h1>
+
+    <div id="options" class="container">
+        <div class="container-header">
+            <span>Options</span>
+        </div>
+        <button id="reload-button" @click="reloadMedia()">[~] Reload Media</button>
+        <button id="delete-button" @click="deleteSelected()">[x] Delete Selected</button>
+        <button id="select-all-button" @click="selectAll()">[+] Select all</button>
+        <button id="select-none-button" @click="selectNone()">[-] Select none</button>
+        <br><br>
+        <label for="order-by">Order by</label>
+        <select id="order-by" v-model="order" @change="loadMedia()">
+            <template v-for="type in orders">
+                <option v-if="type[1] == order" selected :value="type[1]">{{ type[0] }}</option>
+                <option v-else :value="type[1]">{{ type[0] }}</option>
+            </template>
+        </select>
+    </div>
+
+    <div id="uploader" class="container">
+        <div class="container-header">
+            <span>Upload</span>
+        </div>
+        <form action="/api/media/upload" method="post" enctype="multipart/form-data">
+            <template v-if="uploading">
+                Uploading {{ uploadingFile.name }}...
+                <br>
+                <progress max="100" :value="uploadProgress">{{ uploadProgress }}%</progress> ({{ uploadProgress }}%)
+                <br>
+                <button @click="cancelUpload()">Cancel Upload</button>
+            </template>
+            <template v-else>
+                <form @submit.prevent="uploadFile">
+                    Select a file to upload:
+                    <br>
+                    <input id="file" type="file">
+                    <input type="submit" value="Upload">
+                </form>
+            </template>
+        </form>
+    </div>
+
+    <div id="media" class="container">
+        <div class="container-header">
+            <span>Media</span>
+        </div>
+        <template v-if="error">
+            <p class="form-error">{{ error }}</p>
+            <br>
+        </template>
+        <template v-if="loading">
+            <div id="loading">Loading...</div>
+        </template>
+        <template v-else>
+            <div class="media-nav">
+                <span class="page-arrow" @click="lastPage()" v-if="currentPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentPage }} of {{ pages }}</span>
+                <span class="page-arrow" @click="nextPage()" v-if="currentPage < pages">&gt;</span>
+            </div>
+            <div id="media-stats">Total media: {{ totalMedia }}</div>
+            <div id="media-container">
+                <template v-if="totalMedia > 0">
+                    <div @click="toggleSelect(file.id)" v-for="file in media" :id="'media-'+file.id" :class="selected.includes(file.id) ? ['media-listing', 'media-selected'] : ['media-listing']">
+                        <div :class="file.mime.startsWith('video/') ? ['media-thumbnail', 'media-thumbnail-video'] : ['media-thumbnail']">
+                            <img v-if="file.thumbnail_key" :src="'/assets/thumbnail/'+file.id" :alt="file.title">
+                            <img v-else src="/static/img/media-placeholder.png" :alt="file.title">
+                        </div>
+                        <div class="media-details">
+                            <a @click="toggleSelect(file.id)" :href="'/media/'+file.id">
+                                {{ file.title }}
+                                <br>
+                                ({{ file.filename }})
+                            </a>
+                            <br>
+                            <hr>
+                            Uploaded by <a :href="'/contributor/'+file.uploader_username">{{ file.uploader_username }}</a>
+                        </div>
+                    </div>
+                </template>
+                <template v-else>
+                    No media files yet. How about you upload one!
+                </template>
+            </div>
+            <div class="media-nav">
+                <span class="page-arrow" @click="lastPage()" v-if="currentPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentPage }} of {{ pages }}</span>
+                <span class="page-arrow" @click="nextPage()" v-if="currentPage < pages">&gt;</span>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script src="/static/js/vue.js"></script>
+<script src="/static/js/media-manager.js"></script>

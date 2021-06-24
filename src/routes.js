@@ -147,11 +147,12 @@ module.exports = router => {
 
     router.get('/media', async (ctx, next) => {
         await mediaController.getMedia(ctx, next)
-        await render('media', ctx)
+        await render('media-manager', ctx)
     })
-    router.get('/media/:page', async (ctx, next) => {
+
+    router.get('/media/:id', async (ctx, next) => {
         await mediaController.getMedia(ctx, next)
-        await render('media', ctx)
+        await render('media-manager', ctx)
     })
 
     /* API */
@@ -166,6 +167,14 @@ module.exports = router => {
     router.post('/api/media/upload', async (ctx, next) => {
         try {
             await apiMediaController.postUpload(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/media/delete', async (ctx, next) => {
+        try {
+            await apiMediaController.postDelete(ctx, next)
         } catch(err) {
             apiError(ctx, err)
         }

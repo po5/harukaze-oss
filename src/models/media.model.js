@@ -167,6 +167,17 @@ async function fetchMedia(offset, limit, order) {
 }
 
 /**
+ * Fetches media by their IDs
+ * @param {Array<number>} ids The IDs
+ * @returns {Array<Object>} All media with the specified IDs
+ */
+ async function fetchMediaByIds(ids) {
+    return await knex('media')
+        .select('*')
+        .whereIn('media.id', ids)
+}
+
+/**
  * Fetches a media file by its hash
  * @param {string} hash The hash to search for
  * @returns {Array<Object>} An array with the row containing the media or an empty array if none exists
@@ -181,8 +192,18 @@ async function fetchMediaByHash(hash) {
  * Returns the total amount of media
  * @returns {number} The total amount of media
  */
- async function fetchMediaCount() {
+async function fetchMediaCount() {
     return (await knex('media').count('*', { as: 'count' }))[0].count
+}
+
+/**
+ * Deletes the media entry with the specified ID, if it exists
+ * @param {number} id The ID
+ */
+async function deleteMediaById(id) {
+    return await knex('media')
+        .del()
+        .where('media.id', id)
 }
 
 /* Export functions */
@@ -190,8 +211,10 @@ module.exports.createMedia = createMedia
 module.exports.fetchMedia = fetchMedia
 module.exports.fetchMediaInfos = fetchMediaInfos
 module.exports.fetchMediaById = fetchMediaById
+module.exports.fetchMediaByIds = fetchMediaByIds
 module.exports.fetchMediaByHash = fetchMediaByHash
 module.exports.fetchMediaCount = fetchMediaCount
+module.exports.deleteMediaById = deleteMediaById
 
 /* Export values */
 module.exports.Order = Order
