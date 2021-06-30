@@ -1,0 +1,15 @@
+#bio-container {
+    background-image: url('/static/img/speechbubble.png');
+    background-size: 100% 100%;
+    display: inline-block;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-right: 15px;
+    padding-left: 35px;
+}
+#bio-container textarea {
+    border: none;
+    background: none;
+    resize: none;
+    overflow-y: auto;
+}

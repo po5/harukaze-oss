@@ -172,6 +172,34 @@ async function updateUserHashById(id, hash) {
         .where('id', id)
 }
 
+/**
+ * Updates a user's info
+ * @param {number} id The user's ID
+ * @param {string?} bio The user's new bio (can be null)
+ * @param {string} character The user's new character
+ */
+async function updateUserInfoById(id, bio, character) {
+    return await knex('users')
+        .update({
+            user_bio: bio,
+            user_character: character
+        })
+        .where('id', id)
+}
+
+/**
+ * Updates a user's avatar key
+ * @param {number} id The user's ID
+ * @param {string?} bio The user's new avatar key (can be null)
+ */
+async function updateUserAvatarKeyById(id, avatarKey) {
+    return await knex('users')
+        .update({
+            user_avatar_key: avatarKey
+        })
+        .where('id', id)
+}
+
 /* Export functions */
 module.exports.createUser = createUser
 module.exports.fetchUserById = fetchUserById
@@ -183,3 +211,5 @@ module.exports.fetchAdminInfos = fetchAdminInfos
 module.exports.fetchUserAndIpBanById = fetchUserAndIpBanById
 module.exports.fetchUserAndIpBanByUsername = fetchUserAndIpBanByUsername
 module.exports.updateUserHashById = updateUserHashById
+module.exports.updateUserInfoById = updateUserInfoById
+module.exports.updateUserAvatarKeyById = updateUserAvatarKeyById

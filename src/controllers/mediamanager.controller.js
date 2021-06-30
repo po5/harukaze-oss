@@ -1,10 +1,10 @@
 const usersUtil = require('../utils/users.util')
 
 /**
- * GET controller for media page
+ * GET controller for media manager page
  * @param {import("koa").Context} ctx The context
  */
-module.exports.getMedia = async (ctx, next) => {
+module.exports.getMediaManager = async (ctx, next) => {
     // Deal with unauthenticated and unauthorized users
     if(!ctx.state.authed) {
         ctx.state.noRender = true
@@ -20,5 +20,5 @@ module.exports.getMedia = async (ctx, next) => {
     }
 
     // Page title
-    ctx.state.pageTitle = 'View - Media Manager'
+    ctx.state.pageTitle = 'Media Manager'
 }

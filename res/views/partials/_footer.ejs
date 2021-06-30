@@ -18,6 +18,7 @@
 <div id="footer">
     Powered by <a href="https://git.termer.net/trigex/harukaze">Harukaze</a> |
     <% if(authed) { %>
+        <a href="/myaccount">My Account</a> |
         <a href="/logout">Log out!</a>
         <% if(user.role > 0) { %>
             | <a href="/panel">Contributor Panel</a>

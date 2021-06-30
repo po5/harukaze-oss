@@ -1,7 +1,7 @@
 const config = require('../../config.json')
 const usersModel = require('../models/users.model')
 const { renderBBCode } = require('../utils/bbcode.util')
-const { Moods, characterMoodToUrl } = require('../utils/moods.util')
+const { Moods, characterMoodToUrl } = require('../utils/reacts.util')
 
 /**
  * Middleware that fetches data required for rendering pages

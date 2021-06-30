@@ -50,7 +50,9 @@ module.exports = router => {
     const logoutController = require('./controllers/logout.controller')
     const newblogController = require('./controllers/newblog.controller')
     const editblogController = require('./controllers/editblog.controller')
+    const mediamanagerController = require('./controllers/mediamanager.controller')
     const mediaController = require('./controllers/media.controller')
+    const myaccountController = require('./controllers/myaccount.controller')
     const assetsController = require('./controllers/assets.controller')
 
     // API controller imports
@@ -75,6 +77,12 @@ module.exports = router => {
     })
     router.get('/assets/thumbnail/:id', async (ctx, next) => {
         await assetsController.getThumbnail(ctx, next)
+    })
+    router.get('/assets/avatar/:username', async (ctx, next) => {
+        await assetsController.getAvatar(ctx, next)
+    })
+    router.get('/assets/avatar/:username/:filename', async (ctx, next) => {
+        await assetsController.getAvatar(ctx, next)
     })
 
     // Views
@@ -146,19 +154,36 @@ module.exports = router => {
     })
 
     router.get('/media', async (ctx, next) => {
-        await mediaController.getMedia(ctx, next)
-        await render('media-manager', ctx)
+        await mediamanagerController.getMediaManager(ctx, next)
+        await render('mediamanager', ctx)
     })
 
     router.get('/media/:id', async (ctx, next) => {
         await mediaController.getMedia(ctx, next)
-        await render('media-manager', ctx)
+        await render('media', ctx)
+    })
+
+    router.get('/myaccount', async (ctx, next) => {
+        await myaccountController.getMyAccount(ctx, next)
+        await render('myaccount', ctx)
+    })
+    router.post('/myaccount', async (ctx, next) => {
+        await myaccountController.postMyAccount(ctx, next)
+        await render('myaccount', ctx)
     })
 
     /* API */
-    router.get('/api/media', async (ctx, next) => {
+    router.get('/api/media/get', async (ctx, next) => {
         try {
             await apiMediaController.getMedia(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.get('/api/media/list', async (ctx, next) => {
+        try {
+            await apiMediaController.getMediaList(ctx, next)
         } catch(err) {
             apiError(ctx, err)
         }
@@ -167,6 +192,14 @@ module.exports = router => {
     router.post('/api/media/upload', async (ctx, next) => {
         try {
             await apiMediaController.postUpload(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/media/edit', async (ctx, next) => {
+        try {
+            await apiMediaController.postEdit(ctx, next)
         } catch(err) {
             apiError(ctx, err)
         }

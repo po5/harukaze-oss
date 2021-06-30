@@ -8,8 +8,25 @@
     },
     "site": {
         "title": "VISUABUSTERS",
-        "defaultCharacter": "defaultchan",
         "maxUploadSize": 500000000
+    },
+    "reacts": {
+        "default": "defaultchan",
+        "characters": [
+            "defaultchan",
+            "salesdood"
+        ],
+        "moods": [
+            "default",
+            "cheer",
+            "horny",
+            "mad",
+            "omg",
+            "sad",
+            "scare",
+            "yay",
+            "yuck"
+        ]
     },
     "pagination": {
         "pageSize": 10

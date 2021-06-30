@@ -281,6 +281,28 @@ input {
 	margin-right: 4px;
 	height: 225px;
 }
+.xbbcode-video {
+	max-width: calc(100% - 4px);
+}
+.mood-choice {
+	display: inline-block;
+}
+.mood-choice img {
+	width: 50px;
+}
+.mood-choice input {
+	display: none;
+}
+.mood-choice input:checked + img {
+	outline: 2px solid rgb(0, 20, 180);
+}
+.mood-chooser-open {
+	cursor: pointer;
+	display: inline-block;
+}
+.mood-chooser-moods {
+	width: 175px;
+}
 
 #footer {
 	text-align: center;

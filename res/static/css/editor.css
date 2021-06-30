@@ -1,0 +1,49 @@
+.sceditor-button-media div {
+    background-image: url('/static/img/media-placeholder.png') !important;
+    background-size: contain;
+}
+.media-nav {
+    text-align: center;
+}
+.media-listing {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid gray;
+    display: inline-block;
+    width: 160px;
+    padding: 5px !important;
+    margin: 5px !important;
+    word-wrap: break-word;
+    text-align: center;
+}
+.media-listing:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+.media-thumbnail {
+    width: 150px;
+    height: 140px;
+}
+.media-thumbnail img {
+    height: 100%;
+    max-width: 100%;
+}
+.media-thumbnail-video {
+    border: 3px solid blue;
+}
+.media-thumbnail-video img {
+    width: 150px;
+    height: 140px;
+}
+.media-details {
+    font-size: 12px;
+}
+.page-arrow {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#media-picker {
+    width: 375px;
+    height: 300px;
+    overflow-y: auto;
+    word-wrap: break-word;
+}

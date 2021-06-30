@@ -1,4 +1,6 @@
 const mediaModel = require('../models/media.model')
+const usersModel = require('../models/users.model')
+const utils = require('../utils/misc.util')
 const fs = require('fs')
 
 /**
@@ -114,4 +116,54 @@ module.exports.getMedia = async (ctx, next) => {
 
     // Send file
     ctx.body = fs.createReadStream('media/thumbnails/'+media.media_thumbnail_key)
+}
+
+/**
+ * GET controller for user avatars
+ * @param {import("koa").Context} ctx The context
+ */
+ module.exports.getAvatar = async (ctx, next) => {
+    let username = ctx.params.username
+
+    function notFound() {
+        ctx.status = 404
+        ctx.type = 'text/plain'
+        ctx.body = 'File not found'
+    }
+
+    // Fetch user
+    let userRes = await usersModel.fetchUserByUsername(username)
+        
+    // Check if it exists
+    if(userRes.length < 0) {
+        notFound()
+        return
+    }
+
+    let user = userRes[0]
+
+    // Send empty response for HEAD requests
+    if(ctx.method == 'HEAD') {
+        ctx.res.end()
+        return
+    }
+
+    // Check if user has an avatar
+    if(user.user_avatar_key) {
+        // Work out extension
+        let parts = utils.splitFilename(user.user_avatar_key)
+        let ext = parts.length > 1 ? parts[1] : 'png'
+
+        // Set headers
+        ctx.type = 'image/'+ext
+        ctx.res.setHeader('Content-Disposition', `filename="${user.user_username}.${ext}"`)
+
+        // Send file
+        ctx.body = fs.createReadStream('media/avatars/'+user.user_avatar_key)
+    } else {
+        // Redirect to default
+        ctx.type = 'text/plain'
+        ctx.body = 'Redirecting to default avatar'
+        ctx.redirect('/static/img/defaultavatar.png')
+    }
 }

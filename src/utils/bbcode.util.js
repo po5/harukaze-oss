@@ -1,7 +1,7 @@
 const config = require('../../config.json')
 const xbbcode = require('xbbcode-parser')
 
-const urlPattern = /^(?:https?|file|c):(?:\/{1,3}|\\{1})[-a-zA-Z0-9:;,@#%&()~_?\+=\/\\\.]*$/
+const urlPattern = /^((?:https?|file|c):(?:\/{1,3}|\\{1})\/)?[-a-zA-Z0-9:;,@#%&()~_?\+=\/\\\.]*$/
 
 // Add BBCode tags
 xbbcode.addTags({
@@ -104,7 +104,7 @@ xbbcode.addTags({
                 url = params.substr(1)
             }
 
-            if(!(url.startsWith('http://') || url.startsWith('https://')))
+            if(!url.startsWith('/') && (!(url.startsWith('http://') || url.startsWith('https://'))))
                 url = 'http://'+url
 
             urlPattern.lastIndex = 0
@@ -115,6 +115,52 @@ xbbcode.addTags({
         },
         closeTag: function(params, content) {
             return '</a>';
+        }
+    },
+    video: {
+        openTag: function(params, content) {
+            var url
+
+            if (!params) {
+                url = content.replace(/<.*?>/g, "")
+            } else {
+                url = params.substr(1)
+            }
+
+            if(!url.startsWith('/') && (!(url.startsWith('http://') || url.startsWith('https://'))))
+                url = 'http://'+url
+
+            urlPattern.lastIndex = 0
+            if(!urlPattern.test(url))
+                url = "#";
+
+            return '<video class="xbbcode-video" src="' + url + '" controls>';
+        },
+        closeTag: function(params, content) {
+            return '</video>';
+        }
+    },
+    audio: {
+        openTag: function(params, content) {
+            var url
+
+            if (!params) {
+                url = content.replace(/<.*?>/g, "")
+            } else {
+                url = params.substr(1)
+            }
+
+            if(!url.startsWith('/') && (!(url.startsWith('http://') || url.startsWith('https://'))))
+                url = 'http://'+url
+
+            urlPattern.lastIndex = 0
+            if(!urlPattern.test(url))
+                url = "#";
+
+            return '<audio class="xbbcode-audio" src="' + url + '" controls>';
+        },
+        closeTag: function(params, content) {
+            return '</audio>';
         }
     },
     img: {

@@ -33,12 +33,19 @@
                     <% } %>
                     <textarea placeholder="Type something..." id="comment-box" name="content" rows="10" col="50"></textarea>
                     <br>
-                    <label for="comment-mood">Mood:</label>
-                    <select id="comment-mood" name="mood">
-                        <% for(i in characterMoods) { %>
-                            <option value="<%= i %>"><%= characterMoods[i] %></option>
-                        <% } %>
-                    </select>
+                    <div class="mood-chooser">
+                        <div class="mood-chooser-open">Moods ⯈</div>
+                        <div class="mood-chooser-moods" style="display:block">
+                            <% for(i in characterMoods) { %>
+                                <div class="mood-choice">
+                                    <label>
+                                        <input type="radio" name="mood" value="<%= i %>" <%= i == 0 ? 'checked' : '' %>>
+                                        <img src="<%= characterMoodToUrl(i, user.character) %>" alt="<%= characterMoods[i] %>">
+                                    </label>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
                     <br>
                     <input type="submit" value="Post that!">
                 </form>
@@ -85,12 +92,19 @@
                                     <input type="hidden" name="reply" value="<%= comment.id %>">
                                     <textarea placeholder="Reply something..." id="comment-box" name="content" rows="10" col="50"></textarea>
                                     <br>
-                                    <label for="comment-mood">Mood:</label>
-                                    <select id="comment-mood" name="mood">
-                                        <% for(i in characterMoods) { %>
-                                            <option value="<%= i %>"><%= characterMoods[i] %></option>
-                                        <% } %>
-                                    </select>
+                                    <div class="mood-chooser">
+                                        <div class="mood-chooser-open">Moods ⯈</div>
+                                        <div class="mood-chooser-moods" style="display:block">
+                                            <% for(i in characterMoods) { %>
+                                                <div class="mood-choice">
+                                                    <label>
+                                                        <input type="radio" name="mood" value="<%= i %>" <%= i == 0 ? 'checked' : '' %>>
+                                                        <img src="<%= characterMoodToUrl(i, user.character) %>" alt="<%= characterMoods[i] %>">
+                                                    </label>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
                                     <br>
                                     <input type="submit" value="Post that!">
                                 </form>
@@ -108,3 +122,5 @@
         </div>
     </div>
 <% } %>
+
+<script src="/static/js/blog.js"></script>

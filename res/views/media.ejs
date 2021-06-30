@@ -1,0 +1,88 @@
+<link rel="stylesheet" href="/static/css/media.css">
+
+<div id="app">
+    <div id="error" v-if="error != null">
+        {{ error }}
+    </div>
+
+    <div id="container">
+        <template v-if="loading">
+            <h1 id="title">Loading...</h1>
+        </template>
+        <template v-else>
+            <h1 id="title">
+                <form v-if="editing" @submit.prevent="save()">
+                    <input v-model="media.title" type="text" maxlength="256" placeholder="Title...">
+                </form>
+                <template v-else>{{ media.title }}</template>
+            </h1>
+            <div id="display">
+                <div id="display-content">
+                    <template v-if="media.mime.startsWith('image/')">
+                        <img :src="'/assets/media/'+media.id+'/'+media.filename">
+                    </template>
+                    <template v-else-if="media.mime.startsWith('video/')">
+                        <video :src="'/assets/media/'+media.id+'/'+media.filename" controls></video>
+                    </template>
+                    <template v-else-if="media.mime.startsWith('audio/')">
+                        <video v-if="media.thumbnail_key" :poster="'/assets/thumbnail/'+media.id" :src="'/assets/media/'+media.id+'/'+media.filename" controls></video>
+                        <audio v-else :src="'/assets/media/'+media.id+'/'+media.filename" controls></audio>
+                    </template>
+                    <template v-else>
+                        <img src="/static/img/media-placeholder.png" alt="No thumbnail available">
+                        <br>
+                        <i>No thumbnail available</i>
+                    </template>
+                </div>
+            </div>
+            <div class="section" id="details">
+                <div class="section-header">Details</div>
+                <p v-if="!editing">Uploader: <a :href="'/contributor/'+media.uploader_username">{{ media.uploader_username }}</a></p>
+                <p v-if="!editing">File name: <code>{{ media.filename }}</code></p>
+                <p v-if="!editing">File size: <code>{{ mbSize }}MB</code></p>
+                <p v-if="!editing">File hash: <code>{{ media.hash }}</code></p>
+                <p v-if="!editing">MIME type: <code>{{ media.mime }}</code></p>
+                <p>
+                    Visible on booru:
+                    <input v-if="editing" type="checkbox" v-model="media.booru_visible">
+                    <input v-else type="checkbox" @click.prevent :checked="media.booru_visible">
+                </p>
+                <p>
+                    Tags:
+                    <template v-if="editing">
+                        <form @submit.prevent="save()">
+                            <input v-model="tagsRaw" id="tag-input" type="text" maxlength="2048" placeholder="Tags, comment separated (tag1, my_tag, another_tag)">
+                        </form>
+                    </template>
+                    <template v-else>
+                        <template v-if="media.tags.length > 0">
+                            <a v-for="tag in media.tags" class="tag" :href="'/booru/tags/'+tag">
+                                {{ tag }}
+                            </a>
+                        </template>
+                        <i v-else>none</i>
+                    </template>
+                </p>
+                <p v-if="!editing"><a :href="'/assets/media/'+media.id+'/'+media.filename" target="_blank">File link</a></p>
+                <p v-if="!editing && media.booru_visible"><a :href="'/booru/view/'+media.id" target="_blank">Booru link</a></p>
+            </div>
+            <div class="section" id="comment">
+                <div class="section-header">Comment</div>
+                <textarea v-if="editing" v-model="media.comment" id="comment-input" placeholder="Comment..."></textarea>
+                <template v-else>
+                    <div v-if="media.comment" id="comment-box" maxlength="2024">{{ media.comment }}</div>
+                    <i v-else>No comment...</i>
+                </template>
+            </div>
+            <div class="section" id="options">
+                <div class="section-header">Options</div>
+                <button id="edit-button" @click="toggleEditing()">{{ editing ? 'Cancel Edits' : 'Edit' }}</button>
+                <button v-if="editing" id="save-button" @click="save()">Save Edits</button>
+                <button id="delete-button" @click="deleteMedia()">Delete</button>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/media.js"></script>

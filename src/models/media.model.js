@@ -55,6 +55,7 @@ function mediaInfo() {
         .select(knex.ref('media_thumbnail_key').as('thumbnail_key'))
         .select(knex.ref('media_size').as('size'))
         .select(knex.ref('media_hash').as('hash'))
+        .select(knex.ref('media_comment').as('comment'))
         .select(knex.ref('media_created_on').as('created_on'))
         .leftJoin('users', 'media_uploader', 'users.id')
     
@@ -107,8 +108,9 @@ function orderBy(order) {
  * @param {string?} thumbnailKey The key of the underlying thumbnail file on disk (null if no thumbnail)
  * @param {number} size The file's size in bytes
  * @param {string} hash The file's hash
+ * @param {string?} comment The file's comemnt (can be null)
  */
-async function createMedia(uploader, title, filename, mime, key, tags, booruVisible, thumbnailKey, size, hash) {
+async function createMedia(uploader, title, filename, mime, key, tags, booruVisible, thumbnailKey, size, hash, comment) {
     return await knex('media')
         .insert({
             media_uploader: uploader,
@@ -120,7 +122,8 @@ async function createMedia(uploader, title, filename, mime, key, tags, booruVisi
             media_booru_visible: booruVisible,
             media_thumbnail_key: thumbnailKey,
             media_size: size,
-            media_hash: hash
+            media_hash: hash,
+            media_comment: comment
         })
 }
 
@@ -167,6 +170,18 @@ async function fetchMedia(offset, limit, order) {
 }
 
 /**
+ * Fetches media info by its ID
+ * @param {number} id The ID
+ * @returns {Array<Object>} An array with the row containing the media info or an empty array if none exists
+ */
+ async function fetchMediaInfoById(id) {
+    return processMediaInfoRows(
+        await mediaInfo()
+            .where('media.id', id)
+    )
+}
+
+/**
  * Fetches media by their IDs
  * @param {Array<number>} ids The IDs
  * @returns {Array<Object>} All media with the specified IDs
@@ -197,6 +212,25 @@ async function fetchMediaCount() {
 }
 
 /**
+ * Updates the media entry with the specified ID
+ * @param {number} id The ID of the media to update
+ * @param {string} title The new title
+ * @param {Array<string>} tags The new tags
+ * @param {boolean} booruVisible Whether it will be visible on the booru
+ * @param {string?} comment The new comment (can be null)
+ */
+async function updateMediaById(id, title, tags, booruVisible, comment) {
+    return await knex('media')
+        .update({
+            media_title: title,
+            media_tags: utils.arrayToSet(tags),
+            media_booru_visible: booruVisible,
+            media_comment: comment
+        })
+        .where('id', id)
+}
+
+/**
  * Deletes the media entry with the specified ID, if it exists
  * @param {number} id The ID
  */
@@ -211,9 +245,11 @@ module.exports.createMedia = createMedia
 module.exports.fetchMedia = fetchMedia
 module.exports.fetchMediaInfos = fetchMediaInfos
 module.exports.fetchMediaById = fetchMediaById
+module.exports.fetchMediaInfoById = fetchMediaInfoById
 module.exports.fetchMediaByIds = fetchMediaByIds
 module.exports.fetchMediaByHash = fetchMediaByHash
 module.exports.fetchMediaCount = fetchMediaCount
+module.exports.updateMediaById = updateMediaById
 module.exports.deleteMediaById = deleteMediaById
 
 /* Export values */

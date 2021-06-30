@@ -9,10 +9,37 @@ const mediaUtils = require('../../utils/media.util')
 const FileType = require('file-type')
 
 /**
- * GET controller for media
- * @param {import("koa").Context} ctx The context
+ * GET controller for media getting
+ * @param {import('koa').Context} ctx 
  */
 module.exports.getMedia = async ctx => {
+    let body = ctx.request.query
+
+    // Check for ID
+    if(!isNaN(body.id)) {
+        let id = body.id*1
+
+        // Fetch media
+        let mediaRes = await mediaModel.fetchMediaInfoById(id)
+
+        // Check if it exists
+        if(mediaRes.length > 0) {
+            let media = mediaRes[0]
+
+            ctx.apiSuccess({ media })
+        } else {
+            ctx.apiError('not_found')
+        }
+    } else {
+        ctx.apiError('missing_params')
+    }
+}
+
+/**
+ * GET controller for media listing
+ * @param {import("koa").Context} ctx The context
+ */
+module.exports.getMediaList = async ctx => {
     // Collect data
     let body = ctx.request.query
     let offset = isNaN(body.offset) ? 0 : Math.max(body.offset*1, 0)
@@ -60,7 +87,8 @@ module.exports.postUpload = async ctx => {
 
                 // Send success with existing media ID
                 ctx.apiSuccess({
-                    id: media.id
+                    id: media.id,
+                    existing: true
                 })
             } else { // Proceed with upload
                 // Generate key (filename) for file on disk
@@ -76,7 +104,7 @@ module.exports.postUpload = async ctx => {
 
                 // Generate thumbnail if image or video
                 let thumbKey = null
-                if(mime.startsWith('image/') || mime.startsWith('video/')) {
+                if(mime.startsWith('image/') || mime.startsWith('video/') || mime.startsWith('audio/')) {
                     try {
                         let key = keyId+'.jpg'
                         await mediaUtils.generateThumbnail(file.path, 'media/thumbnails/'+key)
@@ -97,7 +125,7 @@ module.exports.postUpload = async ctx => {
                 await unlink(file.path)
 
                 // Create media entry
-                await mediaModel.createMedia(ctx.state.user.id, title, file.name, mime, key, [], false, thumbKey, file.size, file.hash)
+                await mediaModel.createMedia(ctx.state.user.id, title, file.name, mime, key, [], false, thumbKey, file.size, file.hash, null)
 
                 // Fetch newly created media and return its ID
                 let mediaRes = await mediaModel.fetchMediaByHash(file.hash)
@@ -108,7 +136,8 @@ module.exports.postUpload = async ctx => {
 
                     // Return success and newly created media ID
                     ctx.apiSuccess({
-                        id: media.id
+                        id: media.id,
+                        existing: false
                     })
                 } else {
                     console.error(`Created new media file with hash ${file.hash}, but could not find newly created database entry for it!`)
@@ -122,10 +151,50 @@ module.exports.postUpload = async ctx => {
 }
 
 /**
+ * POST controller for media editing
+ * @param {import('koa').Context} ctx 
+ */
+ module.exports.postEdit = async ctx => {
+    let body = ctx.request.body
+
+    // Check for correct data
+    if(!isNaN(body.id) && body.title && body.tags != undefined && body.booru_visible != undefined && body.comment != undefined) {
+        let id = body.id*1
+        let title = body.title.trim()
+        let tags = utils.setToArray(body.tags)
+        let booruVisible = body.booru_visible == 'true' || body.booru_visible == true
+        let comment = body.comment.trim()
+        if(comment.length < 1)
+            comment = null
+
+        // Validate data
+        if(title.length < 1) {
+            ctx.apiError('blank_title')
+            return
+        }
+
+        // Check if the media exists
+        let mediaRes = await mediaModel.fetchMediaById(id)
+
+        if(mediaRes.length > 0) {
+            // Update the media
+            await mediaModel.updateMediaById(id, title, tags, booruVisible, comment)
+
+            // Success
+            ctx.apiSuccess()
+        } else {
+            ctx.apiError('not_found')
+        }
+    } else {
+        ctx.apiError('missing_params')
+    }
+}
+
+/**
  * POST controller for media deletion
  * @param {import('koa').Context} ctx The context
  */
-module.exports.postDelete = async (ctx, next) => {
+module.exports.postDelete = async ctx => {
     let body = ctx.request.body
     
     // Check for correct data
@@ -138,9 +207,8 @@ module.exports.postDelete = async (ctx, next) => {
                 ids.push(id)
         
 
-        // Fetch media entrie
+        // Fetch media entries
         let media = await mediaModel.fetchMediaByIds(ids)
-
 
         // Handle each entry
         for(file of media) {
@@ -156,6 +224,6 @@ module.exports.postDelete = async (ctx, next) => {
         // Success
         ctx.apiSuccess()
     } else {
-        ctx.apiError('missing_id_or_ids')
+        ctx.apiError('missing_params')
     }
 }

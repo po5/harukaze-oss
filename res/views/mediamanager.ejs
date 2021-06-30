@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/static/css/media-manager.css">
+<link rel="stylesheet" href="/static/css/mediamanager.css">
 
 <div id="app">
     <h1>Media Manager</h1>
@@ -77,6 +77,11 @@
                             </a>
                             <br>
                             <hr>
+                            <a @click="toggleSelect(file.id)" :href="'/media/'+file.id">
+                                View/Edit File
+                            </a>
+                            <br>
+                            <hr>
                             Uploaded by <a :href="'/contributor/'+file.uploader_username">{{ file.uploader_username }}</a>
                         </div>
                     </div>
@@ -94,5 +99,5 @@
     </div>
 </div>
 
-<script src="/static/js/vue.js"></script>
-<script src="/static/js/media-manager.js"></script>
+<script src="/static/js/api.js"></script>
+<script src="/static/js/mediamanager.js"></script>

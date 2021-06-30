@@ -1,7 +1,7 @@
 const commentsModel = require('../models/comments.model')
 const postsModel = require('../models/posts.model')
 const paginationUtil = require('../utils/pagination.util')
-const { moodOrDefault } = require('../utils/moods.util')
+const { moodOrDefault } = require('../utils/reacts.util')
 
 // Returns the post or 404s
 async function fetchPostOr404(ctx, next) {

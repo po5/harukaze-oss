@@ -1,0 +1,30 @@
+<link rel="stylesheet" href="/static/css/myaccount.css">
+
+<% if(error != null) { %>
+    <p class="form-error"><%= error %></p>
+    <br>
+<% } %>
+
+<h1>My Account</h1>
+<form action="" method="POST" enctype="multipart/form-data">
+    <img id="avatar" src="<%= avatarUrl %>" alt="Your avatar">
+    <div id="bio-container">
+        <textarea name="bio" id="bio" cols="30" rows="10" maxlength="2048" placeholder="No bio added..."><%= bio %></textarea>
+    </div>
+    <hr>
+    <label for="character">Comment character:</label>
+    <select name="character" id="character">
+        <% for(char of characters) { %>
+            <option value="<%= char %>" <%= character == char ? 'selected' : '' %>><%= char %></option>
+        <% } %>
+    </select>
+    <% if(user.role > 0) { %>
+        <hr>
+        <h2>Upload a new avatar</h2>
+        <p>Ideally, avatars should be 1:1 aspect ratio, and no smaller than 128x128. They cannot be more than 5MB in size. Leave blank to stay unchanged</p>
+        <input type="file" name="avatar" id="avatar-upload">
+        <br>
+    <% } %>
+    <br>
+    <input type="submit" value="Save">
+</form>

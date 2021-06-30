@@ -17,6 +17,9 @@ const authMiddleware = require('./middleware/auth.middleware')
 const protectMiddleware = require('./middleware/protect.middleware')
 const path = require('path')
 
+// Whether the server has started
+var started = false
+
 /**
  * @param {Array<string>} args 
  */
@@ -67,6 +70,8 @@ async function main(args) {
         fs.mkdirSync('media/')
     if(!fs.existsSync('media/thumbnails/'))
         fs.mkdirSync('media/thumbnails/')
+    if(!fs.existsSync('media/avatars'))
+        fs.mkdirSync('media/avatars')
 
     // Check for administrator
     console.log('Connecting to database...')
@@ -115,12 +120,17 @@ async function main(args) {
     // Routes
     require('./routes.js')(router)
     
-    app.listen(config.server.port, config.server.host)
-    console.log(`Listening at ${config.server.host}:${config.server.port}`)
+    app.listen(config.server.port, config.server.host, null, () => {
+        started = true
+        console.log(`Listening at ${config.server.host}:${config.server.port}`)
+    })
 }
 
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
     console.error('UNCAUGHT EXCEPTION: ', error)
+
+    if(!started)
+        process.exit(1)
 })
 
 main(process.argv.slice(2))

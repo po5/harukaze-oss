@@ -37,7 +37,26 @@ function arrayToSet(stringArray) {
  * @returns {Array<string>} The array from the set
  */
 function setToArray(set) {
-    return set.split(',')
+    let str = set.trim()
+
+    // Check if empty
+    if(str.length > 0) {
+        // Sanitize and remove duplicates
+        let res = []
+        let split = str.split(',')
+        for(element of split) {
+            let elem = element
+                .trim()
+                .toLowerCase()
+
+            if(elem.length > 0 && !res.includes(elem))
+                res.push(elem)
+        }
+
+        return res
+    } else {
+        return []
+    }
 }
 
 /**
