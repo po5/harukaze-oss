@@ -1,17 +1,3 @@
-.container {
-    background: #eee;
-    border: 1px solid #aaa;
-    padding: 5px;
-    margin-bottom: 20px;
-}
-.container-header {
-    text-align: center;
-    border-bottom: 1px solid #aaa;
-    padding-bottom: 5px;
-    margin-bottom: 5px;
-    font-weight: bold;
-    cursor: default;
-}
 .media-nav {
     text-align: center;
 }

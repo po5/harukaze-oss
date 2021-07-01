@@ -13,3 +13,7 @@
     resize: none;
     overflow-y: auto;
 }
+#info-container textarea {
+    width: 100%;
+    height: 400px;
+}

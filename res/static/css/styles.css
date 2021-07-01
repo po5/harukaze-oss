@@ -303,6 +303,38 @@ input {
 .mood-chooser-moods {
 	width: 175px;
 }
+.section {
+    border-top: 1px solid gray;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    border-radius: 3px;
+}
+.section-header {
+    font-weight: bold;
+    text-decoration: underline;
+    margin-bottom: 10px;
+}
+.container {
+    background: #eee;
+    border: 1px solid #aaa;
+    padding: 5px;
+    margin-bottom: 20px;
+    border-radius: 3px;
+}
+.container-header {
+    text-align: center;
+    border-bottom: 1px solid #aaa;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    cursor: default;
+}
+.form-error {
+	color: red;
+	font-weight: bold;
+}
 
 #footer {
 	text-align: center;

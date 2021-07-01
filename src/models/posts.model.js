@@ -176,6 +176,26 @@ async function fetchPublishedPostInfos(withContent, offset, limit, order) {
 }
 
 /**
+ * Fetches info about all published posts by the specific author
+ * @param {number} author The user ID of the author
+ * @param {boolean} withContent Whether to include post content
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
+ * @returns {Array<Object>} All published posts' info
+ */
+ async function fetchPublishedPostInfosByAuthor(author, withContent, offset, limit, order) {
+    return processPostInfoRows(
+        await postInfo(withContent)
+            .where('post_published', true)
+            .andWhere('post_author', author)
+            .offset(offset)
+            .limit(limit)
+            .orderByRaw(orderBy(order))
+    )
+}
+
+/**
  * Fetches a post by its slug
  * @param {string} slug The post slug
  * @returns {Array<Object>} An array with the row containing the post or an empty array if none exists
@@ -251,6 +271,7 @@ module.exports.fetchPosts = fetchPosts
 module.exports.fetchPublishedPosts = fetchPublishedPosts
 module.exports.fetchPostInfos = fetchPostInfos
 module.exports.fetchPublishedPostInfos = fetchPublishedPostInfos
+module.exports.fetchPublishedPostInfosByAuthor = fetchPublishedPostInfosByAuthor
 module.exports.fetchPostBySlug = fetchPostBySlug
 module.exports.fetchPostInfoBySlug = fetchPostInfoBySlug
 module.exports.fetchPostsCount = fetchPostsCount

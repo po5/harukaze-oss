@@ -19,11 +19,35 @@
         <% } %>
     </select>
     <% if(user.role > 0) { %>
+        <link rel="stylesheet" href="/static/css/editor.css">
+        <link rel="stylesheet" href="/static/sceditor/minified/themes/default.min.css" id="theme-style">
+
         <hr>
         <h2>Upload a new avatar</h2>
         <p>Ideally, avatars should be 1:1 aspect ratio, and no smaller than 128x128. They cannot be more than 5MB in size. Leave blank to stay unchanged</p>
         <input type="file" name="avatar" id="avatar-upload">
-        <br>
+        <br><br>
+        <h2>Your info</h2>
+        <div id="info-container">
+            <textarea name="info" id="info"><%= info %></textarea>
+        </div>
+        
+        <script src="/static/sceditor/minified/sceditor.min.js"></script>
+        <script src="/static/sceditor/minified/icons/monocons.js"></script>
+        <script src="/static/sceditor/minified/formats/bbcode.js"></script>
+        <script src="/static/js/editor.js"></script>
+
+        <script>
+            // Constants
+            const infoElem = document.getElementById('info')
+
+            // Init SCEditor
+            sceditor.create(infoElem, {
+                format: 'bbcode',
+                style: '/static/sceditor/minified/themes/content/default.min.css',
+                toolbar: sceditor.defaultOptions.toolbar+'|media'
+            })
+        </script>
     <% } %>
     <br>
     <input type="submit" value="Save">

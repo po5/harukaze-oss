@@ -8,6 +8,7 @@ exports.up = async function(knex) {
             \`user_role\` TINYINT NOT NULL DEFAULT 0,
             \`user_avatar_key\` VARCHAR(256),
             \`user_character\` VARCHAR(256),
+            \`user_info\` TEXT NULL DEFAULT NULL,
             \`user_banned\` TINYINT NOT NULL DEFAULT 0,
             \`user_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
             PRIMARY KEY (\`id\`));

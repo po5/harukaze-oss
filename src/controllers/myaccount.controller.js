@@ -14,6 +14,7 @@ function setupCtx(ctx) {
     ctx.state.pageTitle = 'My Account'
     ctx.state.error = null
     ctx.state.bio = user.bio
+    ctx.state.info = user.info
     ctx.state.character = user.character || config.reacts.default
     ctx.state.avatarUrl = ctx.state.user.role >= usersUtil.Roles.CONTRIBUTOR ? 
         '/assets/avatar/'+user.username
@@ -58,10 +59,12 @@ module.exports.postMyAccount = async (ctx, next) => {
     // Collect data
     let body = ctx.request.body
     let bio = body.bio?.trim()
+    let info = body.info?.trim()
     let character = reactsUtil.characterOrDefault(body.character)
     
     // Validate
     ctx.state.bio = bio
+    ctx.state.info = info
     ctx.state.character = character
     if(bio.length > 2048) {
         ctx.state.error = 'Bio is too long (max length is 2048 characters)'
@@ -69,7 +72,7 @@ module.exports.postMyAccount = async (ctx, next) => {
     }
 
     // Update user
-    await usersModel.updateUserInfoById(user.id, bio, character)
+    await usersModel.updateUserInfoById(user.id, bio, character, info)
 
     // Check if avatar was sent, and the user is a contributor or higher
     if(user.role >= usersUtil.Roles.CONTRIBUTOR) {

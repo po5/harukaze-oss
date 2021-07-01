@@ -1,0 +1,43 @@
+<link rel="stylesheet" href="/static/css/contributor.css">
+
+<h1><%= username %></h1>
+<div class="container">
+    <img id="avatar" src="<%= avatarUrl %>" alt="<%= username %>'s avatar">
+    <div id="bio-container" class="speech-bubble">
+        <div class="speech-bubble-content">
+            <% if(bio) { %>
+                <%= bio %>
+            <% } else { %>
+                <i>No bio added...</i>
+            <% } %>
+        </div>
+    </div>
+    <% if(info) { %>
+        <br><br>
+        <div class="container-header">Info</div>
+        <img src="<%= characterUrl %>" alt="<%= username %>'s comment character">
+        <div id="info-container" class="speech-bubble">
+            <div class="speech-bubble-point"></div>
+            <div class="speech-bubble-content">
+                <%- renderBBCode(info) %>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<div id="posts" class="container">
+    <div class="container-header">
+        <span>Posts</span>
+    </div>
+    <% if(posts.length > 0) { %>
+        <div id="posts-container">
+            <% for(post of posts) { with(post) { %>
+                <div class="post-listing">
+                    <span class="name2"><a href="/blog/<%= slug %>"><%= title %></a>, posted <%= date(created_on) %></span>
+                </div>
+            <% } } %>
+        </div>
+    <% } else { %>
+        <p><i><%= username %> hasn't written anything yet...</i></p>
+    <% } %>
+</div>

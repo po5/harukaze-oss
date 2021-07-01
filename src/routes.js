@@ -43,6 +43,7 @@ module.exports = router => {
     const apiutilsMiddleware = require('./middleware/api/apiutils.middleware')
 
     // Controller imports
+    const assetsController = require('./controllers/assets.controller')
     const homeController = require('./controllers/home.controller')
     const blogController = require('./controllers/blog.controller')
     const signupController = require('./controllers/signup.controller')
@@ -53,7 +54,7 @@ module.exports = router => {
     const mediamanagerController = require('./controllers/mediamanager.controller')
     const mediaController = require('./controllers/media.controller')
     const myaccountController = require('./controllers/myaccount.controller')
-    const assetsController = require('./controllers/assets.controller')
+    const contributorController = require('./controllers/contributor.controller')
 
     // API controller imports
     const apiMediaController = require('./controllers/api/media.controller')
@@ -170,6 +171,11 @@ module.exports = router => {
     router.post('/myaccount', async (ctx, next) => {
         await myaccountController.postMyAccount(ctx, next)
         await render('myaccount', ctx)
+    })
+
+    router.get('/contributor/:username', async (ctx, next) => {
+        await contributorController.getContributor(ctx, next)
+        await render('contributor', ctx)
     })
 
     /* API */

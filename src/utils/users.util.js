@@ -58,6 +58,7 @@ function identifyContextWithUserRow(ctx, userRow) {
         role: userRow.user_role,
         avatarKey: userRow.user_avatar_key,
         character: userRow.user_character,
+        info: userRow.user_info,
         banned: userRow.user_banned == 1,
         createdOn: new Date(userRow.user_created_on)
     }

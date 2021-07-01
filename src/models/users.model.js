@@ -9,10 +9,13 @@ const { Knex } = require('knex')
  */
 function userInfo() {
     return knex('users')
+        .select('users.id')
         .select(knex.ref('user_username').as('username'))
         .select(knex.ref('user_bio').as('bio'))
         .select(knex.ref('user_role').as('role'))
         .select(knex.ref('user_avatar_key').as('avatar_key'))
+        .select(knex.ref('user_character').as('character'))
+        .select(knex.ref('user_info').as('info'))
         .select(knex.ref('user_banned').as('banned'))
         .select(knex.ref('user_created_on').as('created_on'))
 }
@@ -27,19 +30,21 @@ function processUserInfoRows(rows) {
  * Creates a new user entry.
  * To create a new user normally, you should use createUser in users.util.js.
  * @param {string} username The user's username
- * @param {string} bio The user's bio (can be null)
+ * @param {string?} bio The user's bio (can be null)
  * @param {string} hash The user's password hash
  * @param {number} role The user's role (values defined in Roles object)
  * @param {string} avatarKey The user's avatar key (can be null)
+ * @param {string?} avatarKey The user's info (can be null)
  */
-async function createUser(username, bio, hash, role, avatarKey) {
+async function createUser(username, bio, hash, role, avatarKey, info) {
     return await knex('users')
         .insert({
             user_username: username,
             user_bio: bio,
             user_hash: hash,
             user_role: role,
-            user_avatar_key: avatarKey
+            user_avatar_key: avatarKey,
+            user_info: info
         })
 }
 
@@ -63,8 +68,6 @@ async function fetchUserInfoById(id) {
     return processUserInfoRows(
         await userInfo()
             .where('id', id)
-            .offset(offset)
-            .limit(limit)
     )
 }
 
@@ -88,8 +91,6 @@ async function fetchUserInfoByUsername(username) {
     return processUserInfoRows(
         await userInfo()
             .where(knex.raw('LOWER(`user_username`)'), username)
-            .offset(offset)
-            .limit(limit)
     )
 }
 
@@ -177,12 +178,14 @@ async function updateUserHashById(id, hash) {
  * @param {number} id The user's ID
  * @param {string?} bio The user's new bio (can be null)
  * @param {string} character The user's new character
+ * @param {string?} info The user's new info (can be null)
  */
-async function updateUserInfoById(id, bio, character) {
+async function updateUserInfoById(id, bio, character, info) {
     return await knex('users')
         .update({
             user_bio: bio,
-            user_character: character
+            user_character: character,
+            user_info: info
         })
         .where('id', id)
 }
