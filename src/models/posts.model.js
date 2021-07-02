@@ -207,6 +207,19 @@ async function fetchPostBySlug(slug) {
 }
 
 /**
+ * Fetches a post's info by its ID
+ * @param {boolean} withContent Whether to include post content
+ * @param {number} id The post's ID
+ * @returns {Array<Object>} An array with the row containing the post's info or an empty array if none exists
+ */
+ async function fetchPostInfoById(withContent, id) {
+    return processPostInfoRows(
+        await postInfo(withContent)
+            .where('posts.id', id)
+    )
+}
+
+/**
  * Fetches a post's info by its slug
  * @param {boolean} withContent Whether to include post content
  * @param {string} slug The post slug
@@ -216,6 +229,19 @@ async function fetchPostInfoBySlug(withContent, slug) {
     return processPostInfoRows(
         await postInfo(withContent)
             .where('post_slug', slug)
+    )
+}
+
+/**
+ * Fetches post infos by their IDs
+ * @param {boolean} withContent Whether to include post content
+ * @param {Array<number>} ids The IDs
+ * @returns {Array<Object>} All post infos with the specified IDs
+ */
+async function fetchPostInfosByIds(withContent, ids) {
+    return processPostInfoRows(
+        await postInfo()
+            .whereIn('posts.id', ids)
     )
 }
 
@@ -265,6 +291,26 @@ async function updatePostById(id, title, slug, content, tags, enableComments, pu
         .where('id', id)
 }
 
+/**
+ * Deletes the post with the specified ID
+ * @param {number} id The post ID
+ */
+async function deletePostById(id) {
+    return await knex('posts')
+        .del()
+        .where('posts.id', id)
+}
+
+/**
+ * Deletes the posts with the specified IDs
+ * @param {Array<number>} ids The post IDs
+ */
+async function deletePostsByIds(ids) {
+    return await knex('posts')
+        .del()
+        .whereIn('posts.id', ids)
+}
+
 /* Export functions */
 module.exports.createPost = createPost
 module.exports.fetchPosts = fetchPosts
@@ -273,10 +319,14 @@ module.exports.fetchPostInfos = fetchPostInfos
 module.exports.fetchPublishedPostInfos = fetchPublishedPostInfos
 module.exports.fetchPublishedPostInfosByAuthor = fetchPublishedPostInfosByAuthor
 module.exports.fetchPostBySlug = fetchPostBySlug
+module.exports.fetchPostInfoById = fetchPostInfoById
 module.exports.fetchPostInfoBySlug = fetchPostInfoBySlug
+module.exports.fetchPostInfosByIds = fetchPostInfosByIds
 module.exports.fetchPostsCount = fetchPostsCount
 module.exports.fetchPostCountBySlugRegex = fetchPostCountBySlugRegex
 module.exports.updatePostById = updatePostById
+module.exports.deletePostById = deletePostById
+module.exports.deletePostsByIds = deletePostsByIds
 
 /* Export values */
 module.exports.Order = Order

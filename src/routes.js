@@ -55,9 +55,11 @@ module.exports = router => {
     const mediaController = require('./controllers/media.controller')
     const myaccountController = require('./controllers/myaccount.controller')
     const contributorController = require('./controllers/contributor.controller')
+    const contributorpanelController = require('./controllers/contributorpanel.controller')
 
     // API controller imports
     const apiMediaController = require('./controllers/api/media.controller')
+    const apiPostsController = require('./controllers/api/posts.controller')
 
     // Redirects
     router.get('/', async ctx => await ctx.redirect('/home')) // /? index? that shit is for the birds, man. /home? now that's where it's at. simple, clean, efficient, fast, linux lacks these, which makes it trash
@@ -178,6 +180,11 @@ module.exports = router => {
         await render('contributor', ctx)
     })
 
+    router.get('/panel', async (ctx, next) => {
+        await contributorpanelController.getContributorPanel(ctx, next)
+        await render('contributorpanel', ctx)
+    })
+
     /* API */
     router.get('/api/media/get', async (ctx, next) => {
         try {
@@ -214,6 +221,31 @@ module.exports = router => {
     router.post('/api/media/delete', async (ctx, next) => {
         try {
             await apiMediaController.postDelete(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+
+    router.get('/api/posts/get', async (ctx, next) => {
+        try {
+            await apiPostsController.getPost(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.get('/api/posts/list', async (ctx, next) => {
+        try {
+            await apiPostsController.getPostsList(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/posts/delete', async (ctx, next) => {
+        try {
+            await apiPostsController.postDelete(ctx, next)
         } catch(err) {
             apiError(ctx, err)
         }

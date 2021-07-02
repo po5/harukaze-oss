@@ -182,14 +182,15 @@ async function fetchMedia(offset, limit, order) {
 }
 
 /**
- * Fetches media by their IDs
+ * Fetches media infos by their IDs
  * @param {Array<number>} ids The IDs
- * @returns {Array<Object>} All media with the specified IDs
+ * @returns {Array<Object>} All media infos with the specified IDs
  */
- async function fetchMediaByIds(ids) {
-    return await knex('media')
-        .select('*')
-        .whereIn('media.id', ids)
+ async function fetchMediaInfosByIds(ids) {
+    return processMediaInfoRows(
+        await mediaInfo()
+            .whereIn('media.id', ids)
+    )
 }
 
 /**
@@ -246,7 +247,7 @@ module.exports.fetchMedia = fetchMedia
 module.exports.fetchMediaInfos = fetchMediaInfos
 module.exports.fetchMediaById = fetchMediaById
 module.exports.fetchMediaInfoById = fetchMediaInfoById
-module.exports.fetchMediaByIds = fetchMediaByIds
+module.exports.fetchMediaInfosByIds = fetchMediaInfosByIds
 module.exports.fetchMediaByHash = fetchMediaByHash
 module.exports.fetchMediaCount = fetchMediaCount
 module.exports.updateMediaById = updateMediaById

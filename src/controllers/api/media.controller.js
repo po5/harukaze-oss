@@ -208,7 +208,7 @@ module.exports.postDelete = async ctx => {
         
 
         // Fetch media entries
-        let media = await mediaModel.fetchMediaByIds(ids)
+        let media = await mediaModel.fetchMediaInfosByIds(ids)
 
         // Handle each entry
         for(file of media) {

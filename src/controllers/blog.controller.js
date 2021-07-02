@@ -51,6 +51,9 @@ async function fetchAndPutPageData(ctx, post) {
         ctx.state.pagination = pagination
     }
 
+    // Page title
+    ctx.state.pageTitle = post.title
+
     // Put context data
     ctx.state.post = post
     ctx.state.enableComments = enableComments

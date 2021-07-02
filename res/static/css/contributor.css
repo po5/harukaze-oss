@@ -14,23 +14,17 @@ h1 {
     padding-bottom: 0px;
     display: inline-block;
     border: 3px solid black;
-    border-radius: 25px;
+    border-radius: 35px;
     background: white;
     margin-left: 40px;
 }
 .speech-bubble::after {
-    content: '';
+    content: '|||||||';
+    color: rgba(0, 0, 0, 0);
 	position: relative;
-	width: 0px;
-	height: 0px;
-    right: 50px;
-	bottom: 20px;
-	border: 30px solid transparent;
-	border-left: none;
-	border-right-color: #fff;
-	filter: drop-shadow(-3px 0 0 black);
-    display: inline-block;
-    transform: scaleY(50%);
+    right: 42px;
+	bottom: 25px;
+    background: url('/static/img/speechbubble-side.png');
 }
 .speech-bubble-content {
     overflow: auto;
