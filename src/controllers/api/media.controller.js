@@ -60,7 +60,7 @@ module.exports.getMediaList = async ctx => {
  * POST controller for media upload
  * @param {import('koa').Context} ctx The context
  */
-module.exports.postUpload = async ctx => {
+module.exports.postUploadMedia = async ctx => {
     let files = ctx.request.files
 
     if('file' in files) {
@@ -154,7 +154,7 @@ module.exports.postUpload = async ctx => {
  * POST controller for media editing
  * @param {import('koa').Context} ctx 
  */
- module.exports.postEdit = async ctx => {
+ module.exports.postEditMedia = async ctx => {
     let body = ctx.request.body
 
     // Check for correct data
@@ -194,7 +194,7 @@ module.exports.postUpload = async ctx => {
  * POST controller for media deletion
  * @param {import('koa').Context} ctx The context
  */
-module.exports.postDelete = async ctx => {
+module.exports.postDeleteMedia = async ctx => {
     let body = ctx.request.body
     
     // Check for correct data

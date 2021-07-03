@@ -1,8 +1,5 @@
-const config = require('../../../config.json')
 const postsModel = require('../../models/posts.model')
 const utils = require('../../utils/misc.util')
-const mediaUtils = require('../../utils/media.util')
-const FileType = require('file-type')
 
 /**
  * GET controller for post getting
@@ -56,7 +53,7 @@ module.exports.getPostsList = async ctx => {
  * POST controller for post deletion
  * @param {import('koa').Context} ctx The context
  */
-module.exports.postDelete = async ctx => {
+module.exports.postDeletePosts = async ctx => {
     let body = ctx.request.body
     
     // Check for correct data

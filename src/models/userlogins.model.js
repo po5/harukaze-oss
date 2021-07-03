@@ -1,12 +1,7 @@
 const config = require('../../knexfile')
 const knex = require('knex')(config)
-const utils = require('../utils/misc.util')
-const { Knex } = require('knex')
 
 /* Utility functions */
-/**
- * @return {Knex}
- */
 function loginInfo() {
     return knex('userlogins')
         .select(knex.ref('login_user').as('user'))
@@ -17,8 +12,6 @@ function loginInfo() {
 }
 function processLoginInfoRows(rows) {
     for(row of rows) {
-        row.tags = utils.setToArray(row.tags)
-        row.referenced_media = utils.setToArray(row.referenced_media)
         row.created_on = new Date(row.created_on)
     }
     return rows
@@ -37,5 +30,32 @@ async function createLogin(user, ip) {
         })
 }
 
+/**
+ * Fetches all logins by the specified user with a unique IP address
+ * @param {number} user The user's ID
+ * @returns {Array<Object>} All logins
+ */
+async function fetchUniqueIpLoginsByUser(user) {
+    return await knex('userlogins')
+        .select('*')
+        .where('login_user', user)
+        .groupBy('login_ip')
+}
+
+/**
+ * Fetches all login infos by the specified user with a unique IP address
+ * @param {number} user The user's ID
+ * @returns {Array<Object>} All logins' info
+ */
+async function fetchUniqueIpLoginInfosByUser(user) {
+    return processLoginInfoRows(
+        await loginInfo()
+            .where('login_user', user)
+            .groupBy('login_ip')
+    )
+}
+
 /* Export functions */
 module.exports.createLogin = createLogin
+module.exports.fetchUniqueIpLoginsByUser = fetchUniqueIpLoginsByUser
+module.exports.fetchUniqueIpLoginInfosByUser = fetchUniqueIpLoginInfosByUser

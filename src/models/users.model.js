@@ -18,6 +18,17 @@ function userInfo() {
         .select(knex.ref('user_info').as('info'))
         .select(knex.ref('user_banned').as('banned'))
         .select(knex.ref('user_created_on').as('created_on'))
+        .select(knex.raw(`(
+            SELECT COUNT(*)
+            FROM \`comments\`
+            WHERE \`comment_author\` = \`users\`.\`id\`
+        ) AS \`comments\``))
+        .select(knex.raw(`(
+            SELECT login_ip FROM userlogins
+            WHERE login_user = users.id
+            ORDER BY id DESC
+            LIMIT 1
+        ) AS \`last_ip\``))
 }
 function processUserInfoRows(rows) {
     for(row of rows) {
@@ -160,6 +171,66 @@ async function fetchUserAndIpBanByUsername(username, ip) {
 }
 
 /**
+ * Fetches all banned users' info
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @returns {Array<Object>} All banned users' info
+ */
+async function fetchBannedUserInfos(offset, limit) {
+    return processUserInfoRows(
+        await userInfo()
+            .where('user_banned', true)
+            .offset(offset)
+            .limit(limit)
+    )
+}
+
+/**
+ * Fetches all users' info with the specified roles
+ * @param {Array<number>} roles The roles
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @returns {Array<Object>} All users' info with the specified roles
+ */
+async function fetchUserInfosByRoles(roles, offset, limit) {
+    return processUserInfoRows(
+        await userInfo()
+            .whereIn('user_role', roles)
+            .offset(offset)
+            .limit(limit)
+    )
+}
+
+/**
+ * Returns the total amount of users
+ * @returns {number} The total amount of users
+ */
+async function fetchUsersCount() {
+    return (await knex('users').count('*', { as: 'count' }))[0].count
+}
+
+/**
+ * Returns the total amount of banned users
+ * @returns {number} The total amount of banned users
+ */
+async function fetchBannedUsersCount() {
+    return (await knex('users')
+        .where('user_banned', true)
+        .count('*', { as: 'count' }))[0].count
+}
+
+/**
+ * Returns the total amount of users with the specified roles
+ * @param {Array<number>} roles The roles
+ * @returns {Array<number>} The total amount of users with the specified roles
+ */
+ async function fetchUsersCountByRoles(roles) {
+    return (await knex('users')
+        .whereIn('user_role', roles)
+        .count('*', { as: 'count' }))[0].count
+}
+
+/**
  * Updates a user's password hash.
  * To change a user's password, you should use changeUserPassword in users.util.js.
  * @param {number} id The user's ID
@@ -203,6 +274,32 @@ async function updateUserAvatarKeyById(id, avatarKey) {
         .where('id', id)
 }
 
+/**
+ * Updates whether a user is banned
+ * @param {number} id The user's ID
+ * @param {boolean} banned Whether the user is banned
+ */
+async function updateUserBannedById(id, banned) {
+    return await knex('users')
+        .update({
+            user_banned: banned
+        })
+        .where('id', id)
+}
+
+/**
+ * Updates a user's role
+ * @param {number} id The user's ID
+ * @param {number} role The user's new role
+ */
+async function updateUserRoleById(id, role) {
+    return await knex('users')
+        .update({
+            user_role: role
+        })
+        .where('id', id)
+}
+
 /* Export functions */
 module.exports.createUser = createUser
 module.exports.fetchUserById = fetchUserById
@@ -213,6 +310,13 @@ module.exports.fetchContributorInfos = fetchContributorInfos
 module.exports.fetchAdminInfos = fetchAdminInfos
 module.exports.fetchUserAndIpBanById = fetchUserAndIpBanById
 module.exports.fetchUserAndIpBanByUsername = fetchUserAndIpBanByUsername
+module.exports.fetchBannedUserInfos = fetchBannedUserInfos
+module.exports.fetchUserInfosByRoles = fetchUserInfosByRoles
+module.exports.fetchUsersCount = fetchUsersCount
+module.exports.fetchBannedUsersCount = fetchBannedUsersCount
+module.exports.fetchUsersCountByRoles = fetchUsersCountByRoles
 module.exports.updateUserHashById = updateUserHashById
 module.exports.updateUserInfoById = updateUserInfoById
 module.exports.updateUserAvatarKeyById = updateUserAvatarKeyById
+module.exports.updateUserBannedById = updateUserBannedById
+module.exports.updateUserRoleById = updateUserRoleById

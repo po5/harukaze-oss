@@ -56,10 +56,14 @@ module.exports = router => {
     const myaccountController = require('./controllers/myaccount.controller')
     const contributorController = require('./controllers/contributor.controller')
     const contributorpanelController = require('./controllers/contributorpanel.controller')
+    const adminpanelController = require('./controllers/adminpanel.controller')
 
     // API controller imports
     const apiMediaController = require('./controllers/api/media.controller')
     const apiPostsController = require('./controllers/api/posts.controller')
+    const apiCommentsController = require('./controllers/api/comments.controller')
+    const apiBansController = require('./controllers/api/bans.controller')
+    const apiUsersController = require('./controllers/api/users.controller')
 
     // Redirects
     router.get('/', async ctx => await ctx.redirect('/home')) // /? index? that shit is for the birds, man. /home? now that's where it's at. simple, clean, efficient, fast, linux lacks these, which makes it trash
@@ -185,6 +189,11 @@ module.exports = router => {
         await render('contributorpanel', ctx)
     })
 
+    router.get('/panel/admin', async (ctx, next) => {
+        await adminpanelController.getAdminPanel(ctx, next)
+        await render('adminpanel', ctx)
+    })
+
     /* API */
     router.get('/api/media/get', async (ctx, next) => {
         try {
@@ -204,7 +213,7 @@ module.exports = router => {
     })
     router.post('/api/media/upload', async (ctx, next) => {
         try {
-            await apiMediaController.postUpload(ctx, next)
+            await apiMediaController.postUploadMedia(ctx, next)
         } catch(err) {
             apiError(ctx, err)
         }
@@ -212,7 +221,7 @@ module.exports = router => {
     })
     router.post('/api/media/edit', async (ctx, next) => {
         try {
-            await apiMediaController.postEdit(ctx, next)
+            await apiMediaController.postEditMedia(ctx, next)
         } catch(err) {
             apiError(ctx, err)
         }
@@ -220,7 +229,7 @@ module.exports = router => {
     })
     router.post('/api/media/delete', async (ctx, next) => {
         try {
-            await apiMediaController.postDelete(ctx, next)
+            await apiMediaController.postDeleteMedia(ctx, next)
         } catch(err) {
             apiError(ctx, err)
         }
@@ -245,7 +254,90 @@ module.exports = router => {
     })
     router.post('/api/posts/delete', async (ctx, next) => {
         try {
-            await apiPostsController.postDelete(ctx, next)
+            await apiPostsController.postDeletePosts(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+
+    router.get('/api/comments/get', async (ctx, next) => {
+        try {
+            await apiCommentsController.getComment(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.get('/api/comments/list', async (ctx, next) => {
+        try {
+            await apiCommentsController.getCommentsList(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/comments/delete', async (ctx, next) => {
+        try {
+            await apiCommentsController.postDeleteComments(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+
+    router.get('/api/admin/bans/users/list', async (ctx, next) => {
+        try {
+            await apiBansController.getBannedUsers(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/admin/bans/users/set', async (ctx, next) => {
+        try {
+            await apiBansController.postSetUserBan(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.get('/api/admin/bans/ips/list', async (ctx, next) => {
+        try {
+            await apiBansController.getBannedIps(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/admin/bans/ips/create', async (ctx, next) => {
+        try {
+            await apiBansController.postCreateIpBan(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/admin/bans/ips/delete', async (ctx, next) => {
+        try {
+            await apiBansController.postDeleteIpBan(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+
+    router.get('/api/admin/users/list', async (ctx, next) => {
+        try {
+            await apiUsersController.getUsers(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/admin/users/roles/set', async (ctx, next) => {
+        try {
+            await apiUsersController.postSetRole(ctx, next)
         } catch(err) {
             apiError(ctx, err)
         }

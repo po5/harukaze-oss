@@ -12,6 +12,19 @@
     <% } %>
 </head>
 <body>
+    <script>
+    <% if(typeof user == 'undefined') { %>
+        var authed = false;
+    <% } else { %>
+        var authed = false;
+        var user = {
+            id: <%= user.id %>,
+            username: "<%= user.username %>",
+            role: <%= user.role %>
+        };
+    <% } %>
+    </script>
+    
     <div class="main">
         <div class="maincol">
             <% include partials/_header.ejs %>

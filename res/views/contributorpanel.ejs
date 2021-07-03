@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="/static/css/contributorpanel.css">
 
+<h1>Contributor Panel</h1>
 <div id="app">
     <div id="error" v-if="error != null">
         {{ error }}
@@ -7,10 +8,11 @@
 
     <div class="container" id="container">
         <div class="container-header">Options</div>
+
         <a href="/media"><button>Go to media manager</button></a>
         <br><br>
         <button id="reload-button" @click="reloadPosts()">[~] Reload posts</button>
-        <button id="delete-button" @click="deleteSelected()">[x] Delete Selected</button>
+        <button id="delete-button" @click="deleteSelected()">[x] Delete selected</button>
         <button id="select-all-button" @click="selectAll()">[+] Select all</button>
         <button id="select-none-button" @click="selectNone()">[-] Select none</button>
         <br><br>
@@ -22,6 +24,7 @@
             </template>
         </select>
         <br><br>
+
         <div class="container-header">Posts</div>
 
         <template v-if="loading">
@@ -66,6 +69,33 @@
                 <span class="page-number">Page {{ currentPage }} of {{ pages }}</span>
                 <span class="page-arrow" @click="nextPage()" v-if="currentPage < pages">&gt;</span>
             </div>
+        </template>
+    </div>
+
+    <div class="container">
+        <div class="container-header">Latest Comments</div>
+
+        <template v-if="commentsLoading">
+            <h1>Loading...</h1>
+        </template>
+        <template v-else>
+            <template v-if="comments.length > 0">
+                <div v-for="comment in comments" :id="'comment-'+comment.id" class="comment-listing">
+                    <div class="comment-listing-left">
+                        <img :src="comment.author_character_url" :alt="comment.author_username+'\'s character'">
+                        <br>
+                        <b>{{ comment.author_username }}</b>
+                    </div>
+                    <div class="comment-listing-right">
+                        <div class="speech-bubble">
+                            <div class="speech-bubble-point"></div>
+                            <div class="speech-bubble-content">{{ comment.content }}</div>
+                        </div>
+                        <p class="comment-listing-attribution">on <a :href="'/blog/'+comment.post_slug">{{ comment.post_title }}</a> at {{ date(comment.created_on) }}</p>
+                    </div>
+                </div>
+            </template>
+            <i v-else>No comments yet...</i>
         </template>
     </div>
 </div>

@@ -1,0 +1,183 @@
+<link rel="stylesheet" href="/static/css/adminpanel.css">
+
+<h1>Admin Panel</h1>
+<div id="app">
+    <div id="error" v-if="error != null">
+        {{ error }}
+    </div>
+
+    <div class="container" id="user-bans-container">
+        <div class="container-header">User bans</div>
+
+        <form action="" @submit.prevent="banUserForm()">
+            <p>Ban user</p>
+            <input type="text" placeholder="Username" id="user-ban-username">
+            <input type="submit" value="Ban">
+        </form>
+        <br><br>
+
+        <template v-if="userBansLoading">
+            <h1 id="title">Loading...</h1>
+        </template>
+        <template v-else>
+            <div class="page-nav">
+                <span class="page-arrow" @click="lastUserBansPage()" v-if="currentUserBansPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentUserBansPage }} of {{ userBansPages }}</span>
+                <span class="page-arrow" @click="nextUserBansPage()" v-if="currentUserBansPage < userBansPages">&gt;</span>
+            </div>
+            <div id="user-bans-stats">Total banned users: {{ totalUserBans }}</div>
+            <br>
+            <div id="user-bans-container">
+                <template v-if="totalUserBans > 0">
+                    <table>
+                        <tr>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Last IP</th>
+                            <th>Join date</th>
+                            <th>Comments</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr v-for="user in userBans" :id="'user-ban-'+user.id">
+                            <td>{{ user.username }}</td>
+                            <td>{{ roles[user.role] }}</td>
+                            <td>{{ user.last_ip }}</td>
+                            <td>{{ date(user.created_on) }}</td>
+                            <td>{{ user.comments }}</td>
+                            <td>
+                                <button @click="unbanUser(user.username)">Unban</button>
+                                <button v-if="user.comments > 0" @click="deleteComments(user.id)">Delete Comments</button>
+                                <button @click="banUserIps(user.id)">Ban IPs</button>
+                                <button @click="unbanUserIps(user.id)">Unban IPs</button>
+                            </td>
+                        </tr>
+                      </table>
+                </template>
+                <template v-else>
+                    No users are banned at the moment.
+                </template>
+            </div>
+            <br>
+            <div class="page-nav">
+                <span class="page-arrow" @click="lastUserBansPage()" v-if="currentUserBansPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentUserBansPage }} of {{ userBansPages }}</span>
+                <span class="page-arrow" @click="nextUserBansPage()" v-if="currentUserBansPage < userBansPages">&gt;</span>
+            </div>
+        </template>
+    </div>
+
+    <div class="container" id="ip-bans-container">
+        <div class="container-header">IP bans</div>
+
+        <form action="" @submit.prevent="banIpForm()">
+            <p>Ban IP</p>
+            <input type="text" placeholder="IP address" id="ip-ban-ip">
+            <input type="submit" value="Ban">
+        </form>
+        <br><br>
+
+        <template v-if="ipBansLoading">
+            <h1 id="title">Loading...</h1>
+        </template>
+        <template v-else>
+            <div class="page-nav">
+                <span class="page-arrow" @click="lastIpBansPage()" v-if="currentIpBansPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentIpBansPage }} of {{ ipBansPages }}</span>
+                <span class="page-arrow" @click="nextIpBansPage()" v-if="currentIpBansPage < ipBansPages">&gt;</span>
+            </div>
+            <div id="ip-bans-stats">Total banned IPs: {{ totalIpBans }}</div>
+            <br>
+            <div id="ip-bans-container">
+                <template v-if="totalIpBans > 0">
+                    <table>
+                        <tr>
+                            <th>IP</th>
+                            <th>Ban date</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr v-for="ban in ipBans">
+                            <td>{{ ban.ip }}</td>
+                            <td>{{ date(ban.created_on) }}</td>
+                            <td>
+                                <button @click="unbanIp(ban.ip)">Unban</button>
+                            </td>
+                        </tr>
+                      </table>
+                </template>
+                <template v-else>
+                    No IPs are banned at the moment.
+                </template>
+            </div>
+            <br>
+            <div class="page-nav">
+                <span class="page-arrow" @click="lastIpBansPage()" v-if="currentIpBansPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentIpBansPage }} of {{ ipBansPages }}</span>
+                <span class="page-arrow" @click="nextIpBansPage()" v-if="currentIpBansPage < ipBansPages">&gt;</span>
+            </div>
+        </template>
+    </div>
+
+    <div class="container" id="privs-container">
+        <div class="container-header">Contributors & Administrators</div>
+
+        <form action="" @submit.prevent="promoteForm()">
+            <p>Promote user</p>
+            <input type="text" placeholder="Username" id="promote-username">
+            <input type="submit" value="Promote">
+        </form>
+        <br><br>
+
+        <template v-if="privsLoading">
+            <h1 id="title">Loading...</h1>
+        </template>
+        <template v-else>
+            <div class="page-nav">
+                <span class="page-arrow" @click="lastPrivsPage()" v-if="currentPrivsPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentPrivsPage }} of {{ privsPages }}</span>
+                <span class="page-arrow" @click="nextPrivsPage()" v-if="currentPrivsPage < privsPages">&gt;</span>
+            </div>
+            <div id="privs-stats">Total privileged users: {{ totalPrivs }}</div>
+            <br>
+            <div id="privs-container">
+                <template v-if="totalPrivs > 0">
+                    <table>
+                        <tr>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Last IP</th>
+                            <th>Join date</th>
+                            <th>Comments</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr v-for="user in privs" :id="'priv-'+user.id">
+                            <td>{{ user.username }}</td>
+                            <td>{{ roles[user.role] }}</td>
+                            <td>{{ user.last_ip }}</td>
+                            <td>{{ date(user.created_on) }}</td>
+                            <td>{{ user.comments }}</td>
+                            <td>
+                                <i v-if="user.username == self.username">None</i>
+                                <template v-else>
+                                    <button v-if="user.role < roles.length" @click="changeUserRole(user.username, 1)">Promote</button>
+                                    <button v-if="user.role > 0" @click="changeUserRole(user.username, -1)">Demote</button>
+                                </template>
+                            </td>
+                        </tr>
+                      </table>
+                </template>
+                <template v-else>
+                    No users are privileged at the moment... how are you viewing this page?
+                </template>
+            </div>
+            <br>
+            <div class="page-nav">
+                <span class="page-arrow" @click="lastPrivsPage()" v-if="currentPrivsPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentPrivsPage }} of {{ privsPages }}</span>
+                <span class="page-arrow" @click="nextPrivsPage()" v-if="currentPrivsPage < privsPages">&gt;</span>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/adminpanel.js"></script>

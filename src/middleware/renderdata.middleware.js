@@ -59,5 +59,8 @@ module.exports = async (ctx, next) => {
         return `${day} at ${hour}:${minute} ${pm ? 'PM' : 'AM'}`
     }
 
+    // JSON stringify
+    ctx.state.prettyJson = obj => JSON.stringify(obj, null, 4)
+
     await next()
 }

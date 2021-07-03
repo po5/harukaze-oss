@@ -21,11 +21,30 @@ function processBanInfoRows(rows) {
 
 /**
  * Creates a new IP ban
- * @param {number} ip The IP to ban
+ * @param {string} ip The IP to ban
  */
 async function createBan(ip) {
     return await knex('ipbans')
         .insert({ ip })
+        .onConflict('ip')
+        .ignore()
+}
+
+/**
+ * Creates several new IP bans
+ * @param {Array<string>} ips The IPs to ban
+ */
+async function createBans(ips) {
+    let rows = new Array(ips.length)
+    for(i in ips)
+        rows[i] = {
+            ip: ips[i]
+        }
+    
+    return await knex('ipbans')
+        .insert(rows)
+        .onConflict('ip')
+        .ignore()
 }
 
 /**
@@ -96,11 +115,32 @@ async function deleteBanByIp(ip) {
         .where('ip', ip)
 }
 
+/**
+ * Deletes all bans with the specified IPs, if any
+ * @param {Array<string>} ips The IPs
+ */
+async function deleteBansByIps(ips) {
+    return await knex('ipbans')
+        .del()
+        .whereIn('ip', ips)
+}
+
+/**
+ * Deletes all IP bans
+ */
+async function deleteAllBans() {
+    return await knex('ipbans')
+        .del()
+}
+
 /* Export functions */
 module.exports.createBan = createBan
+module.exports.createBans = createBans
 module.exports.fetchBans = fetchBans
 module.exports.fetchBanInfos = fetchBanInfos
 module.exports.fetchBanByIp = fetchBanByIp
 module.exports.fetchBanInfoByIp = fetchBanInfoByIp
 module.exports.fetchBansCount = fetchBansCount
 module.exports.deleteBanByIp = deleteBanByIp
+module.exports.deleteBansByIps = deleteBansByIps
+module.exports.deleteAllBans = deleteAllBans

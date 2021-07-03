@@ -1,4 +1,5 @@
 const usersModel = require('./models/users.model')
+const ipbansModel = require('./models/ipbans.model')
 const usersUtil = require('./utils/users.util')
 const utils = require('./utils/misc.util')
 const fs = require('fs')
@@ -25,7 +26,15 @@ var started = false
  */
 async function main(args) {
     // Check for special args
-    if(args.includes('--create-admin')) {
+    if(args.includes('--help') || args.includes('-h')) {
+console.log(`Command line arguments:
+--help, -h\t\tShows this message
+--create-admin\t\tCreates a new administrator account
+--reset-ip-bans\t\tDeletes all IP bans
+
+Run without any arguments to start the server.`)
+        process.exit(0)
+    } else if(args.includes('--create-admin')) {
         console.log('This is the administrator creation wizard. Press CTRL+C to exit at any time.')
         
         let username = null
@@ -61,6 +70,12 @@ async function main(args) {
         } else {
             console.log('The passwords do not match')
         }
+
+        process.exit(0)
+    } else if(args.includes('--reset-ip-bans')) {
+        console.log('Deleting IP bans...')
+        await ipbansModel.deleteAllBans()
+        console.log('All IP bans have been deleted.')
 
         process.exit(0)
     }

@@ -22,6 +22,8 @@ module.exports.getLogin = async ctx => {
     let next = ctx.request.query.next ? ctx.request.query.next : '/'
     if(next == '/' && ctx.request.header.referer)
         next = ctx.request.header.referer
+    if(next.endsWith(ctx.path))
+        next = '/'
     ctx.state.next = next
 
     // Redirect if already logged in

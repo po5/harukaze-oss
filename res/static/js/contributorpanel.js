@@ -18,6 +18,9 @@ function main() {
                 ['Title alphabetically, descending', 3]
             ],
             selected: [],
+            commentsLoading: true,
+            totalComments: 0,
+            comments: []
         },
         methods: {
             handleError(err) {
@@ -152,11 +155,33 @@ function main() {
                     minute = '0'+minute
         
                 return `${day} at ${hour}:${minute} ${pm ? 'PM' : 'AM'}`
+            },
+            async loadComments() {
+                try {
+                    this.loading = true
+
+                    let res = await api.get('/api/comments/list', {
+                        offset: 0,
+                        limit: 10,
+                        order: 1
+                    })
+
+                    if(res.status == 'success') {
+                        this.totalComments = res.total
+                        this.comments = res.comments
+                        this.commentsLoading = false
+                    } else {
+                        this.handleError(res)
+                    }
+                } catch(err) {
+                    this.handleError(err)
+                }
             }
         }
     })
 
     app.loadPosts()
+    app.loadComments()
 }
 
 // Load Vue if not present

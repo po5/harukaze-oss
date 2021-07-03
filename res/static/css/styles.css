@@ -335,7 +335,39 @@ input {
 	color: red;
 	font-weight: bold;
 }
+.speech-bubble {
+    padding: 20px;
+    padding-bottom: 0px;
+    display: inline-block;
+    border: 3px solid black;
+    border-radius: 30px;
+    background: white;
+    margin-left: 40px;
+	max-width: 100%;
+	word-wrap: break-word;
+}
+.speech-bubble::after {
+    content: '|||||||';
+    color: rgba(0, 0, 0, 0);
+	position: relative;
+    right: 42px;
+	bottom: 18px;
+    background: url('/static/img/speechbubble-side.png');
+}
+.speech-bubble-content {
+    overflow: auto;
+    max-width: 100%;
+	min-height: 30px;
+    border-radius: 5px;
+}
+.speech-bubble-content * {
+    max-width: 100%;
+    word-wrap: break-word;
+}
 
+#contributors {
+	
+}
 #footer {
 	text-align: center;
 	padding-top: 30px;

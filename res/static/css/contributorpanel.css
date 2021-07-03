@@ -16,6 +16,18 @@ tr:nth-child(even) {
     cursor: pointer;
     font-weight: bold;
 }
+.comment-listing-left, .comment-listing-right {
+    display: inline-block;
+}
+.comment-listing-left {
+    text-align: center;
+}
+.comment-listing-right {
+    max-width: calc(100% - 190px);
+}
+.comment-listing-attribution {
+    margin-left: 25px;
+}
 
 #container {
     margin-top: 10px;

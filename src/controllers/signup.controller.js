@@ -1,5 +1,6 @@
 const usersModel = require('../models/users.model')
 const ipbansModel = require('../models/ipbans.model')
+const userloginsModel = require('../models/userlogins.model')
 const usersUtil = require('../utils/users.util')
 
 // Puts boilerplate context data
@@ -21,6 +22,8 @@ module.exports.getSignup = async ctx => {
     let next = ctx.request.query.next ? ctx.request.query.next : '/'
     if(next == '/' && ctx.request.header.referer)
         next = ctx.request.header.referer
+    if(next.endsWith(ctx.path))
+        next = '/'
     ctx.state.next = next
 
     // Redirect if already logged in
@@ -79,6 +82,9 @@ module.exports.postSignup = async ctx => {
                     let newUserRes = await usersModel.fetchUserByUsername(username)
                     if(newUserRes.length > 0) {
                         let newUser = newUserRes[0]
+
+                        // Create initial login record
+                        await userloginsModel.createLogin(newUser.id, ctx.ip)
 
                         // Set user ID in session
                         ctx.session.id = newUser.id

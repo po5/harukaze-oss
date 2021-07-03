@@ -1,6 +1,6 @@
 const config = require('../../knexfile')
 const knex = require('knex')(config)
-const { Knex } = require('knex')
+const { characterMoodToUrl } = require('../utils/reacts.util')
 
 /**
  * Orders comment results can be returned in
@@ -63,6 +63,8 @@ function commentInfo() {
     let query = knex('comments')
         .select('comments.id')
         .select(knex.ref('comment_post').as('post'))
+        .select('post_title')
+        .select('post_slug')
         .select(knex.ref('comment_parent').as('parent'))
         .select(knex.ref('comment_author').as('author'))
         .select(knex.ref('user_username').as('author_username'))
@@ -71,6 +73,7 @@ function commentInfo() {
         .select(knex.ref('comment_mood').as('mood'))
         .select(knex.ref('comment_created_on').as('created_on'))
         .leftJoin('users', 'comment_author', 'users.id')
+        .leftJoin('posts', 'comment_post', 'posts.id')
     
     return query
 }
@@ -80,6 +83,7 @@ function commentInfo() {
 function processCommentInfoRows(rows) {
     for(row of rows) {
         row.created_on = new Date(row.created_on)
+        row.author_character_url = characterMoodToUrl(row.mood, row.author_character)
     }
     return rows
 }
@@ -116,6 +120,22 @@ async function createComment(post, parent, author, content, mood) {
 }
 
 /**
+ * Fetches all comments
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
+ * @returns {Array<Object>} All comments' info
+ */
+ async function fetchCommentInfos(offset, limit, order) {
+    return processCommentInfoRows(
+        await commentInfo()
+            .offset(offset)
+            .limit(limit)
+            .orderByRaw(orderBy(order))
+    )
+}
+
+/**
  * Fetches normal (non-reply) comments on the specified post
  * @param {number} post The post ID
  * @param {number} offset The offset to return results
@@ -147,6 +167,18 @@ async function fetchReplyCommentsByParentIds(ids) {
 }
 
 /**
+ * Fetches a comment's info by its ID
+ * @param {number} id The ID
+ * @returns {Array<Object>} An array with the row containing the comment's info or an empty array if none exists
+ */
+ async function fetchCommentInfoById(id) {
+    return processCommentInfoRows(
+        await commentInfo()
+            .where('comments.id', id)
+    )
+}
+
+/**
  * Fetches a normal comment by its ID
  * @param {number} id The comment ID
  * @returns {Array<Object>} An array with the row containing the comment or an empty array if none exists
@@ -159,23 +191,69 @@ async function fetchNormalCommentById(id) {
 }
 
 /**
+ * Returns the total amount of comments
+ * @returns {number} The total amount of comments
+ */
+ async function fetchCommentsCount() {
+    return (await knex('comments')
+        .count('*', { as: 'count' })
+    )[0].count
+}
+
+/**
  * Returns the total amount of comments on a post
  * @param {number} post The post ID
  * @returns {number} The total amount of comments on the specified post
  */
- async function fetchCommentsCountByPost(post) {
+async function fetchCommentsCountByPost(post) {
     return (await knex('comments')
         .count('*', { as: 'count' })
         .where('comment_post', post)
     )[0].count
 }
 
+/**
+ * Deletes a comment by its ID
+ * @param {number} id The ID
+ */
+async function deleteCommentById(id) {
+    return await knex('comments')
+        .del()
+        .where('id', id)
+}
+
+/**
+ * Deletes comments by their IDs
+ * @param {Array<number>} ids The IDs
+ */
+async function deleteCommentsByIds(ids) {
+    return await knex('comments')
+        .del()
+        .whereIn('ids', ids)
+}
+
+/**
+ * Deletes all comments by the specified author ID
+ * @param {number} author The author's ID
+ */
+async function deleteCommentsByAuthor(author) {
+    return await knex('comments')
+        .del()
+        .where('comment_author', author)
+}
+
 /* Export functions */
 module.exports.createComment = createComment
+module.exports.fetchCommentInfos = fetchCommentInfos
 module.exports.fetchNormalCommentInfosByPost = fetchNormalCommentInfosByPost
 module.exports.fetchReplyCommentsByParentIds = fetchReplyCommentsByParentIds
+module.exports.fetchCommentInfoById = fetchCommentInfoById
 module.exports.fetchNormalCommentById = fetchNormalCommentById
+module.exports.fetchCommentsCount = fetchCommentsCount
 module.exports.fetchCommentsCountByPost = fetchCommentsCountByPost
+module.exports.deleteCommentById = deleteCommentById
+module.exports.deleteCommentsByIds = deleteCommentsByIds
+module.exports.deleteCommentsByAuthor = deleteCommentsByAuthor
 
 /* Export values */
 module.exports.Order = Order
