@@ -59,6 +59,7 @@ module.exports = router => {
     const contributorpanelController = require('./controllers/contributorpanel.controller')
     const adminpanelController = require('./controllers/adminpanel.controller')
     const blogtagController = require('./controllers/blogtag.controller')
+    const rssController = require('./controllers/rss.controller')
 
     // API controller imports
     const apiMediaController = require('./controllers/api/media.controller')
@@ -204,6 +205,10 @@ module.exports = router => {
     router.get('/tags/:tag/:page', async (ctx, next) => {
         await blogtagController.getBlogTag(ctx, next)
         await render('blogtag', ctx)
+    })
+
+    router.get('/rss', async (ctx, next) => {
+        await rssController.getRss(ctx, next)
     })
 
     /* API */
