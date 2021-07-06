@@ -1,3 +1,4 @@
+const config = require('../../config.json')
 const usersModel = require('../models/users.model')
 const postsModel = require('../models/posts.model')
 const mediaModel = require('../models/media.model')
@@ -41,4 +42,8 @@ module.exports.getContributor = async (ctx, next) => {
 
     // Page title
     ctx.state.pageTitle = user.username
+    // Meta image
+    ctx.state.metaImage = '/assets/avatar/'+user.username
+    // Meta description
+    ctx.state.metaDescription = user.bio || `${user.username} is a contributor on ${config.site.title}!`
 }
