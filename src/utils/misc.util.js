@@ -166,9 +166,9 @@ function findMediaIdsInString(str) {
         let ids = []
         
         for(match of matches) {
-            let id = match.substring(match.lastIndexOf('/')+1)
+            let id = match.substring(match.lastIndexOf('/')+1)*1
 
-            if(!isNaN(id))
+            if(!isNaN(id) && !ids.includes(id))
                 ids.push(id)
         }
 
