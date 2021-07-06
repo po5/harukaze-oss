@@ -30,7 +30,7 @@ module.exports.getBlogTag = async ctx => {
         // Put pagination information
         ctx.state.pagination = pagination
     } else {
-        ctx.state.postsPresent = true
+        ctx.state.postsPresent = false
 
         // Nothing else to do
     }
