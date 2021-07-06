@@ -368,7 +368,7 @@ input {
     margin-bottom: 20px;
     border-radius: 3px;
 }
-.blog-tags {
+.blog-tags, .blog-media {
 	border-top: 1px solid #aaa;
 	padding: 5px;
 	color: #555;
@@ -379,6 +379,15 @@ input {
     padding: 3px;
     margin: 3px;
     background: rgba(0, 0, 0, 0.2);
+}
+.booru-reference {
+	margin: 3px;
+}
+.booru-reference a {
+	border-bottom: 1px solid gray;
+}
+.booru-reference i {
+	font-size: 10px;
 }
 
 #contributors {

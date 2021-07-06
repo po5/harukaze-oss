@@ -149,7 +149,7 @@ async function fetchMedia(offset, limit, order) {
  * @param {number} order The order of results to return
  * @returns {Array<Object>} All media's info
  */
- async function fetchMediaInfos(offset, limit, order) {
+async function fetchMediaInfos(offset, limit, order) {
     return processMediaInfoRows(
         await mediaInfo()
             .offset(offset)
@@ -163,7 +163,7 @@ async function fetchMedia(offset, limit, order) {
  * @param {number} id The ID
  * @returns {Array<Object>} An array with the row containing the media or an empty array if none exists
  */
- async function fetchMediaById(id) {
+async function fetchMediaById(id) {
     return await knex('media')
         .select('*')
         .where('media.id', id)
@@ -174,7 +174,7 @@ async function fetchMedia(offset, limit, order) {
  * @param {number} id The ID
  * @returns {Array<Object>} An array with the row containing the media info or an empty array if none exists
  */
- async function fetchMediaInfoById(id) {
+async function fetchMediaInfoById(id) {
     return processMediaInfoRows(
         await mediaInfo()
             .where('media.id', id)
@@ -186,10 +186,23 @@ async function fetchMedia(offset, limit, order) {
  * @param {Array<number>} ids The IDs
  * @returns {Array<Object>} All media infos with the specified IDs
  */
- async function fetchMediaInfosByIds(ids) {
+async function fetchMediaInfosByIds(ids) {
     return processMediaInfoRows(
         await mediaInfo()
             .whereIn('media.id', ids)
+    )
+}
+
+/**
+ * Fetches booru-visible media infos by their IDs
+ * @param {Array<number>} ids The IDs
+ * @returns {Array<Object>} All booru-visible media infos with the specified IDs
+ */
+ async function fetchBooruVisibleMediaInfosByIds(ids) {
+    return processMediaInfoRows(
+        await mediaInfo()
+            .whereIn('media.id', ids)
+            .andWhere('media_booru_visible', true)
     )
 }
 
@@ -210,6 +223,29 @@ async function fetchMediaByHash(hash) {
  */
 async function fetchMediaCount() {
     return (await knex('media').count('*', { as: 'count' }))[0].count
+}
+
+/**
+ * Returns the total amount of booru-visible media
+ * @returns {number} The total amount of booru-visible media
+ */
+async function fetchBooruVisibleMediaCount() {
+    return (await knex('media')
+        .count('*', { as: 'count' })
+        .where('media_booru_visible', true))[0].count
+}
+
+/**
+ * Returns the amount of booru-visible media uploaded by the specified uploader
+ * @param {string} username The uploader's username
+ * @returns {number} The amount of booru-visible media uploaded by the specified uploader
+ */
+ async function fetchBooruVisibleMediaCountByUploaderUsername(username) {
+    return (await knex('media')
+        .count('*', { as: 'count' })
+        .where('media_booru_visible', true)
+        .andWhere(knex.raw('LOWER(`user_username`)'), username.toLowerCase())
+        .leftJoin('users', 'media_uploader', 'users.id'))[0].count
 }
 
 /**
@@ -248,8 +284,11 @@ module.exports.fetchMediaInfos = fetchMediaInfos
 module.exports.fetchMediaById = fetchMediaById
 module.exports.fetchMediaInfoById = fetchMediaInfoById
 module.exports.fetchMediaInfosByIds = fetchMediaInfosByIds
+module.exports.fetchBooruVisibleMediaInfosByIds = fetchBooruVisibleMediaInfosByIds
 module.exports.fetchMediaByHash = fetchMediaByHash
 module.exports.fetchMediaCount = fetchMediaCount
+module.exports.fetchBooruVisibleMediaCount = fetchBooruVisibleMediaCount
+module.exports.fetchBooruVisibleMediaCountByUploaderUsername = fetchBooruVisibleMediaCountByUploaderUsername
 module.exports.updateMediaById = updateMediaById
 module.exports.deleteMediaById = deleteMediaById
 

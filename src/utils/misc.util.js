@@ -154,6 +154,30 @@ function filenameToTitle(filename) {
 	return name.trim()
 }
 
+/**
+ * Searches for references to media in the provided string, and returns all found media IDs
+ * @param {string} str The string to search
+ * @returns {Array<number>} All found media IDs
+ */
+function findMediaIdsInString(str) {
+    let matches = str.match(/\/assets\/media\/([0-9]+)/g)
+
+    if(matches) {
+        let ids = []
+        
+        for(match of matches) {
+            let id = match.substring(match.lastIndexOf('/')+1)
+
+            if(!isNaN(id))
+                ids.push(id)
+        }
+
+        return ids
+    } else {
+        return []
+    }
+}
+
 /* Export functions */
 module.exports.stripTrailingSlash = stripTrailingSlash
 module.exports.arrayToSet = arrayToSet
@@ -164,3 +188,4 @@ module.exports.random = random
 module.exports.generateAlphanumericString = generateAlphanumericString
 module.exports.splitFilename = splitFilename
 module.exports.filenameToTitle = filenameToTitle
+module.exports.findMediaIdsInString = findMediaIdsInString

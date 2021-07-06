@@ -1,5 +1,7 @@
 const commentsModel = require('../models/comments.model')
 const postsModel = require('../models/posts.model')
+const mediaModel = require('../models/media.model')
+const { findMediaIdsInString } = require('../utils/misc.util')
 const paginationUtil = require('../utils/pagination.util')
 const { moodOrDefault } = require('../utils/reacts.util')
 const { Roles } = require('../utils/users.util')
@@ -29,7 +31,6 @@ async function fetchAndPutPageData(ctx, post) {
     // Check if comments are enabled
     let enableComments = post.enable_comments
     
-
     if(enableComments) {
         // Fetch total comments
         let totalComments = await commentsModel.fetchCommentsCountByPost(post.id)
@@ -51,6 +52,17 @@ async function fetchAndPutPageData(ctx, post) {
         ctx.state.replies = replies
         ctx.state.pagination = pagination
     }
+
+    // Extract media IDs
+    let mediaIds = findMediaIdsInString(post.content)
+    let media = []
+
+    // Fetch media if there are any IDs, otherwise just give empty array to save a query
+    if(mediaIds.length > 0) {
+        media = await mediaModel.fetchBooruVisibleMediaInfosByIds(mediaIds)
+    }
+
+    ctx.state.media = media
 
     // Page title
     ctx.state.pageTitle = post.title

@@ -25,10 +25,13 @@
     <% } %>
 </div>
 
-<div id="posts" class="container">
-    <div class="container-header">
-        <span>Posts</span>
-    </div>
+<div id="stats" class="container">
+    <% if(mediaCount > 0) { %>
+        <div class="container-header">Booru</div>
+        <p><%= username %> has uploaded <%= mediaCount %> item(s) to the booru.</p>
+        <p><a href="/booru/user/<%= username %>">View <%= username %>'s booru user page</a></p>
+    <% } %>
+    <div class="container-header">Posts</div>
     <% if(posts.length > 0) { %>
         <div id="posts-container">
             <% for(post of posts) { with(post) { %>
