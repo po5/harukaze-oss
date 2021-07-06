@@ -58,6 +58,7 @@ module.exports = router => {
     const contributorController = require('./controllers/contributor.controller')
     const contributorpanelController = require('./controllers/contributorpanel.controller')
     const adminpanelController = require('./controllers/adminpanel.controller')
+    const blogtagController = require('./controllers/blogtag.controller')
 
     // API controller imports
     const apiMediaController = require('./controllers/api/media.controller')
@@ -66,10 +67,10 @@ module.exports = router => {
     const apiBansController = require('./controllers/api/bans.controller')
     const apiUsersController = require('./controllers/api/users.controller')
 
-    // Redirects
+    /* Redirects */
     router.get('/', async ctx => await ctx.redirect('/home')) // /? index? that shit is for the birds, man. /home? now that's where it's at. simple, clean, efficient, fast, linux lacks these, which makes it trash
 
-    // Middleware
+    /* Middleware */
     router.use(renderdataMiddleware)
     router.use(apiutilsMiddleware)
     router.use(captchaMiddleware)
@@ -94,7 +95,7 @@ module.exports = router => {
         await assetsController.getAvatar(ctx, next)
     })
 
-    // Views
+    /* Views */
     router.get('/home', async (ctx, next) => {
         await homeController.getHome(ctx, next)
         await render('home', ctx)
@@ -194,6 +195,15 @@ module.exports = router => {
     router.get('/panel/admin', async (ctx, next) => {
         await adminpanelController.getAdminPanel(ctx, next)
         await render('adminpanel', ctx)
+    })
+
+    router.get('/tags/:tag', async (ctx, next) => {
+        await blogtagController.getBlogTag(ctx, next)
+        await render('blogtag', ctx)
+    })
+    router.get('/tags/:tag/:page', async (ctx, next) => {
+        await blogtagController.getBlogTag(ctx, next)
+        await render('blogtag', ctx)
     })
 
     /* API */

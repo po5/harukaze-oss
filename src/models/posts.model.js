@@ -285,6 +285,18 @@ async function fetchPostCountBySlugRegex(slugRegex) {
 }
 
 /**
+ * Fetches the amount of posts with the specified tag
+ * @param {string} tag The tag to search for
+ * @returns {number} The amount of posts with the specified tag
+ */
+async function fetchPublishedPostCountByTag(tag) {
+    return (await knex('posts')
+        .count('*', { as: 'count' })
+        .where('post_published', true)
+        .andWhereRaw('FIND_IN_SET(?, post_tags) > 0', [tag]))[0].count
+}
+
+/**
  * Updates the post with the specified ID
  * @param {number} id The ID of the post to update
  * @param {string} title The post's new title
@@ -345,6 +357,7 @@ module.exports.fetchPostInfosByIds = fetchPostInfosByIds
 module.exports.fetchPublishedPostInfosByTag = fetchPublishedPostInfosByTag
 module.exports.fetchPostsCount = fetchPostsCount
 module.exports.fetchPostCountBySlugRegex = fetchPostCountBySlugRegex
+module.exports.fetchPublishedPostCountByTag = fetchPublishedPostCountByTag
 module.exports.updatePostById = updatePostById
 module.exports.deletePostById = deletePostById
 module.exports.deletePostsByIds = deletePostsByIds
