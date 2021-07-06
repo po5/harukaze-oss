@@ -26,6 +26,18 @@
             <% } %>
         </div>
     <% } %>
+    <% if(media.length > 0) { %>
+        <div class="blog-media">
+            Booru items in this post:
+            <br><br>
+            <% for(file of media) { %>
+                <p class="booru-reference">
+                    <a href="/booru/item/<%= file.id %>"><%= file.title %></a>
+                    <i>(Uploaded by <a href="/booru/user/<%= file.uploader_username %>"><%= file.uploader_username %></a>)</i>
+                </p>
+            <% } %>
+        </div>
+    <% } %>
 </div>
 <% if(enableComments) { %>
     <div id="comments-area">
