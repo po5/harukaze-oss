@@ -132,9 +132,33 @@ Run without any arguments to start the server.`)
     app.use(koaMount('/static', koaStatic(path.join(__dirname, '../res/static'))))
     app.use(router.routes()).use(router.allowedMethods())
 
+    // Error page
+    app.use(async (ctx, next) => {
+        try {
+            await next()
+        } catch (err) {
+            ctx.status = err.status || 500;
+
+            ctx.state.error = err
+            ctx.state.pageTitle = 'Something went wrong!'
+            await ctx.render('error', ctx.state)
+
+            ctx.app.emit('error', err, ctx);
+        }
+    })
+
     // Routes
     require('./routes.js')(router)
+
+    // 404 page
+    app.use(async ctx => {
+        sdfsdf()
+        ctx.status = 404
+        ctx.state.pageTitle = 'Not found'
+        await ctx.render('notfound', ctx.state)
+    })
     
+    // Start HTTP server
     app.listen(config.server.port, config.server.host, null, () => {
         started = true
         console.log(`Listening at ${config.server.host}:${config.server.port}`)
