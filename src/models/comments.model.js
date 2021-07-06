@@ -171,7 +171,7 @@ async function fetchReplyCommentsByParentIds(ids) {
  * @param {number} id The ID
  * @returns {Array<Object>} An array with the row containing the comment's info or an empty array if none exists
  */
- async function fetchCommentInfoById(id) {
+async function fetchCommentInfoById(id) {
     return processCommentInfoRows(
         await commentInfo()
             .where('comments.id', id)
@@ -242,6 +242,16 @@ async function deleteCommentsByAuthor(author) {
         .where('comment_author', author)
 }
 
+/**
+ * Deletes all comments with the specified parent
+ * @param {number} parent The parent comment ID
+ */
+async function deleteCommentsByParent(parent) {
+    return await knex('comments')
+        .del()
+        .where('comment_parent', parent)
+}
+
 /* Export functions */
 module.exports.createComment = createComment
 module.exports.fetchCommentInfos = fetchCommentInfos
@@ -254,6 +264,7 @@ module.exports.fetchCommentsCountByPost = fetchCommentsCountByPost
 module.exports.deleteCommentById = deleteCommentById
 module.exports.deleteCommentsByIds = deleteCommentsByIds
 module.exports.deleteCommentsByAuthor = deleteCommentsByAuthor
+module.exports.deleteCommentsByParent = deleteCommentsByParent
 
 /* Export values */
 module.exports.Order = Order

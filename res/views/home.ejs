@@ -3,7 +3,7 @@
         <div class="blogpost">
             <div class="aligned"> 
                 <div class="blog-icon">
-                    <img src="/static/img/iconthing.png" alt="Site icon">
+                    <img src="/assets/avatar/<%= author_username %>" alt="Author icon">
                 </div>
                 <div class="name2">
                     <a href="/contributor/<%= author_username %>">
@@ -20,7 +20,7 @@
             <div class="blog-view-button"><a href="/blog/<%= slug %>">View post</a></div>
             <div class="blogdate">
                 <span><a href="/blog/<%= slug %>"><%= date(post.created_on) %></a><span>
-                <span class="right"><a href="/blog/<%= slug %>">comments (<%= comments %>)</a></span>
+                <span class="right"><a href="/blog/<%= slug %>#comments-area">comments (<%= comments %>)</a></span>
             </div>
         </div>
     <% } } %>

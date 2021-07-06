@@ -206,10 +206,40 @@ xbbcode.addTags({
         openTag: function(params, content) {
             return '<pre class="xbbcode-code">'
         },
-        closeTag: function(param, content) {
+        closeTag: function(params, content) {
             return '</pre>'
         },
         noParse: true
+    },
+    quote: {
+        openTag: function(params, content) {
+            if(params && params.includes('::')) {
+                let parts = params.substring(1).split('::')
+                let img = parts[0]
+                let dir = parts[1]
+                let color = parts[2]
+
+                if(!isNaN(img))
+                    img = '/assets/media/'+img
+
+                let htmlPerson = (
+`<div class="interview-person">
+    <img class="interview-image" src="${img}">
+</div>`)
+                let htmlContent = `<div class="interview-content speech-bubble speech-bubble-${dir}" style="border-color:${color};background-color:${color}"><div class="speech-bubble-content">${content}</div></div>`
+                
+                return (
+`<blockquote class="interview interview-${dir}" data-image="${img}" data-dir="${dir}">
+    ${dir == 'right' ? htmlContent+htmlPerson : htmlPerson+htmlContent}
+</blockquote>`)
+            } else {
+                return `<blockquote class="xbbcode-blockquote">${content}</blockquote>`
+            }
+        },
+        closeTag: function(params, content) {
+            return ''
+        },
+        displayContent: false
     }
 })
 

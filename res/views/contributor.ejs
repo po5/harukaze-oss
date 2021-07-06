@@ -3,7 +3,7 @@
 <h1><%= username %></h1>
 <div class="container">
     <img id="avatar" src="<%= avatarUrl %>" alt="<%= username %>'s avatar">
-    <div id="bio-container" class="speech-bubble">
+    <div id="bio-container" class="speech-bubble speech-bubble-left">
         <div class="speech-bubble-content">
             <% if(bio) { %>
                 <%= bio %>
@@ -16,7 +16,7 @@
         <br><br>
         <div class="container-header">Info</div>
         <img src="<%= characterUrl %>" alt="<%= username %>'s comment character">
-        <div id="info-container" class="speech-bubble">
+        <div id="info-container" class="speech-bubble speech-bubble-left">
             <div class="speech-bubble-point"></div>
             <div class="speech-bubble-content">
                 <%- renderBBCode(info) %>

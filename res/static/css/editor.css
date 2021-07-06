@@ -2,6 +2,10 @@
     background-image: url('/static/img/media-placeholder.png') !important;
     background-size: contain;
 }
+.sceditor-button-interview div {
+    background-image: url('/static/img/interview-icon.png') !important;
+    background-size: contain;
+}
 .media-nav {
     text-align: center;
 }

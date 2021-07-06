@@ -41,6 +41,7 @@ module.exports = router => {
     // Middleware imports
     const renderdataMiddleware = require('./middleware/renderdata.middleware')
     const apiutilsMiddleware = require('./middleware/api/apiutils.middleware')
+    const captchaMiddleware = require('./middleware/captcha.middleware')
 
     // Controller imports
     const assetsController = require('./controllers/assets.controller')
@@ -71,6 +72,7 @@ module.exports = router => {
     // Middleware
     router.use(renderdataMiddleware)
     router.use(apiutilsMiddleware)
+    router.use(captchaMiddleware)
 
     /* Assets */
     router.get('/assets/media/:id/:filename', async (ctx, next) => {

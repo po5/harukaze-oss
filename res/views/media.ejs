@@ -56,7 +56,7 @@
                     </template>
                     <template v-else>
                         <template v-if="media.tags.length > 0">
-                            <a v-for="tag in media.tags" class="tag" :href="'/booru/tags/'+tag">
+                            <a v-for="tag in tags" class="tag" :href="'/booru/tags/'+tag">
                                 {{ tag }}
                             </a>
                         </template>

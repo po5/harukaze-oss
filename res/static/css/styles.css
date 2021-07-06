@@ -154,16 +154,8 @@ hr {
 	margin-left: 4px;
 	color: #555;
 }
-.comments-area {
-	background-color: #eee;
-	border: 1px solid #aaa;
-	border-radius: 3px;
-}
-.comments-area {
-	margin-bottom: 8px;
-}
 .comments {
-	/* TODO */
+	
 }
 .comment-box {
 	margin-left: 4px;
@@ -188,6 +180,14 @@ hr {
 	margin-bottom:4px;
 	font-weight: bold;
 	text-align: right;
+}
+.comment-delete {
+	text-align: right;
+}
+.comment-delete input[type="submit"] {
+	color: white;
+	background: red;
+	border: none;
 }
 .comment-reply-content {
 	margin-left: 10px;
@@ -335,34 +335,50 @@ input {
 	color: red;
 	font-weight: bold;
 }
-.speech-bubble {
-    padding: 20px;
-    padding-bottom: 0px;
+.interview {
+    background: none;
+    border: none;
+	padding: 0px;
+	margin: 0px;
+}
+.interview-left {
+    text-align: left;
+}
+.interview-right {
+    text-align: right;
+}
+
+.interview-content.speech-bubble {
+    max-width: calc(100% - 290px);
+}
+.interview-image {
+    width: 128px;
+    height: auto;
+}
+.interview-name {
+    font-weight: bold;
+}
+.interview-person {
+    position: relative;
+    top: 20px;
     display: inline-block;
-    border: 3px solid black;
-    border-radius: 30px;
-    background: white;
-    margin-left: 40px;
-	max-width: 100%;
-	word-wrap: break-word;
+    margin-bottom: 25px;
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 20px;
+    border-radius: 3px;
 }
-.speech-bubble::after {
-    content: '|||||||';
-    color: rgba(0, 0, 0, 0);
-	position: relative;
-    right: 42px;
-	bottom: 18px;
-    background: url('/static/img/speechbubble-side.png');
+.blog-tags {
+	border-top: 1px solid #aaa;
+	padding: 5px;
+	color: #555;
+	font-weight: bold;
 }
-.speech-bubble-content {
-    overflow: auto;
-    max-width: 100%;
-	min-height: 30px;
-    border-radius: 5px;
-}
-.speech-bubble-content * {
-    max-width: 100%;
-    word-wrap: break-word;
+.tag {
+    display: inline-block;
+    padding: 3px;
+    margin: 3px;
+    background: rgba(0, 0, 0, 0.2);
 }
 
 #contributors {
@@ -374,4 +390,54 @@ input {
 	padding-bottom: 30px;
 	text-transform: lowercase;
 	margin-bottom: 10px;
+}
+#comments-area {
+	background-color: #eee;
+	border: 1px solid #aaa;
+	border-radius: 3px;
+	margin-bottom: 8px;
+}
+
+/* Speech bubble */
+.speech-bubble {
+	position: relative;
+	background-color: #fff;
+	padding: 1.125em 1.5em;
+	border-radius: 1rem;
+	display: inline-block;
+	margin-left: 60px;
+	margin-top: 60px;
+	bottom: 50px;
+	border-bottom-color: #fff;
+}
+.speech-bubble-content {
+	word-wrap: break-word;
+}
+.speech-bubble-content img, .speech-bubble-content video {
+	max-width: 100%;
+}
+.speech-bubble::before {
+    content: '';
+	position: absolute;
+	width: 0;
+	height: 0;
+	bottom: 20px;
+	border: .75rem solid transparent;
+	border-top: none;
+	transform: rotate(-95deg) scale(0.8, 4);
+	border-bottom-color: inherit;
+}
+.speech-bubble-left::before {
+	left: -30px;
+}
+.speech-bubble-right .speech-bubble-content, .speech-bubble-left .speech-bubble-content {
+	text-align: left;
+}
+.speech-bubble-right {
+	margin-left: 0px;
+    margin-right: 35px;
+}
+.speech-bubble-right::before {
+	transform: rotate(95deg) scale(-0.8, 4);
+	right: -30px;
 }

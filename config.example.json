@@ -8,7 +8,9 @@
     },
     "site": {
         "title": "VISUABUSTERS",
-        "maxUploadSize": 500000000
+        "description": "Visuabusters is bustin' out the visua!",
+        "maxUploadSize": 500000000,
+        "captchaExpireSeconds": 120
     },
     "reacts": {
         "default": "defaultchan",
@@ -29,7 +31,7 @@
         ]
     },
     "pagination": {
-        "pageSize": 10
+        "pageSize": 5
     },
     "ffmpeg": {
         "ffmpegPath": "/usr/bin/ffmpeg",

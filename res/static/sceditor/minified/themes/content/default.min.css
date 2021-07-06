@@ -1,1 +1,77 @@
 /*! SCEditor | (C) 2011-2013, Sam Clarke | sceditor.com/license */body,code:before,html,p,table{margin:0;padding:0;font-family:Verdana,Arial,Helvetica,sans-serif;font-size:14px;color:#111;line-height:1.25;overflow:visible}html{height:100%}.ios{overflow:auto;-webkit-overflow-scrolling:touch}.ios body{position:relative;overflow:auto}body{min-height:100%;word-wrap:break-word}body.placeholder:before{content:attr(placeholder);color:#555;font-style:italic}ol,ul{margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0}table,td{border:1px dotted #000;empty-cells:show}table td{min-width:5px}code{display:block;background:#f1f1f1;white-space:pre;padding:1em;text-align:left;margin:.25em 0;direction:ltr}blockquote{background:#fff7d9;margin:.25em 0;border-left:.3em solid #f4e59f;padding:.5em .5em .5em .75em}blockquote cite{font-weight:700;display:block;font-size:1em;margin:0 -.5em .25em -.75em;padding:0 .5em .15em .75em;border-bottom:1px solid #f4e59f}h1,h2,h3,h4,h5,h6{padding:0;margin:0}div,p{min-height:1.25em}
+
+/* Harukaze modifications */
+.interview {
+    background: none;
+    border: none;
+}
+.interview-left {
+    text-align: left;
+}
+.interview-right {
+    text-align: right;
+}
+
+.interview-content.speech-bubble {
+    max-width: calc(100% - 250px);
+}
+.interview-image {
+    width: 128px;
+    height: auto;
+}
+.interview-name {
+    font-weight: bold;
+}
+.interview-person {
+    position: relative;
+    top: 20px;
+    display: inline-block;
+    margin-bottom: 25px;
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 20px;
+    border-radius: 3px;
+}
+
+.speech-bubble {
+	position: relative;
+	background-color: rgb(230, 230, 230);
+	padding: 1.125em 1.5em;
+	border-radius: 1rem;
+	display: inline-block;
+	margin-left: 60px;
+	margin-top: 60px;
+	bottom: 50px;
+	border-bottom-color: rgb(230, 230, 230);
+}
+.speech-bubble-content {
+	word-wrap: break-word;
+}
+.speech-bubble-content img, .speech-bubble-content video {
+	max-width: 100%;
+}
+.speech-bubble::before {
+    content: '';
+	position: absolute;
+	width: 0;
+	height: 0;
+	bottom: 20px;
+	border: .75rem solid transparent;
+	border-top: none;
+	transform: rotate(-95deg) scale(0.8, 4);
+	border-bottom-color: inherit;
+}
+.speech-bubble-left::before {
+	left: -30px;
+}
+.speech-bubble-right .speech-bubble-content, .speech-bubble-left .speech-bubble-content {
+	text-align: left;
+}
+.speech-bubble-right {
+	margin-left: 0px;
+    margin-right: 35px;
+}
+.speech-bubble-right::before {
+	transform: rotate(95deg) scale(-0.8, 4);
+	right: -30px;
+}

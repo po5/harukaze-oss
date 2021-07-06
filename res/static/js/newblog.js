@@ -5,7 +5,7 @@ var contentElem = document.getElementById('content')
 sceditor.create(contentElem, {
 	format: 'bbcode',
 	style: '/static/sceditor/minified/themes/content/default.min.css',
-	toolbar: sceditor.defaultOptions.toolbar+'|media'
+	toolbar: defaultToolbar
 })
 
 // Ask for confirmation before leaving

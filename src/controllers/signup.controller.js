@@ -4,10 +4,13 @@ const userloginsModel = require('../models/userlogins.model')
 const usersUtil = require('../utils/users.util')
 
 // Puts boilerplate context data
-function setupCtx(ctx) {
+async function setupCtx(ctx) {
     ctx.state.pageTitle = 'Sign Up'
     ctx.state.error = null
     ctx.state.username = ''
+
+    // Setup captcha
+    await ctx.createCaptcha()
 }
 
 /**
@@ -16,7 +19,7 @@ function setupCtx(ctx) {
  */
 module.exports.getSignup = async ctx => {
     // Setup context
-    setupCtx(ctx)
+    await setupCtx(ctx)
     
     // Put next page in context
     let next = ctx.request.query.next ? ctx.request.query.next : '/'
@@ -42,7 +45,7 @@ module.exports.postSignup = async ctx => {
     let body = ctx.request.body
 
     // Setup context
-    setupCtx(ctx)
+    await setupCtx(ctx)
 
     // Put next page in context
     let next = body.next ? body.next : '/'
@@ -52,6 +55,12 @@ module.exports.postSignup = async ctx => {
     if(ctx.state.authed) {
         ctx.state.noRender = true
         ctx.redirect(next)
+        return
+    }
+
+    // Check captcha
+    if(!ctx.validateCaptcha()) {
+        ctx.state.error = 'You failed the captcha, try again'
         return
     }
 

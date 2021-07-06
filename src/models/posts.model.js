@@ -240,8 +240,28 @@ async function fetchPostInfoBySlug(withContent, slug) {
  */
 async function fetchPostInfosByIds(withContent, ids) {
     return processPostInfoRows(
-        await postInfo()
+        await postInfo(withContent)
             .whereIn('posts.id', ids)
+    )
+}
+
+/**
+ * Fetches info about all published posts with the specified tag
+ * @param {string} tag The tag to search for
+ * @param {boolean} withContent Whether to include post content
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
+ * @returns {Array<Object>} All published posts' info
+ */
+async function fetchPublishedPostInfosByTag(tag, withContent, offset, limit, order) {
+    return processPostInfoRows(
+        await postInfo(withContent)
+            .where('post_published', true)
+            .andWhereRaw('FIND_IN_SET(?, post_tags) > 0', [tag])
+            .offset(offset)
+            .limit(limit)
+            .orderByRaw(orderBy(order))
     )
 }
 
@@ -322,6 +342,7 @@ module.exports.fetchPostBySlug = fetchPostBySlug
 module.exports.fetchPostInfoById = fetchPostInfoById
 module.exports.fetchPostInfoBySlug = fetchPostInfoBySlug
 module.exports.fetchPostInfosByIds = fetchPostInfosByIds
+module.exports.fetchPublishedPostInfosByTag = fetchPublishedPostInfosByTag
 module.exports.fetchPostsCount = fetchPostsCount
 module.exports.fetchPostCountBySlugRegex = fetchPostCountBySlugRegex
 module.exports.updatePostById = updatePostById

@@ -10,6 +10,9 @@ const { Moods, characterMoodToUrl } = require('../utils/reacts.util')
 module.exports = async (ctx, next) => {
     // Site data
     ctx.state.site = config.site
+    
+    // URL
+    ctx.state.url = ctx.url
 
     // Default page title to null
     ctx.state.pageTitle = null
@@ -58,6 +61,11 @@ module.exports = async (ctx, next) => {
 
         return `${day} at ${hour}:${minute} ${pm ? 'PM' : 'AM'}`
     }
+    
+    // Tag format
+    ctx.state.formatTag = str => str
+        .toLowerCase()
+        .replace(/_/g, ' ')
 
     // JSON stringify
     ctx.state.prettyJson = obj => JSON.stringify(obj, null, 4)

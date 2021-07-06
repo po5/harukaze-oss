@@ -5,11 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="stylesheet" href="/static/css/xbbcode.css">
-    <% if(pageTitle == null) { %>
-        <title><%= site.title %></title>
-    <% } else { %>
-        <title><%= pageTitle %> - <%= site.title %></title>
-    <% } %>
+
+    <% var _title = pageTitle == null ? site.title : pageTitle+' - '+site.title %>
+    <% var _metaTitle = pageTitle || site.title %>
+
+    <title><%= _title %></title>
+
+    <meta property="og:title" content="<%= _metaTitle %>">
+    <meta property="og:description" content="<%= site.description %>">
+    <meta property="og:image" content="/static/img/logo.png">
+    <meta property="og:url" content="<%= url %>">
+
+    <meta name="twitter:title" content="<%= _metaTitle %>">
+    <meta name="twitter:description" content="<%= site.description %>">
+    <meta name="twitter:image" content="/static/img/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
     <script>

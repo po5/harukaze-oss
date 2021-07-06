@@ -14,5 +14,10 @@
     <br>
     <input type="password" placeholder="Something good" name="password" maxlength="64" id="password">
     <br><br>
+    <%- captchaInput() %>
+    <%- captchaImage() %>
+    <br>
+    <input type="text" name="captcha-response" placeholder="Enter the text above">
+    <br><br>
     <input type="submit" value="Sign up!">
 </form>

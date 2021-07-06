@@ -56,6 +56,16 @@ function main() {
         computed: {
             mbSize() {
                 return (this.media.size/1000000).toPrecision(3)
+            },
+            tags() {
+                let tags = new Array(this.media.tags.length)
+
+                for(i in this.media.tags)
+                    tags[i] = this.media.tags[i]
+                        .toLowerCase()
+                        .replace(/_/g, ' ')
+
+                return tags
             }
         },
         methods: {

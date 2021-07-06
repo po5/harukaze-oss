@@ -1,6 +1,6 @@
 <div class="blogpost">
     <div class="aligned"> 
-        <div class="blog-icon"><img src="/static/img/iconthing.png" alt=""></div>
+        <div class="blog-icon"><img src="/assets/avatar/<%= post.author_username %>" alt=""></div>
         <div class="name2">
             <a href="/contributor/<%= post.author_username %>">
                 <span><%= post.author_username %></span>
@@ -18,15 +18,24 @@
     <hr>
     <span class="blogdate"><%= date(post.created_on) %></span>
     <div class="blogdesc"><%- renderBBCode(post.content) %></div>
+    <% if(post.tags.length > 0) { %>
+        <div class="blog-tags">
+            Blog tags:
+            <% for(tag of post.tags) { %>
+                <a href="/tags/<%= tag %>" class="tag"><%= formatTag(tag) %></a>
+            <% } %>
+        </div>
+    <% } %>
 </div>
 <% if(enableComments) { %>
-    <div class="comments-area">
+    <div id="comments-area">
         <div class="aligned">
             <span class="name2">COMMENTS</span>
         </div>
         <div class="comment-box">
             <% if(authed) { %>
                 <form action="" method="POST">
+                    <input type="hidden" name="action" value="comment">
                     <% if(error != null) { %>
                         <p class="form-error"><%= error %></p>
                         <br>
@@ -66,8 +75,15 @@
                         </div>
                         <div class="comment-content"><%= comment.content %></div>
                         <div class="commentdate"><%= date(comment.created_on) %></div>
+                        <% if(authed && (user.id == comment.author || user.id == post.author || user.role > 1)) { %>
+                            <form action="" method="POST" class="comment-delete">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="comment" value="<%= comment.id %>">
+                                <input type="submit" value="Delete">
+                            </form>
+                        <% } %>
                     </div>
-                    <div class="comment-replies">
+                    <div class="comment-replies" id="comment-<%= comment.id %>-replies">
                         <% for(reply of replies) { %>
                             <% if(reply.parent == comment.id) { %>
                                 <div class="comment-reply">
@@ -79,6 +95,13 @@
                                     </div>
                                     <div class="comment-reply-content"><%= reply.content %></div>
                                     <div class="commentdate"><span><%= date(reply.created_on) %></span></div>
+                                    <% if(authed && (user.id == reply.author || user.id == post.author || user.role > 1)) { %>
+                                        <form action="" method="POST" class="comment-delete">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="comment" value="<%= reply.id %>">
+                                            <input type="submit" value="Delete">
+                                        </form>
+                                    <% } %>
                                 </div>
                             <% } %>
                         <% } %>
@@ -89,6 +112,7 @@
                                         <p class="form-error"><%= replyErrors[comment.id] %></p>
                                         <br>
                                     <% } %>
+                                    <input type="hidden" name="action" value="comment">
                                     <input type="hidden" name="reply" value="<%= comment.id %>">
                                     <textarea placeholder="Reply something..." id="comment-box" name="content" rows="10" col="50"></textarea>
                                     <br>
