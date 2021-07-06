@@ -17,6 +17,9 @@ module.exports = async (ctx, next) => {
     // Default page title to null
     ctx.state.pageTitle = null
 
+    // Default meta image to null
+    ctx.state.metaImage = null
+
     // Fetch contributors
     ctx.state.contributors = await usersModel.fetchContributorInfos(0, 99)
 

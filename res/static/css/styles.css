@@ -389,6 +389,9 @@ input {
 .booru-reference i {
 	font-size: 10px;
 }
+.site-logo {
+	margin-bottom: 20px;
+}
 
 #contributors {
 	

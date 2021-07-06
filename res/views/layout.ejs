@@ -8,17 +8,18 @@
 
     <% var _title = pageTitle == null ? site.title : pageTitle+' - '+site.title %>
     <% var _metaTitle = pageTitle || site.title %>
+    <% var _image = metaImage || '/static/img/logo.png' %>
 
     <title><%= _title %></title>
 
     <meta property="og:title" content="<%= _metaTitle %>">
     <meta property="og:description" content="<%= site.description %>">
-    <meta property="og:image" content="/static/img/logo.png">
+    <meta property="og:image" content="<%= _image %>">
     <meta property="og:url" content="<%= url %>">
 
     <meta name="twitter:title" content="<%= _metaTitle %>">
     <meta name="twitter:description" content="<%= site.description %>">
-    <meta name="twitter:image" content="/static/img/logo.png">
+    <meta name="twitter:image" content="<%= _image %>">
     <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
