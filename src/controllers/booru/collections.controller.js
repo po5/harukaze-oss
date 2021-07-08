@@ -22,6 +22,9 @@ module.exports.getCollections = async ctx => {
     // Put pagination information
     ctx.state.pagination = pagination
 
+    // Put metadata
+    ctx.state.metaDescription = `View ${totalCollections} collection${totalCollections == 1 ? '' : 's'} of items on the booru`
+
     // Put data
     ctx.state.collections = collections
     ctx.state.queryTags = []

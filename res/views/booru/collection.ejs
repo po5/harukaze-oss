@@ -1,5 +1,5 @@
 <br>
-<i>Showing files in collection "<%= collection.title %>"</i>
+<i>Showing items in collection "<%= collection.title %>"</i>
 <% if(collection.comment) { %>
     <br>
     <div id="item-comment" class="container">
@@ -9,7 +9,7 @@
 <% } %>
 <br>
 <% if(media.length > 0) { %>
-    <div id="search-results">
+    <div id="collection-items">
         <% for(file of media) { with(file) { %>
             <div class="listing media-listing <%= mime.startsWith('video/') ? 'video-listing' : '' %>" title="<%= title %> (<%= tags.join(' ') %>)">
                 <a href="/booru/item/<%= id %>?collection=<%= collection.id %>">

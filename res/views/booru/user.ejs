@@ -1,0 +1,20 @@
+<br>
+<i>Showing items by <a href="/contributor/<%= user.username %>"><%= user.username %></a></i>
+<br>
+<% if(media.length > 0) { %>
+    <div id="user-items">
+        <% for(file of media) { with(file) { %>
+            <div class="listing media-listing <%= mime.startsWith('video/') ? 'video-listing' : '' %>" title="<%= title %> (<%= tags.join(' ') %>)">
+                <a href="/booru/item/<%= id %>">
+                    <img src="/assets/thumbnail/<%= id %>" alt="<%= title %> (<%= tags.join(' ') %>)">
+                </a>
+                <% if(authed && user.role > 0) { %>
+                    <br>
+                    <a href="/booru/action?action=add-to-collection&item=<%= id %>">Add to collection</a>
+                <% } %>
+            </div>
+        <% } } %>
+    </div>
+<% } else { %>
+    <p>This user has not uploaded any items.</p>
+<% } %>

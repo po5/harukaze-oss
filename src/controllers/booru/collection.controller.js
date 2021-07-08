@@ -1,7 +1,6 @@
 const collectionsModel = require('../../models/collections.model')
 const mediaModel = require('../../models/media.model')
 const paginationUtil = require('../../utils/pagination.util')
-const utils = require('../../utils/misc.util')
 
 /**
  * GET controller for booru collection page
@@ -52,7 +51,13 @@ module.exports.getCollection = async (ctx, next) => {
     ctx.state.pagination = pagination
     
     // Set page title
-    ctx.state.pageTitle = collection.title
+    ctx.state.pageTitle = `Items in collection "${collection.title}"`
+
+    // Put metadata if present
+    let itemCount = collection.items
+    ctx.state.metaDescription = collection.comment ? collection.comment : `View ${itemCount} item${itemCount == 1 ? '' : 's'} in collection "${collection.title}" on the booru`
+    if(collection.first_item != null)
+        ctx.state.metaImage = '/assets/thumbnail/'+collection.first_item
 
     // Put data
     ctx.state.collection = collection
