@@ -19,7 +19,6 @@
                     </div>
                 <% } %>
                 <div class="blogdesc"><%- renderBBCode(content) %></div>
-                <div class="blog-view-button"><a href="/blog/<%= slug %>">View post</a></div>
                 <div class="blogdate">
                     <span><a href="/blog/<%= slug %>"><%= date(post.created_on) %></a><span>
                     <span class="right"><a href="/blog/<%= slug %>#comments-area">comments (<%= comments %>)</a></span>

@@ -1,0 +1,139 @@
+body {
+    padding: 0px;
+    margin: 0px;
+    background-image: url("/static/img/bg.png");
+    background-repeat: repeat-x;
+    margin: 0 auto;
+    font-family: Verdana;
+}
+
+.container {
+    background: #eee;
+    border: 1px solid #aaa;
+    padding: 5px;
+    margin-bottom: 20px;
+    border-radius: 3px;
+}
+.container-header {
+    text-align: center;
+    border-bottom: 1px solid #aaa;
+    margin-bottom: 10px;
+    font-weight: bold;
+    cursor: default;
+    display: inline-block;
+}
+.sidebar-section {
+    margin-bottom: 20px;
+}
+
+.listing {
+    display: inline-block;
+    margin: 10px;
+    width: 180px;
+    height: 180px;
+    text-align: center;
+}
+.listing img {
+    max-width: 100%;
+    max-height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+.video-listing img {
+    border: 3px solid blue;
+    max-width: calc(100% - 6px);
+    max-height: calc(100% - 6px);
+}
+.item-container {
+    text-align: center;
+}
+
+#header {
+    width: 100vw;
+    height: 102px;
+    background: rgba(255, 255, 255, 0.5);
+}
+#logo-container {
+    width: 140px;
+    padding: 10px;
+}
+#logo {
+    height: 50px;
+}
+#nav {
+    background: #3e95ff;
+    color: white;
+    padding: 5px
+}
+#nav a {
+    color: white;
+}
+
+#sidebar {
+    float: left;
+    padding: 10px;
+    background: white;
+    width: 200px;
+    min-height: calc(100vh - 125px);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+#tag-form input[type="submit"] {
+    margin-top: 3px;
+    width: calc(100% - 15px);
+}
+
+#content {
+    position: relative;
+    right: 10px;
+    float: right;
+    width: calc(100vw - 240px);
+}
+#item-collection, #item-collections {
+    margin-top: 10px;
+    display: inline-block;
+}
+#item-collection {
+    text-align: left;
+}
+#item-collections .listing {
+    width: 100px;
+    height: 100px;
+}
+#item-content {
+    position: relative;
+    left: 8px;
+}
+#item-content img, #item-content video {
+    max-width: calc(100% - 10px);
+}
+#item-comment {
+    display: inline-block;
+    margin-top: 20px;
+    word-wrap: break-word;
+}
+
+#pagination {
+    text-align: center;
+}
+
+/* Mobile view */
+@media screen and (max-width: 975px) {
+	#sidebar {
+		float: none;
+        display: block;
+        width: calc(100vw - 20px);
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        min-height: 0px;
+        height: auto;
+	}
+    #tag-form input[type="submit"], #tag-form input[type="text"] {
+        margin-top: 3px;
+        width: calc(100% - 30px);
+    }
+    #content {
+        float: none;
+        display: block;
+        width: calc(100vw - 20px);
+    }
+}

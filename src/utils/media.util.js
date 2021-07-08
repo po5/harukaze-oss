@@ -11,7 +11,7 @@ async function generateThumbnail(inputPath, outputPath) {
         let proc = execFile(config.ffmpeg.ffmpegPath, [
             '-i',
             inputPath,
-            '-vf', 'scale=-2:150',
+            '-vf', 'scale=-2:180',
             '-vframes', '1',
             '-an',
             outputPath,

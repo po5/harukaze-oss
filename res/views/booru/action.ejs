@@ -1,0 +1,60 @@
+<% if(error) { %>
+    <span class="form-error"><%= error %></span>
+    <br><br>
+<% } else { %>
+    <% if(action == 'create-collection') { %>
+        <h1>Create new collection</h1>
+        <form action="" method="POST">
+            <input type="hidden" name="action" value="<%= action %>">
+            <label for="title">Title</label><br>
+            <input type="text" name="title" id="title" placeholder="Collection title" maxlength="256">
+            <br><br>
+            <label for="comment">Comment</label><br>
+            <textarea name="comment" id="comment" cols="30" rows="10" placeholder="Collection comment (can be blank)"></textarea>
+            <br><br>
+            <input type="submit" value="Create">
+        </form>
+    <% } else if(action == 'add-to-collection') { %>
+        <h1>Add item to collection</h1>
+        <% if(collections.length > 0) { %>
+            <form action="" method="POST">
+                <input type="hidden" name="action" value="<%= action %>">
+                <input type="hidden" name="item" value="<%= itemId %>">
+                <label for="collection">Select a collection to add the item to:</label>
+                <br><br>
+                <select name="collection" id="collection">
+                    <% for(col of collections) { with(col) { %>
+                        <option value="<%= id %>" <%= collection.id == id ? 'selected' : '' %>><%= title %> (<%= items %> item<%= s(items) %>)</option>
+                    <% } } %>
+                </select>
+                <br><br>
+                <input type="submit" value="Add">
+            </form>
+        <% } else { %>
+            <p>There are no collections that this item can be added to.</p>
+        <% } %>
+    <% } else if(action == 'remove-from-collection') { %>
+        <h1>Remove item from collection</h1>
+        <p>Are you sure you want to remove this item?</p>
+        <form action="" method="POST">
+            <input type="hidden" name="action" value="<%= action %>">
+            <input type="hidden" name="item" value="<%= itemId %>">
+            <input type="hidden" name="collection" value="<%= collection %>">
+            <input type="submit" value="Yes, remove it">
+        </form>
+    <% } else if(action == 'delete-collection') { %>
+        <h1>Delete collection</h1>
+        <p>Are you sure you want to delete this collection?</p>
+        <form action="" method="POST">
+            <input type="hidden" name="action" value="<%= action %>">
+            <input type="hidden" name="collection" value="<%= collection %>">
+            <input type="submit" value="Yes, delete it">
+        </form>
+    <% } else if(action) { %>
+        <h1>Unknown action</h1>
+        <p>The action "<%= action %>" is not a known action.</p>
+    <% } else { %>
+        <h1>No action supplied</h1>
+        <p>No action was supplied.</p>
+    <% } %>
+<% } %>

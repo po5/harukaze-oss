@@ -5,6 +5,9 @@ body {
   width: 891px;
   font-family: Verdana;
 }
+label {
+	font-weight: bold;
+}
 
 .maincol {
   float: left;
@@ -112,7 +115,6 @@ a:hover {
 	color: #555;
 }
 .blogdesc {
-	margin-left: 4px;
 	font-size: 14px;
 	color: #555;
 	margin-bottom:4px;
@@ -361,12 +363,17 @@ input {
 .interview-person {
     position: relative;
     top: 20px;
+	right: 10px;
     display: inline-block;
-    margin-bottom: 25px;
     text-align: center;
     padding: 5px;
     margin-bottom: 20px;
     border-radius: 3px;
+	vertical-align: top;
+}
+.interview-noresize .interview-person img {
+	width: auto !important;
+	height: auto !important;
 }
 .blog-tags, .blog-media {
 	border-top: 1px solid #aaa;
@@ -436,11 +443,11 @@ input {
 	bottom: 20px;
 	border: .75rem solid transparent;
 	border-top: none;
-	transform: rotate(-95deg) scale(0.8, 4);
+	transform: rotate(-95deg) scale(0.8, 2);
 	border-bottom-color: inherit;
 }
 .speech-bubble-left::before {
-	left: -30px;
+	left: -20px;
 }
 .speech-bubble-right .speech-bubble-content, .speech-bubble-left .speech-bubble-content {
 	text-align: left;
@@ -451,5 +458,17 @@ input {
 }
 .speech-bubble-right::before {
 	transform: rotate(95deg) scale(-0.8, 4);
-	right: -30px;
+	right: -20px;
+}
+
+/* Mobile view */
+@media screen and (max-width: 975px) {
+	#contributors {
+		display: none;
+	}
+	.maincol {
+		position: absolute;
+		left: 25px;
+		width: calc(100vw - 68px);
+	}
 }

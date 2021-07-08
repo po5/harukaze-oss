@@ -1,0 +1,20 @@
+<% if(collections.length > 0) { %>
+    <div id="collections">
+        <% for(collection of collections) { with(collection) { %>
+            <div class="listing collection-listing" title="<%= title %>">
+                <a href="/booru/collection/<%= id %>">
+                    <img src="<%= first_item == null ? '/static/img/media-placeholder.png' : '/assets/thumbnail/'+first_item %>" alt="<%= title %>">
+                    <br>
+                    <span class="collection-title"><%= title %> (<%= items %> item<%= s(items) %>)</span>
+                </a>
+            </div>
+        <% } } %>
+    </div>
+<% } else { %>
+    <h1>No collections</h1>
+    <p>There are no collections at the moment.</p>
+<% } %>
+<% if(authed && user.role > 0) { %>
+    <br>
+    <a href="/booru/action?action=create-collection"><button>Create a new collection</button></a>
+<% } %>

@@ -58,6 +58,7 @@ module.exports = router => {
     const contributorController = require('./controllers/contributor.controller')
     const contributorpanelController = require('./controllers/contributorpanel.controller')
     const adminpanelController = require('./controllers/adminpanel.controller')
+    const sitesettingsController = require('./controllers/sitesettings.controller')
     const blogtagController = require('./controllers/blogtag.controller')
     const rssController = require('./controllers/rss.controller')
 
@@ -196,6 +197,15 @@ module.exports = router => {
     router.get('/panel/admin', async (ctx, next) => {
         await adminpanelController.getAdminPanel(ctx, next)
         await render('adminpanel', ctx)
+    })
+
+    router.get('/panel/admin/settings', async (ctx, next) => {
+        await sitesettingsController.getSiteSettings(ctx, next)
+        await render('sitesettings', ctx)
+    })
+    router.post('/panel/admin/settings', async (ctx, next) => {
+        await sitesettingsController.postSiteSettings(ctx, next)
+        await render('sitesettings', ctx)
     })
 
     router.get('/tags/:tag', async (ctx, next) => {

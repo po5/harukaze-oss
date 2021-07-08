@@ -31,6 +31,11 @@
     padding: 5px;
     margin-bottom: 20px;
     border-radius: 3px;
+	vertical-align: top;
+}
+.interview-noresize .interview-person img {
+	width: auto !important;
+	height: auto !important;
 }
 
 .speech-bubble {
@@ -58,11 +63,11 @@
 	bottom: 20px;
 	border: .75rem solid transparent;
 	border-top: none;
-	transform: rotate(-95deg) scale(0.8, 4);
+	transform: rotate(-95deg) scale(0.8, 2);
 	border-bottom-color: inherit;
 }
 .speech-bubble-left::before {
-	left: -30px;
+	left: -20px;
 }
 .speech-bubble-right .speech-bubble-content, .speech-bubble-left .speech-bubble-content {
 	text-align: left;
@@ -73,5 +78,5 @@
 }
 .speech-bubble-right::before {
 	transform: rotate(95deg) scale(-0.8, 4);
-	right: -30px;
+	right: -20px;
 }

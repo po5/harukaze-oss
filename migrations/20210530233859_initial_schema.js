@@ -71,6 +71,24 @@ exports.up = async function(knex) {
             \`media_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
             PRIMARY KEY (\`id\`));
     `)
+    await knex.raw(`
+        CREATE TABLE \`collections\` (
+            \`id\` INT NOT NULL AUTO_INCREMENT,
+            \`collection_title\` VARCHAR(256) NULL,
+            \`collection_comment\` VARCHAR(2048) NULL,
+            \`collection_creator\` BIGINT NOT NULL,
+            \`collection_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (\`id\`));
+    `)
+    await knex.raw(`
+        CREATE TABLE ``collectionitems\` (
+            \`id\` BIGINT NOT NULL AUTO_INCREMENT,
+            \`item_collection\` INT NOT NULL,
+            \`item_media\` BIGINT NOT NULL,
+            \`item_creator\` BIGINT NOT NULL,
+            \`item_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (\`id\`));
+    `)
 };
 
 exports.down = async function(knex) {

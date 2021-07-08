@@ -3,7 +3,6 @@ const ipbansModel = require('./models/ipbans.model')
 const usersUtil = require('./utils/users.util')
 const utils = require('./utils/misc.util')
 const fs = require('fs')
-
 const config = require('../config.json')
 const koa = require('koa')
 const koaLogger = require('koa-logger')
@@ -17,6 +16,10 @@ const koaMount = require('koa-mount')
 const authMiddleware = require('./middleware/auth.middleware')
 const protectMiddleware = require('./middleware/protect.middleware')
 const path = require('path')
+const { putEssentialState } = require('./utils/render.util')
+
+// Put root in global object
+global.root = path.join(__dirname, '../')
 
 // Whether the server has started
 var started = false
@@ -103,7 +106,7 @@ Run without any arguments to start the server.`)
     const router = new koaRouter()
 
     koaEjs(app, {
-        root: path.join(__dirname, '../res/views'),
+        root: path.normalize(global.root+'/res/views'),
         layout: 'layout',
         viewExt: 'ejs',
         cache: false,
@@ -139,22 +142,26 @@ Run without any arguments to start the server.`)
         } catch (err) {
             ctx.status = err.status || 500;
 
+            await putEssentialState(ctx.state)
             ctx.state.error = err
             ctx.state.pageTitle = 'Something went wrong!'
-            await ctx.render('error', ctx.state)
+            ctx.state.bbcode = config.site.errorPage
+            await ctx.render('error', ctx)
 
             ctx.app.emit('error', err, ctx);
         }
     })
 
     // Routes
-    require('./routes.js')(router)
+    require('./routes')(router)
+    require('./booruroutes')(router)
 
     // 404 page
     app.use(async ctx => {
-        sdfsdf()
+        await putEssentialState(ctx)
         ctx.status = 404
         ctx.state.pageTitle = 'Not found'
+        ctx.state.bbcode = config.site.notFoundPage
         await ctx.render('notfound', ctx.state)
     })
     

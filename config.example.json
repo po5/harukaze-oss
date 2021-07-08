@@ -10,7 +10,9 @@
         "title": "VISUABUSTERS",
         "description": "Visuabusters is bustin' out the visua!",
         "maxUploadSize": 500000000,
-        "captchaExpireSeconds": 120
+        "captchaExpireSeconds": 120,
+        "notFoundPage": "[size=7]Not Found[/size]\nNo page could be found...",
+        "errorPage": "[size=7]Error Occurred[/size]\nAn internal error occurred while serving this request..."
     },
     "reacts": {
         "default": "defaultchan",
@@ -31,7 +33,8 @@
         ]
     },
     "pagination": {
-        "pageSize": 5
+        "pageSize": 5,
+        "booruPageSize": 40
     },
     "ffmpeg": {
         "ffmpegPath": "/usr/bin/ffmpeg",

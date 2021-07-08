@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/booru.css">
+
+    <% var _title = pageTitle == null ? site.title : pageTitle+' - '+site.title %>
+    <% var _metaTitle = pageTitle || site.title %>
+    <% var _image = metaImage || '/static/img/logo.png' %>
+    <% var _desc = metaDescription || site.description %>
+
+    <title><%= _title %></title>
+
+    <meta property="og:title" content="<%= _metaTitle %>">
+    <meta property="og:description" content="<%= _desc %>">
+    <meta property="og:image" content="<%= _image %>">
+    <meta property="og:url" content="<%= url %>">
+
+    <meta name="twitter:title" content="<%= _metaTitle %>">
+    <meta name="twitter:description" content="<%= _desc %>">
+    <meta name="twitter:image" content="<%= _image %>">
+    <meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+    <script>
+    <% if(typeof user == 'undefined') { %>
+        var authed = false;
+    <% } else { %>
+        var authed = false;
+        var user = {
+            id: <%= user.id %>,
+            username: "<%= user.username %>",
+            role: <%= user.role %>
+        };
+    <% } %>
+    </script>
+    
+    <div id="header"><% include partials/_header.ejs %></div>
+    <div id="sidebar"><% include partials/_sidebar.ejs %></div>
+    <div id="content"><%- body %></div>
+    <div id="footer"><% include partials/_footer.ejs %></div>
+</body>
+</html>

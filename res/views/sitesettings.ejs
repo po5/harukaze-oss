@@ -1,0 +1,68 @@
+<link rel="stylesheet" href="/static/css/sitesettings.css">
+<link rel="stylesheet" href="/static/css/editor.css">
+<link rel="stylesheet" href="/static/sceditor/minified/themes/default.min.css" id="theme-style">
+		  
+<script src="/static/sceditor/minified/sceditor.min.js"></script>
+<script src="/static/sceditor/minified/icons/monocons.js"></script>
+<script src="/static/sceditor/minified/formats/bbcode.js"></script>
+
+<h1>Site Settings</h1>
+<% if(error) { %>
+    <p id="error" class="form-error"><%= error %></p>
+    <br>
+<% } %>
+
+<div class="container">
+    <div class="container-header">Warning</div>
+    <p>
+        Some of these settings could cause issues with the site.<br>
+        Anything marked with <code>[!]</code> is considered a "dangerous" setting, and you should be cautious when changing it.
+    </p>
+</div>
+
+<div class="container">
+    <form action="" method="POST">
+        <div class="container-header">Site Metadata</div>
+        <label for="site-title">Site title</label><br>
+        <input type="text" name="site-title" id="site-title" value="<%= siteTitle %>">
+        <br><br>
+        <label for="site-description">Site description</label><br>
+        <textarea type="text" name="site-description" id="site-description"><%= siteDescription %></textarea>
+        <br><br>
+        <div class="container-header">Not Found (404) Page</div>
+        <textarea name="not-found-page" id="not-found-page"><%= notFoundPage %></textarea>
+        <br><br>
+        <div class="container-header">Error Page</div>
+        <textarea name="error-page" id="error-page"><%= errorPage %></textarea>
+        <br><br>
+        <div class="container-header">Comment Reacts</div>
+        <label for="default-react">[!] Default react character</label><br>
+        <input type="text" name="default-react" id="default-react" value="<%= defaultReact %>">
+        <br><br>
+        <label for="moods">[!] Moods</label><br>
+        <p>These values must be in order, or else comments will not have their original moods. This is primarily for adding new moods. One line per mood.</p>
+        <textarea name="moods" id="moods"><%= moods.join('\n') %></textarea>
+        <br><br>
+        <div class="container-header">Miscellaneous</div>
+        <label for="page-size">Page size</label><br>
+        <p>Applies to homepage, blog tag search, and most other pages that have pagination.</p>
+        <input type="number" name="page-size" id="page-size" value="<%= pageSize %>">
+        <br><br>
+        <label for="page-size">Booru page size</label><br>
+        <p>Applies to booru pages.</p>
+        <input type="number" name="booru-page-size" id="booru-page-size" value="<%= booruPageSize %>">
+        <br><br>
+        <label for="max-upload-size">Max upload size</label><br>
+        <p>This applies to media. Size is in bytes, so 500000000 = 500MB, or half a gigabyte.</p>
+        <input type="number" name="max-upload-size" id="max-upload-size" value="<%= maxUploadSize %>">
+        <br><br>
+        <label for="captcha-expire-seconds">Captcha expire seconds</label><br>
+        <p>The amount of seconds before captchas expire.</p>
+        <input type="number" name="captcha-expire-seconds" id="captcha-expire-seconds" value="<%= captchaExpireSeconds %>">
+        <br><br>
+        <input type="submit" value="Save">
+    </form>
+</div>
+
+<script src="/static/js/editor.js"></script>
+<script src="/static/js/sitesettings.js"></script>

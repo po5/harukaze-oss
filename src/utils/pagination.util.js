@@ -1,14 +1,14 @@
 const config = require('../../config.json')
-const pageSize = config.pagination.pageSize
 const utils = require('./misc.util')
 
 /**
  * Returns information about this paginated route.
  * A paginated route looks like this: "/route/:page". "/route" is also valid, and is just understood as the first page.
+ * Query params, such as "/route?page=1" are also valid
  * 
  * Returned object contains the following:
  * 
- * page (number) - Current page, based on route param named "page", or 1 if not in route params
+ * page (number) - Current page, based on route param/query named "page", or 1 if not in route params/query
  * 
  * totalPages (number) - The total amount of pages
  * 
@@ -28,17 +28,22 @@ const utils = require('./misc.util')
  * 
  * @param {import('koa').Context} ctx The route context
  * @param {number} itemCount The amount of items available to paginate
+ * @param {boolean} useBooruSettings Whether to use booru settings (different page size, use query params instead of route params)
  * @returns {Object} Information about the paginated route
  */
-function paginatedRouteInfo(ctx, itemCount) {
+function paginatedRouteInfo(ctx, itemCount, useBooruSettings = false) {
+    const pageSize = useBooruSettings ? config.pagination.booruPageSize : config.pagination.pageSize
     let page = 1
     let hasPageParam = false
     let totalPages = Math.max(1, Math.ceil(itemCount/pageSize))
 
     // Get page number from route param if available
     if(!isNaN(ctx.params.page)) {
-        hasPageParam = true
+        hasPageParam = !useBooruSettings
         page = Math.max(1, ctx.params.page*1)
+    } else if(!isNaN(ctx.request.query.page)) {
+        hasPageParam = !useBooruSettings
+        page = Math.max(1, ctx.request.query.page*1)
     }
 
     // Correct page number
@@ -52,7 +57,21 @@ function paginatedRouteInfo(ctx, itemCount) {
 
     // Define page paths function
     let pageLink = function(num) {
-        return basePath+'/'+num+(ctx.querystring.length > 0 ? '?'+ctx.querystring : '')
+        if(useBooruSettings) {
+            // Copy query params, change page, and re-serialize them
+            let query = { ...ctx.query }
+            query.page = num
+            let queryStr = ''
+            let keys = Object.keys(query)
+            for(key of keys)
+                queryStr += `&${key}=${encodeURIComponent(query[key])}`
+            if(queryStr.length > 0)
+                queryStr = '?'+queryStr.substring(1)
+
+            return basePath+queryStr
+        } else {
+            return basePath+'/'+num+(ctx.querystring.length > 0 ? '?'+ctx.querystring : '')
+        }
     }
     let lastPage = (page > 1) ? pageLink(page-1) : null
     let nextPage = (page < totalPages) ? pageLink(page+1) : null

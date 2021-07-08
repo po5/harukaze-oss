@@ -1,17 +1,19 @@
-<div id="contributors">
-<% for(contributor of contributors) { with(contributor) { %>
-    <div class="contributor">
-        <img class="contributor-avatar" src="/assets/avatar/<%= username %>">
-        <div class="contributor-name">
-            <a href="/contributor/<%= username %>"><%= username %></a>
+<% if(typeof contributors != 'undefined') { %>
+    <div id="contributors">
+    <% for(contributor of contributors) { with(contributor) { %>
+        <div class="contributor">
+            <img class="contributor-avatar" src="/assets/avatar/<%= username %>">
+            <div class="contributor-name">
+                <a href="/contributor/<%= username %>"><%= username %></a>
+            </div>
+            <div class="contributor-bio">
+                <% if(bio) { %>
+                    <%= bio %>
+                <% } else { %>
+                    <i>No bio added...</i>
+                <% } %>
+            </div>
         </div>
-        <div class="contributor-bio">
-            <% if(bio) { %>
-                <%= bio %>
-            <% } else { %>
-                <i>No bio added...</i>
-            <% } %>
-        </div>
+    <% } } %>
     </div>
-<% } } %>
-</div>
+<% } %>

@@ -1,0 +1,51 @@
+<% with(item) { %><div class="item-container item-container-<%= mime.split('/')[0] %>">
+    <% if(typeof collection != 'undefined') { %>
+        <div id="item-collection" class="container">
+            This item is a member of the collection <a href="/booru/collection/<%= collection.id %>"><%= collection.title %></a>, which has <%= collection.items %> item<%= s(collection.items) %>.
+            <br>
+            <a href="/booru/collection/<%= collection.id %>">View collection</a>
+        </div>
+    <% } else if(typeof collections != 'undefined') { %>
+        <div id="item-collections" class="container">
+            <div class="container-header">This item is a member of the following collections</div>
+            <br>
+            <% for(col of collections) { %>
+                <div class="listing collection-listing" title="<%= col.title %>">
+                    <a href="/booru/collection/<%= col.id %>">
+                        <img src="<%= col.first_item == null ? '/static/img/media-placeholder.png' : '/assets/thumbnail/'+col.first_item %>" alt="<%= col.title %>">
+                        <br>
+                        <span class="collection-title"><%= col.title %> (<%= col.items %> item<%= s(col.items) %>)</span>
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    <% } %>
+    <div id="item-title">
+        <h1><%= title %></h1>
+    </div>
+    <div id="item-content">
+        <% if(mime.startsWith('image/')) { %>
+            <img src="/assets/media/<%= id %>/<%= encodeURIComponent(filename) %>" alt="<%= title %>">
+        <% } else if(mime.startsWith('video/')) { %>
+            <video src="/assets/media/<%= id %>/<%= encodeURIComponent(filename) %>" controls></video>
+        <% } else if(mime.startsWith('audio/')) { %>
+            <% if(thumbnail_key) { %>
+                <video poster="/assets/thumbnail/<%= id %>" src="/assets/media/<%= id %>/<%= encodeURIComponent(filename) %>" controls></video>
+            <% } else { %>
+                <audio src="/assets/media/<%= id %>/<%= encodeURIComponent(filename) %>" controls></audio>
+            <% } %>
+        <% } else { %>
+            <img src="/static/img/media-placeholder.png" alt="Placeholder image">
+            <p>
+                No preview available.
+                <a href="/assets/media/<%= id %>/<%= encodeURIComponent(filename) %>">Download file</a>
+            </p>
+        <% } %>
+    </div>
+    <% if(comment) { %>
+        <div id="item-comment" class="container">
+            <div class="container-header">Creator comment</div>
+            <pre><%= comment %></pre>
+        </div>
+    <% } %>
+</div><% } %>

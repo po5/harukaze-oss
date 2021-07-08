@@ -126,6 +126,7 @@ sceditor.formats.bbcode.set('quote', {
             let img = attr(element, 'data-image') || ''
             let dir = attr(element, 'data-dir') || 'left'
             let color = attr(element, 'data-color') || '#e6e6e6'
+            let resize = attr(element, 'data-resize') || 'resize'
 
             let pattern = dir == 'right' ?
                 /\W*\[img(=.*)?\].*\[\/img\]\W*(\[\/right\])?\W*$/ :
@@ -147,13 +148,10 @@ sceditor.formats.bbcode.set('quote', {
                 txt = txt.trim()
             }
 
-            console.log(txt)
             if(txt.indexOf(']') < txt.indexOf('['))
                 txt = '['+txt
-                
-            console.log(txt)
 
-            return `[quote=${img}::${dir}::${color}]${txt}[/quote]`
+            return `[quote=${img}::${dir}::${color}::${resize}]${txt}[/quote]`
         } else {
             var authorAttr = 'data-author'
             var	author = ''
@@ -191,8 +189,9 @@ sceditor.formats.bbcode.set('quote', {
         if(attrs.defaultattr && attrs.defaultattr.includes('::')) {
             let parts = attrs.defaultattr.split('::')
             let img = parts[0]
-            let dir = parts[1]
-            let color = parts[2] || '#e6e6e6'
+            let dir = parts[1] || 'left'
+            let color = parts[2] || '#fff'
+            let resize = parts[3] || 'resize'
 
             if(!isNaN(img))
                 img = '/assets/media/'+img
@@ -209,7 +208,7 @@ sceditor.formats.bbcode.set('quote', {
 </div>`)
             
             return (
-`<blockquote class="interview interview-${dir}" data-image="${img}" data-dir="${dir}" data-color="${color}">
+`<blockquote class="interview interview-${dir} interview-${resize}" data-image="${img}" data-dir="${dir}" data-color="${color}" data-resize="${resize}">
     ${dir == 'right' ? htmlContent+htmlPerson : htmlPerson+htmlContent}
 </blockquote>`)
         } else {
@@ -333,6 +332,12 @@ sceditor.command.set('interview', {
                 Bubble color:
                 <input type="color" v-model="color">
                 <br><br>
+                Resize character:
+                <select v-model="resizeSelect">
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+                <br><br>
                 <button @click.prevent="insert()">Insert</button>
             </template>
         </div>
@@ -354,7 +359,19 @@ sceditor.command.set('interview', {
                 selecting: true,
                 selected: null,
                 dir: 'left',
-                color: '#e6e6e6'
+                color: '#e6e6e6',
+                resize: true
+            },
+            computed: {
+                resizeSelect: {
+                    get() {
+                        return this.resize.toString()
+                    },
+                    set(val) {
+                        let v = val.toLowerCase()
+                        this.resize = v == 'yes' || v == 'true'
+                    }
+                }
             },
             methods: {
                 handleError(err) {
@@ -406,7 +423,7 @@ sceditor.command.set('interview', {
                     }
                 },
                 insert() {
-                    editor.insert(`\n[quote=${this.selected}::${this.dir}::${this.color}]Edit me[/quote]\n`)
+                    editor.insert(`\n[quote=${this.selected}::${this.dir}::${this.color}::${this.resize ? 'resize' : 'noresize'}]Edit me[/quote]\n`)
                     editor.closeDropDown()
                 }
             }

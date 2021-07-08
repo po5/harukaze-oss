@@ -14,5 +14,6 @@ h1 {
     max-width: calc(100% - 220px);
 }
 #info-container {
-    max-width: calc(100% - 230px);
+    width: 100%;
+    word-wrap: break-word;
 }

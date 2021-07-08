@@ -170,7 +170,7 @@ async function fetchMediaById(id) {
 }
 
 /**
- * Fetches media info by its ID
+ * Fetches a media's info by its ID
  * @param {number} id The ID
  * @returns {Array<Object>} An array with the row containing the media info or an empty array if none exists
  */
@@ -178,6 +178,19 @@ async function fetchMediaInfoById(id) {
     return processMediaInfoRows(
         await mediaInfo()
             .where('media.id', id)
+    )
+}
+
+/**
+ * Fetches a booru-visible media's info by its ID
+ * @param {number} id The ID
+ * @returns {Array<Object>} An array with the row containing the media info or an empty array if none exists
+ */
+ async function fetchBooruVisibleMediaInfoById(id) {
+    return processMediaInfoRows(
+        await mediaInfo()
+            .where('media_booru_visible', true)
+            .andWhere('media.id', id)
     )
 }
 
@@ -198,11 +211,53 @@ async function fetchMediaInfosByIds(ids) {
  * @param {Array<number>} ids The IDs
  * @returns {Array<Object>} All booru-visible media infos with the specified IDs
  */
- async function fetchBooruVisibleMediaInfosByIds(ids) {
+async function fetchBooruVisibleMediaInfosByIds(ids) {
     return processMediaInfoRows(
         await mediaInfo()
             .whereIn('media.id', ids)
             .andWhere('media_booru_visible', true)
+    )
+}
+
+/**
+ * Fetches booru-visible media infos with the specified tags
+ * @param {Array<string>} tags The tags to search for
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
+ * @returns {Array<Object>} All booru-visible media infos with the specified tags
+ */
+async function fetchBooruVisibleMediaInfosByTags(tags, offset, limit, order) {
+    let query = mediaInfo()
+            .where('media_booru_visible', true)
+            .offset(offset)
+            .limit(limit)
+            .orderByRaw(orderBy(order))
+    
+    // Add tags to query
+    for(tag of tags)
+        query.andWhereRaw('FIND_IN_SET(?, media_tags) > 0', [tag])
+
+    return processMediaInfoRows(await query)
+}
+
+/**
+ * Fetches booru-visible media infos in the specified collection
+ * @param {number} collection The collection ID
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
+ * @returns {Array<Object>} All booru-visible media infos with the specified tags
+ */
+ async function fetchBooruVisibleMediaInfosByCollection(collection, offset, limit, order) {
+    return processMediaInfoRows(
+        await mediaInfo()
+            .leftJoin('collectionitems', 'item_media', 'media.id')
+            .where('media_booru_visible', true)
+            .andWhere('item_collection', collection)
+            .offset(offset)
+            .limit(limit)
+            .orderByRaw(orderBy(order))
     )
 }
 
@@ -236,6 +291,24 @@ async function fetchBooruVisibleMediaCount() {
 }
 
 /**
+ * Returns the total amount of booru-visible media with the specified tags
+ * @param {Array<string>} tags The tags to search for
+ * @returns {number} The total amount of booru-visible media with the specified tags
+ */
+async function fetchBooruVisibleMediaCountByTags(tags) {
+    // Start query
+    let query = knex('media')
+        .count('*', { as: 'count' })
+        .where('media_booru_visible', true)
+    
+    // Add tags to query
+    for(tag of tags)
+        query.andWhereRaw('FIND_IN_SET(?, media_tags) > 0', [tag])
+    
+    return (await query)[0].count
+}
+
+/**
  * Returns the amount of booru-visible media uploaded by the specified uploader
  * @param {string} username The uploader's username
  * @returns {number} The amount of booru-visible media uploaded by the specified uploader
@@ -246,6 +319,19 @@ async function fetchBooruVisibleMediaCount() {
         .where('media_booru_visible', true)
         .andWhere(knex.raw('LOWER(`user_username`)'), username.toLowerCase())
         .leftJoin('users', 'media_uploader', 'users.id'))[0].count
+}
+
+/**
+ * Returns the amount of booru-visible media in the specified collection
+ * @param {number} collection The collection ID
+ * @returns {number} The amount of booru-visible media in the specified collection
+ */
+ async function fetchBooruVisibleMediaCountByCollection(collection) {
+    return (await knex('media')
+        .count('*', { as: 'count' })
+        .where('media_booru_visible', true)
+        .andWhere('item_collection', collection)
+        .leftJoin('collectionitems', 'item_media', 'media.id'))[0].count
 }
 
 /**
@@ -283,12 +369,17 @@ module.exports.fetchMedia = fetchMedia
 module.exports.fetchMediaInfos = fetchMediaInfos
 module.exports.fetchMediaById = fetchMediaById
 module.exports.fetchMediaInfoById = fetchMediaInfoById
+module.exports.fetchBooruVisibleMediaInfoById = fetchBooruVisibleMediaInfoById
 module.exports.fetchMediaInfosByIds = fetchMediaInfosByIds
 module.exports.fetchBooruVisibleMediaInfosByIds = fetchBooruVisibleMediaInfosByIds
+module.exports.fetchBooruVisibleMediaInfosByTags = fetchBooruVisibleMediaInfosByTags
+module.exports.fetchBooruVisibleMediaInfosByCollection = fetchBooruVisibleMediaInfosByCollection
 module.exports.fetchMediaByHash = fetchMediaByHash
 module.exports.fetchMediaCount = fetchMediaCount
 module.exports.fetchBooruVisibleMediaCount = fetchBooruVisibleMediaCount
+module.exports.fetchBooruVisibleMediaCountByTags = fetchBooruVisibleMediaCountByTags
 module.exports.fetchBooruVisibleMediaCountByUploaderUsername = fetchBooruVisibleMediaCountByUploaderUsername
+module.exports.fetchBooruVisibleMediaCountByCollection = fetchBooruVisibleMediaCountByCollection
 module.exports.updateMediaById = updateMediaById
 module.exports.deleteMediaById = deleteMediaById
 

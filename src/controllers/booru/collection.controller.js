@@ -1,0 +1,62 @@
+const collectionsModel = require('../../models/collections.model')
+const mediaModel = require('../../models/media.model')
+const paginationUtil = require('../../utils/pagination.util')
+const utils = require('../../utils/misc.util')
+
+/**
+ * GET controller for booru collection page
+ * @param {import("koa").Context} ctx The context
+ */
+module.exports.getCollection = async (ctx, next) => {
+    let id = ctx.params.id*1
+
+    // Validate ID
+    if(isNaN(id)) {
+        ctx.state.noRender = true
+        await next()
+        return
+    }
+
+    // Fetch collection
+    let collectionRes = await collectionsModel.fetchCollectionInfoById(id)
+
+    // Check if collection exists
+    if(collectionRes.length < 1) {
+        ctx.state.noRender = true
+        await next()
+        return
+    }
+
+    let collection = collectionRes[0]
+
+    // Fetch total media in collection
+    let totalMedia = await mediaModel.fetchBooruVisibleMediaCountByCollection(id)
+
+    // Get pagination info
+    let pagination = paginationUtil.paginatedRouteInfo(ctx, totalMedia, true)
+
+    // Fetch media for collection
+    let media = await mediaModel.fetchBooruVisibleMediaInfosByCollection(id, pagination.queryOffset, pagination.queryLimit, mediaModel.Order.CREATED_DESC)
+
+    // Enumerate tags from items
+    let resultTags = []
+    for(file of media)
+        for(tag of file.tags)
+            if(!resultTags.includes(tag))
+                resultTags.push(tag)
+    
+    // Sort tags alphabetically
+    resultTags.sort()
+
+    // Put pagination information
+    ctx.state.pagination = pagination
+    
+    // Set page title
+    ctx.state.pageTitle = collection.title
+
+    // Put data
+    ctx.state.collection = collection
+    ctx.state.media = media
+    ctx.state.resultTags = resultTags
+    ctx.state.queryTags = []
+}

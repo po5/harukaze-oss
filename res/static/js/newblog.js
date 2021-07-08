@@ -1,5 +1,5 @@
 // Constants
-var contentElem = document.getElementById('content')
+const contentElem = document.getElementById('content')
 
 // Init SCEditor
 sceditor.create(contentElem, {

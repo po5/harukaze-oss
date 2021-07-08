@@ -216,8 +216,9 @@ xbbcode.addTags({
             if(params && params.includes('::')) {
                 let parts = params.substring(1).split('::')
                 let img = parts[0]
-                let dir = parts[1]
-                let color = parts[2]
+                let dir = parts[1] || 'left'
+                let color = parts[2] || '#fff'
+                let resize = parts[3] || 'resize'
 
                 if(!isNaN(img))
                     img = '/assets/media/'+img
@@ -229,7 +230,7 @@ xbbcode.addTags({
                 let htmlContent = `<div class="interview-content speech-bubble speech-bubble-${dir}" style="border-color:${color};background-color:${color}"><div class="speech-bubble-content">${content}</div></div>`
                 
                 return (
-`<blockquote class="interview interview-${dir}" data-image="${img}" data-dir="${dir}">
+`<blockquote class="interview interview-${dir} interview-${resize}" data-image="${img}" data-dir="${dir}" data-resize="${resize}">
     ${dir == 'right' ? htmlContent+htmlPerson : htmlPerson+htmlContent}
 </blockquote>`)
             } else {

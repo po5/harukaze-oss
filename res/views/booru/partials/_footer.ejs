@@ -1,0 +1,15 @@
+<% if(typeof pagination != 'undefined') { with(pagination) { %>
+    <div id="pagination">
+        Page
+        <% for(let i = Math.max(page-4, 1); i <= Math.min(page+4, totalPages); i++) { %>
+            <% if(i == page) { %>
+                <b class="current-page"><%= i %></b>
+            <% } else { %>
+                <a href="<%= pageLink(i) %>"><%= i %></a>
+            <% } %>
+        <% } %>
+        <% if(page < totalPages-1) { %>
+            ... <a href="<%= pageLink(totalPages) %>"><%= totalPages %></a>
+        <% } %>
+    </div>
+<% } } %>

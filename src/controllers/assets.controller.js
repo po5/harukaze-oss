@@ -102,7 +102,6 @@ module.exports.getMedia = async (ctx, next) => {
 
     // Check if it has a thumbnail
     if(!media.media_thumbnail_key) {
-        
         ctx.redirect('/static/img/media-placeholder.png')
         return
     }
