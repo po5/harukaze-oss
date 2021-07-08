@@ -89,6 +89,14 @@ exports.up = async function(knex) {
             \`item_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
             PRIMARY KEY (\`id\`));
     `)
+    await knex.raw(`
+        CREATE TABLE \`harukaze\`.\`moods\` (
+            \`id\` INT NOT NULL AUTO_INCREMENT,
+            \`mood_name\` VARCHAR(256) NOT NULL,
+            \`mood_key\` VARCHAR(256) NOT NULL,
+            \`mood_creator\` VARCHAR(45) NULL,
+            PRIMARY KEY (\`id\`));
+    `)
 };
 
 exports.down = async function(knex) {
