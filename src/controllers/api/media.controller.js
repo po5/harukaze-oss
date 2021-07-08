@@ -213,9 +213,9 @@ module.exports.postDeleteMedia = async ctx => {
         // Handle each entry
         for(file of media) {
             // Delete files
-            await unlink('media/'+file.media_key)
-            if(file.media_thumbnail_key)
-                await unlink('media/thumbnails/'+file.media_thumbnail_key)
+            await unlink('media/'+file.key)
+            if(file.thumbnail_key)
+                await unlink('media/thumbnails/'+file.thumbnail_key)
             
             // Delete entry
             await mediaModel.deleteMediaById(file.id)
