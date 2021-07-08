@@ -37,7 +37,9 @@ module.exports.getMedia = async (ctx, next) => {
     ctx.res
         .setHeader('Accept-Ranges', 'bytes')
         .setHeader('Vary', 'accept-encoding')
-        .setHeader('Content-Disposition', `filename="${media.media_filename}"`)
+    if(!ctx.params.filename)
+        ctx.res.setHeader('Content-Disposition', `filename="${media.media_filename.replace(/[^\x00-\x7F]/g, '_')}"`)
+
     ctx.length = media.media_size
     ctx.etag = media.media_hash
     ctx.type = media.media_mime
@@ -91,7 +93,7 @@ module.exports.getMedia = async (ctx, next) => {
     let mediaRes = await mediaModel.fetchMediaById(id)
         
     // Check if it exists
-    if(mediaRes.length < 0) {
+    if(mediaRes.length < 1) {
         notFound()
         return
     }
@@ -136,7 +138,7 @@ module.exports.getMedia = async (ctx, next) => {
     let userRes = await usersModel.fetchUserByUsername(username)
         
     // Check if it exists
-    if(userRes.length < 0) {
+    if(userRes.length < 1) {
         notFound()
         return
     }
