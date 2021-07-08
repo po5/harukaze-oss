@@ -94,7 +94,8 @@ exports.up = async function(knex) {
             \`id\` INT NOT NULL AUTO_INCREMENT,
             \`mood_name\` VARCHAR(256) NOT NULL,
             \`mood_key\` VARCHAR(256) NOT NULL,
-            \`mood_creator\` VARCHAR(45) NULL,
+            \`mood_creator\` VARCHAR(45) NOT NULL,
+            \`mood_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
             PRIMARY KEY (\`id\`));
     `)
 };
