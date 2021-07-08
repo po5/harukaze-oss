@@ -98,6 +98,7 @@ body {
 #item-collections .listing {
     width: 100px;
     height: 100px;
+    font-size: 10px;
 }
 #item-content {
     position: relative;
