@@ -68,6 +68,7 @@ module.exports = router => {
     const apiCommentsController = require('./controllers/api/comments.controller')
     const apiBansController = require('./controllers/api/bans.controller')
     const apiUsersController = require('./controllers/api/users.controller')
+    const apiMoodsController = require('./controllers/api/moods.controller')
 
     /* Redirects */
     router.get('/', async ctx => await ctx.redirect('/home')) // /? index? that shit is for the birds, man. /home? now that's where it's at. simple, clean, efficient, fast, linux lacks these, which makes it trash
@@ -99,7 +100,7 @@ module.exports = router => {
     router.get('/assets/mood/:id', async (ctx, next) => {
         await assetsController.getMood(ctx, next)
     })
-    router.get('/assets/avatar/:id/:filename', async (ctx, next) => {
+    router.get('/assets/mood/:id/:filename', async (ctx, next) => {
         await assetsController.getMood(ctx, next)
     })
 
@@ -371,6 +372,64 @@ module.exports = router => {
     router.post('/api/admin/users/roles/set', async (ctx, next) => {
         try {
             await apiUsersController.postSetRole(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+
+    router.get('/api/admin/characters/list', async (ctx, next) => {
+        try {
+            await apiMoodsController.getCharacters(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/admin/characters/default/set', async (ctx, next) => {
+        try {
+            await apiMoodsController.postSetCharacterDefault(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/admin/characters/create', async (ctx, next) => {
+        try {
+            await apiMoodsController.postCreateCharacter(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/admin/characters/delete', async (ctx, next) => {
+        try {
+            await apiMoodsController.postDeleteCharacter(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+
+    router.get('/api/admin/moods/list', async (ctx, next) => {
+        try {
+            await apiMoodsController.getMoods(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/admin/moods/create', async (ctx, next) => {
+        try {
+            await apiMoodsController.postCreateMood(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/admin/moods/delete', async (ctx, next) => {
+        try {
+            await apiMoodsController.postDeleteMood(ctx, next)
         } catch(err) {
             apiError(ctx, err)
         }

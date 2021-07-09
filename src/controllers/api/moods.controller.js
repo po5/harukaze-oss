@@ -4,10 +4,7 @@ const moodUtils = require('../../utils/moods.util')
 const fs = require('fs')
 const util = require('util')
 const unlink = util.promisify(fs.unlink)
-const copyFile = util.promisify(fs.copyFile)
-const utils = require('../../utils/misc.util')
 const mediaUtils = require('../../utils/media.util')
-const FileType = require('file-type')
 
 async function deleteMood(moodInfoRow) {
     // Delete file on disk
