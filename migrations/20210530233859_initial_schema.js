@@ -81,7 +81,7 @@ exports.up = async function(knex) {
             PRIMARY KEY (\`id\`));
     `)
     await knex.raw(`
-        CREATE TABLE ``collectionitems\` (
+        CREATE TABLE \`collectionitems\` (
             \`id\` BIGINT NOT NULL AUTO_INCREMENT,
             \`item_collection\` INT NOT NULL,
             \`item_media\` BIGINT NOT NULL,
@@ -94,9 +94,19 @@ exports.up = async function(knex) {
             \`id\` INT NOT NULL AUTO_INCREMENT,
             \`mood_name\` VARCHAR(256) NOT NULL,
             \`mood_key\` VARCHAR(256) NOT NULL,
+            \`mood_character\` INT NOT NULL,
             \`mood_creator\` VARCHAR(45) NOT NULL,
             \`mood_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
             PRIMARY KEY (\`id\`));
+    `)
+    await knex.raw(`
+        CREATE TABLE \`moodchars\` (
+            \`id\` INT NOT NULL AUTO_INCREMENT,
+            \`char_name\` VARCHAR(256) NOT NULL,
+            \`char_default\` INT NULL,
+            \`char_creator\` BIGINT NOT NULL,
+            \`char_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (\`id\`));      
     `)
 };
 
