@@ -40,6 +40,7 @@ module.exports = router => {
     const itemController = require('./controllers/booru/item.controller')
     const collectionsController = require('./controllers/booru/collections.controller')
     const collectionController = require('./controllers/booru/collection.controller')
+    const userController = require('./controllers/booru/user.controller')
     const actionController = require('./controllers/booru/action.controller')
 
     /* Middleware */

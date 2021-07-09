@@ -19,16 +19,16 @@ module.exports.getUser = async (ctx, next) => {
         return
     }
 
-    let user = user[0]
+    let user = userRes[0]
 
-    // Fetch total media in collection
+    // Fetch total media by user
     let totalMedia = await mediaModel.fetchBooruVisibleMediaCountByUploaderUsername(username)
 
     // Get pagination info
     let pagination = paginationUtil.paginatedRouteInfo(ctx, totalMedia, true)
 
-    // Fetch media for collection
-    let media = await mediaModel.fetchBooruVisibleMediaInfoByUploaderUsername(username, pagination.queryOffset, pagination.queryLimit, mediaModel.Order.CREATED_DESC)
+    // Fetch media by user
+    let media = await mediaModel.fetchBooruVisibleMediaInfosByUploaderUsername(username, pagination.queryOffset, pagination.queryLimit, mediaModel.Order.CREATED_DESC)
 
     // Enumerate tags from items
     let resultTags = []
@@ -47,11 +47,11 @@ module.exports.getUser = async (ctx, next) => {
     ctx.state.pageTitle = 'Items by '+user.username
 
     // Put metadata
-    ctx.state.metaDescription = `View ${itemCount} item${itemCount == 1 ? '' : 's'} by ${username} on the booru`
+    ctx.state.metaDescription = `View ${totalMedia} item${totalMedia == 1 ? '' : 's'} by ${username} on the booru`
     ctx.state.metaImage = '/assets/avatar/'+username
 
     // Put data
-    ctx.state.collection = collection
+    ctx.state.user = user
     ctx.state.media = media
     ctx.state.resultTags = resultTags
     ctx.state.queryTags = []

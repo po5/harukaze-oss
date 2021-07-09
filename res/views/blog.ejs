@@ -57,11 +57,11 @@
                     <div class="mood-chooser">
                         <div class="mood-chooser-open">Moods ⯈</div>
                         <div class="mood-chooser-moods" style="display:block">
-                            <% for(i in characterMoods) { %>
+                            <% for(mood of user.characterMoods) { %>
                                 <div class="mood-choice">
                                     <label>
-                                        <input type="radio" name="mood" value="<%= i %>" <%= i == 0 ? 'checked' : '' %>>
-                                        <img src="<%= characterMoodToUrl(i, user.character) %>" alt="<%= characterMoods[i] %>">
+                                        <input type="radio" name="mood" value="<%= mood.id %>" <%= mood.id == user.character_default ? 'checked' : '' %>>
+                                        <img src="/assets/mood/<%= mood.id %>" alt="<%= mood.name %>">
                                     </label>
                                 </div>
                             <% } %>
@@ -80,8 +80,8 @@
                 <% for(comment of comments) {%>
                     <div class="comment" id="comment-<%= comment.id %>">
                         <div class="aligned">
-                            <div class="blog-icon">
-                                <img src="<%= characterMoodToUrl(comment.mood, comment.author_character) %>" alt="<%= characterMoods[comment.mood] %>" title="<%= characterMoods[comment.mood] %>">
+                            <div class="comment-mood">
+                                <img src="/assets/mood/<%= comment.mood %>" alt="<%= comment.mood_name %>" title="<%= comment.mood_name %>">
                             </div>
                             <span class="name2"><%= comment.author_username %></span>
                         </div>
@@ -100,8 +100,8 @@
                             <% if(reply.parent == comment.id) { %>
                                 <div class="comment-reply">
                                     <div class="alignedcom"> 
-                                        <div class="blog-icon">
-                                            <img src="<%= characterMoodToUrl(reply.mood, reply.author_character) %>" alt="<%= characterMoods[reply.mood] %>" title="<%= characterMoods[reply.mood] %>">
+                                        <div class="comment-mood">
+                                            <img src="/assets/mood/<%= comment.mood %>" alt="<%= comment.mood_name %>" title="<%= comment.mood_name %>">
                                         </div>
                                         <div class="name2"><span><%= reply.author_username %></span></div>
                                     </div>
