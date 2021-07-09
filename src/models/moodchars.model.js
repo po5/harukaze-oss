@@ -33,6 +33,12 @@ function charInfo() {
         .select(knex.ref('user_username').as('creator_username'))
         .select(knex.ref('char_created_on').as('created_on'))
         .select(knex.raw(`(
+            SELECT mood_name
+            FROM \`moods\`
+            WHERE \`moods\`.\`id\` = char_default
+            LIMIT 1
+        ) AS \`default_name\``))
+        .select(knex.raw(`(
             SELECT COUNT(*)
             FROM \`moods\`
             WHERE \`mood_character\` = \`moodchars\`.\`id\`
