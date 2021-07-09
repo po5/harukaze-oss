@@ -90,6 +90,8 @@ Run without any arguments to start the server.`)
         fs.mkdirSync('media/thumbnails/')
     if(!fs.existsSync('media/avatars'))
         fs.mkdirSync('media/avatars')
+    if(!fs.existsSync('media/moods'))
+        fs.mkdirSync('media/moods')
 
     // Check for administrator
     console.log('Connecting to database...')
