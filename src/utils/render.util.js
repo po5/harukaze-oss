@@ -3,7 +3,7 @@ const ejs = require('ejs')
 const path = require('path')
 const usersModel = require('../models/users.model')
 const { renderBBCode } = require('../utils/bbcode.util')
-const { Moods, characterMoodToUrl } = require('../utils/reacts.util')
+const { Moods, characterMoodToUrl } = require('./moods.util')
 
 async function putEssentialState(ctx, fetchContributors = true) {
     if(!ctx.state)

@@ -3,7 +3,7 @@ const usersModel = require('../models/users.model')
 const postsModel = require('../models/posts.model')
 const mediaModel = require('../models/media.model')
 const { Roles } = require('../utils/users.util')
-const { characterMoodToUrl } = require('../utils/reacts.util')
+const { characterMoodToUrl } = require('../utils/moods.util')
 
 /**
  * GET controller for contributor page

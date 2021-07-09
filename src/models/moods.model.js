@@ -91,6 +91,18 @@ async function fetchMoodInfoById(id) {
 }
 
 /**
+ * Fetches the mood's info with the specified key
+ * @param {number} key The key
+ * @return {Array<Object>} An array with the row containing the mood's info or an empty array if none exists
+ */
+async function fetchMoodInfoByKey(key) {
+    return processMoodInfoRows(
+        await moodInfo()
+            .where('moods_key', key)
+    )
+}
+
+/**
  * Fetches all moods' info
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
@@ -114,7 +126,7 @@ async function fetchMoodInfos(offset, limit, order) {
  * @param {number} order The order of results to return
  * @return {Array<Object>} All moods' info
  */
- async function fetchMoodInfosByCharacter(character, offset, limit, order) {
+async function fetchMoodInfosByCharacter(character, offset, limit, order) {
     return processMoodInfoRows(
         await moodInfo()
             .where('mood_character', character)
@@ -155,6 +167,7 @@ async function deleteMoodsByCharacter(character) {
 /* Export functions */
 module.exports.createMood = createMood
 module.exports.fetchMoodInfoById = fetchMoodInfoById
+module.exports.fetchMoodInfoByKey = fetchMoodInfoByKey
 module.exports.fetchMoodInfos = fetchMoodInfos
 module.exports.fetchMoodInfosByCharacter = fetchMoodInfosByCharacter
 module.exports.fetchMoodsCount = fetchMoodsCount

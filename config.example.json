@@ -14,24 +14,6 @@
         "notFoundPage": "[size=7]Not Found[/size]\nNo page could be found...",
         "errorPage": "[size=7]Error Occurred[/size]\nAn internal error occurred while serving this request..."
     },
-    "reacts": {
-        "default": "defaultchan",
-        "characters": [
-            "defaultchan",
-            "salesdood"
-        ],
-        "moods": [
-            "default",
-            "cheer",
-            "horny",
-            "mad",
-            "omg",
-            "sad",
-            "scare",
-            "yay",
-            "yuck"
-        ]
-    },
     "pagination": {
         "pageSize": 5,
         "booruPageSize": 40

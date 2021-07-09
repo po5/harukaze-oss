@@ -1,6 +1,6 @@
 const config = require('../../knexfile')
 const knex = require('knex')(config)
-const { characterMoodToUrl } = require('../utils/reacts.util')
+const { characterMoodToUrl } = require('../utils/moods.util')
 
 /**
  * Orders comment results can be returned in

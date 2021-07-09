@@ -1,5 +1,5 @@
 const config = require('../../config.json')
-const reactsUtil = require('../utils/reacts.util')
+const reactsUtil = require('../utils/moods.util')
 const usersUtil = require('../utils/users.util')
 const usersModel = require('../models/users.model')
 const { generateAlphanumericString } = require('../utils/misc.util')
@@ -104,7 +104,7 @@ module.exports.postMyAccount = async (ctx, next) => {
                 console.error(err)
                 ctx.state.error = 'Failed to process avatar file'
 
-                // Delete failed file if it exists
+                // Delete failed if file exists
                 try { await unlink('media/avatars/'+key) } catch(err) {}
 
                 return

@@ -96,6 +96,12 @@ module.exports = router => {
     router.get('/assets/avatar/:username/:filename', async (ctx, next) => {
         await assetsController.getAvatar(ctx, next)
     })
+    router.get('/assets/mood/:id', async (ctx, next) => {
+        await assetsController.getMood(ctx, next)
+    })
+    router.get('/assets/avatar/:id/:filename', async (ctx, next) => {
+        await assetsController.getMood(ctx, next)
+    })
 
     /* Views */
     router.get('/home', async (ctx, next) => {

@@ -69,6 +69,34 @@ async function generateAvatar(inputPath, outputPath) {
     })
 }
 
+/**
+ * Generates a mood image from the provided image
+ * @param {string} inputPath The path of the image to process
+ * @param {string} outputPath The path to write the generated avatar
+ */
+ async function generateMood(inputPath, outputPath) {
+    await new Promise((res, rej) => {
+        let proc = execFile(config.ffmpeg.ffmpegPath, [
+            '-i', inputPath,
+            '-vf', 'scale=100:100',
+            '-vframes', '1',
+            '-an',
+            outputPath,
+            'y'
+        ])
+
+        proc.stderr.on('data', d => console.error(d))
+
+        proc.on('close', code => {
+            if(code > 0)
+                rej('FFmpeg exited with code '+code)
+            else
+                res()
+        })
+    })
+}
+
 /* Export functions */
 module.exports.generateThumbnail = generateThumbnail
 module.exports.generateAvatar = generateAvatar
+module.exports.generateMood = generateMood

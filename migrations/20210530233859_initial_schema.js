@@ -7,7 +7,7 @@ exports.up = async function(knex) {
             \`user_hash\` TEXT NOT NULL,
             \`user_role\` TINYINT NOT NULL DEFAULT 0,
             \`user_avatar_key\` VARCHAR(256),
-            \`user_character\` VARCHAR(256),
+            \`user_character\` INT NOT NULL,
             \`user_info\` TEXT NULL DEFAULT NULL,
             \`user_banned\` TINYINT NOT NULL DEFAULT 0,
             \`user_created_on\` TIMESTAMP NOT NULL DEFAULT NOW(),

@@ -113,11 +113,41 @@ async function fetchCharacterInfos(offset, limit, order) {
 }
 
 /**
+ * Fetches all characters' info with a default mood
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
+ * @return {Array<Object>} All characters' info with a default mood
+ */
+ async function fetchCharacterInfosWithDefault(offset, limit, order) {
+    return processCharInfoRows(
+        await charInfo()
+            .whereNotNull('char_default')
+            .offset(offset)
+            .limit(limit)
+            .orderByRaw(orderBy(order))
+    )
+}
+
+/**
  * Fetches the amount of characters
  * @returns {number} The amount of characters
  */
 async function fetchCharactersCount() {
     return (await knex('moodchars').count('*', { as: 'count' }))[0].count
+}
+
+/**
+ * Updates a character's default mood
+ * @param {number} id The character's ID
+ * @param {number?} defaultMood The new default mood's ID (can be null)
+ */
+async function updateCharacterDefaultById(id, defaultMood) {
+    return await knex('moodchars')
+        .update({
+            char_default: defaultMood
+        })
+        .where('id', id)
 }
 
 /**
@@ -134,7 +164,9 @@ async function deleteCharacterById(id) {
 module.exports.createCharacter = createCharacter
 module.exports.fetchCharacterInfoById = fetchCharacterInfoById
 module.exports.fetchCharacterInfos = fetchCharacterInfos
+module.exports.fetchCharacterInfosWithDefault = fetchCharacterInfosWithDefault
 module.exports.fetchCharactersCount = fetchCharactersCount
+module.exports.updateCharacterDefaultById = updateCharacterDefaultById
 module.exports.deleteCharacterById = deleteCharacterById
 
 /* Export values */

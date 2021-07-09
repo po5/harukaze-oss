@@ -3,7 +3,7 @@ const postsModel = require('../models/posts.model')
 const mediaModel = require('../models/media.model')
 const { findMediaIdsInString } = require('../utils/misc.util')
 const paginationUtil = require('../utils/pagination.util')
-const { moodOrDefault } = require('../utils/reacts.util')
+const { moodOrDefault } = require('../utils/moods.util')
 const { Roles } = require('../utils/users.util')
 
 // Returns the post or 404s

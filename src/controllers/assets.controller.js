@@ -1,7 +1,17 @@
 const mediaModel = require('../models/media.model')
 const usersModel = require('../models/users.model')
+const moodsModel = require('../models/moods.model')
 const utils = require('../utils/misc.util')
 const fs = require('fs')
+
+/**
+ * @param {import('koa').Context} ctx 
+ */
+function notFound(ctx) {
+    ctx.status = 404
+    ctx.type = 'text/plain'
+    ctx.body = 'File not found'
+}
 
 /**
  * GET controller for media assets
@@ -10,15 +20,9 @@ const fs = require('fs')
 module.exports.getMedia = async (ctx, next) => {
     let id = ctx.params.id*1
 
-    function notFound() {
-        ctx.status = 404
-        ctx.type = 'text/plain'
-        ctx.body = 'File not found'
-    }
-
     // Make sure ID is numeric
     if(isNaN(id)) {
-        notFound()
+        notFound(ctx)
         return
     }
 
@@ -27,7 +31,7 @@ module.exports.getMedia = async (ctx, next) => {
         
     // Check if it exists
     if(mediaRes.length < 1) {
-        notFound()
+        notFound(ctx)
         return
     }
 
@@ -74,10 +78,10 @@ module.exports.getMedia = async (ctx, next) => {
  * GET controller for media thumbnails
  * @param {import("koa").Context} ctx The context
  */
- module.exports.getThumbnail = async (ctx, next) => {
+module.exports.getThumbnail = async (ctx, next) => {
     let id = ctx.params.id*1
 
-    function notFound() {
+    function notFound(ctx) {
         ctx.status = 404
         ctx.type = 'text/plain'
         ctx.body = 'File not found'
@@ -85,7 +89,7 @@ module.exports.getMedia = async (ctx, next) => {
 
     // Make sure ID is numeric
     if(isNaN(id)) {
-        notFound()
+        notFound(ctx)
         return
     }
 
@@ -94,7 +98,7 @@ module.exports.getMedia = async (ctx, next) => {
         
     // Check if it exists
     if(mediaRes.length < 1) {
-        notFound()
+        notFound(ctx)
         return
     }
 
@@ -124,10 +128,10 @@ module.exports.getMedia = async (ctx, next) => {
  * GET controller for user avatars
  * @param {import("koa").Context} ctx The context
  */
- module.exports.getAvatar = async (ctx, next) => {
+module.exports.getAvatar = async (ctx, next) => {
     let username = ctx.params.username
 
-    function notFound() {
+    function notFound(ctx) {
         ctx.status = 404
         ctx.type = 'text/plain'
         ctx.body = 'File not found'
@@ -138,7 +142,7 @@ module.exports.getMedia = async (ctx, next) => {
         
     // Check if it exists
     if(userRes.length < 1) {
-        notFound()
+        notFound(ctx)
         return
     }
 
@@ -168,4 +172,48 @@ module.exports.getMedia = async (ctx, next) => {
         ctx.body = 'Redirecting to default avatar'
         ctx.redirect('/static/img/defaultavatar.png')
     }
+}
+
+/**
+ * GET controller for mood images
+ * @param {import("koa").Context} ctx The context
+ */
+module.exports.getMood = async (ctx, next) => {
+    let id = ctx.params.id*1
+
+    function notFound(ctx) {
+        ctx.status = 404
+        ctx.type = 'text/plain'
+        ctx.body = 'File not found'
+    }
+
+    // Make sure ID is numeric
+    if(isNaN(id)) {
+        notFound(ctx)
+        return
+    }
+
+    // Fetch mood
+    let moodRes = await moodsModel.fetchMoodInfoById(id)
+
+    // Check if it exists
+    if(moodRes.length < 1) {
+        notFound(ctx)
+        return
+    }
+
+    let mood = moodRes[0]
+
+    // Send empty response for HEAD requests
+    if(ctx.method == 'HEAD') {
+        ctx.res.end()
+        return
+    }
+
+    // Set headers
+    ctx.type = 'image/png'
+    ctx.res.setHeader('Content-Disposition', `filename="mood.png"`)
+
+    // Send file
+    ctx.body = fs.createReadStream('media/moods/'+mood.key)
 }
