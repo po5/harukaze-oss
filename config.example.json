@@ -4,7 +4,14 @@
         "port": 8080,
         "reverseProxy": false,
         "reverseProxyHeader": "X-Forwarded-For",
-        "sessionSecret": "SomethingSuperRandom"
+        "sessionSecret": "SomethingSuperRandom",
+        "https": {
+            "enable": false,
+            "redirectEnable": false,
+            "redirectPort": 80,
+            "keyPath": "key.pem",
+            "certPath": "cert.pem"
+        }
     },
     "site": {
         "title": "VISUABUSTERS",

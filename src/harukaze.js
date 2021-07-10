@@ -9,6 +9,8 @@ const tagsUtil = require('./utils/tags.util')
 const utils = require('./utils/misc.util')
 const fs = require('fs')
 const config = require('../config.json')
+const http = require('http')
+const https = require('https')
 const koa = require('koa')
 const koaLogger = require('koa-logger')
 const koaSession = require('koa-session')
@@ -214,11 +216,40 @@ Run without any arguments to start the server.`)
         await ctx.render('notfound', ctx.state)
     })
     
-    // Start HTTP server
-    app.listen(config.server.port, config.server.host, null, () => {
+    // Start server
+    let httpsSettings = config.server.https
+    let server = httpsSettings.enable ? https.createServer({
+        key: fs.readFileSync(httpsSettings.keyPath),
+        cert: fs.readFileSync(httpsSettings.certPath)
+    }, app.callback()) : http.createServer(app.callback())
+
+    server.listen(config.server.port, config.server.host, null, () => {
         started = true
         console.log(`Listening at ${config.server.host}:${config.server.port}`)
     })
+
+    // Start redirect server if enabled
+    if(httpsSettings.enable && httpsSettings.redirectEnable) {
+        http.createServer((req, res) => {
+            res.statusCode = '301'
+            res.statusMessage = 'Found'
+
+            // Work out appropriate host
+            let host
+            if(req.headers.host) {
+                host = req.headers.host
+
+                if(host.includes(':'))
+                    host = host.substring(0, host.lastIndexOf(':'))+config.server.port
+            } else {
+                host = config.server.host+':'+config.server.port
+            }
+            
+            // Redirect to HTTPS version
+            res.setHeader('Location', `https://${host}${req.url || ''}`)
+            res.end()
+        }).listen(httpsSettings.redirectPort, config.server.host)
+    }
 }
 
 process.on('uncaughtException', error => {
