@@ -1,25 +1,23 @@
 <% if(posts.length > 0) { %>
     <% for(post of posts) { with(post) { %>
         <div class="blogpost">
-            <div class="aligned"> 
-                <div class="blog-icon">
-                    <img src="/assets/avatar/<%= author_username %>" alt="Author icon">
-                </div>
-                <div class="name2">
-                    <a href="/contributor/<%= author_username %>">
-                        <span><%= author_username %></span>
-                    </a>
-                </div>
-            </div>
             <% if(show_title) { %>
-                <div class="blog-title">
-                    <a href="/blog/<%= slug %>"><%= title %></a>
+                <div class="aligned"> 
+                    <div class="blog-icon">
+                        <img src="/assets/avatar/<%= author_username %>" alt="Author icon">
+                    </div>
+                    <div class="name2">
+                        <a href="/blog/<%= slug %>">
+                            <span><%= title %></span>
+                        </a>
+                    </div>
                 </div>
             <% } %>
             <div class="blogdesc"><%- renderBBCode(content) %></div>
-            <div class="blogdate">
-                <span><a href="/blog/<%= slug %>"><%= date(post.created_on) %></a><span>
-                <span class="right"><a href="/blog/<%= slug %>#comments-area">comments (<%= comments %>)</a></span>
+            <div class="blog-details">
+                <span>Posted by: <a href="/contributor/<%= author_username %>"><%= author_username %></a></span> |
+                <span><a href="/blog/<%= slug %>"><%= date(post.created_on) %></a><span> |
+                <span><a href="/blog/<%= slug %>#comments-area">comments (<%= comments %>)</a></span>
             </div>
         </div>
     <% } } %>

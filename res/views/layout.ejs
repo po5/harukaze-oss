@@ -37,16 +37,14 @@
     <% } %>
     </script>
     
-    <div class="main">
-        <div class="maincol">
-            <% include partials/_header.ejs %>
+    <% include partials/_sidenav.ejs %>
 
-            <%- body %>
+    <div id="main">
+        <% include partials/_header.ejs %>
 
-            <% include partials/_footer.ejs %>
-        </div>
+        <%- body %>
 
-        <% include partials/_sidenav.ejs %>
+        <% include partials/_footer.ejs %>
     </div>
 </body>
 </html>

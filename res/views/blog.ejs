@@ -1,14 +1,15 @@
 <div class="blogpost">
-    <div class="aligned"> 
-        <div class="blog-icon"><img src="/assets/avatar/<%= post.author_username %>" alt=""></div>
-        <div class="name2">
-            <a href="/contributor/<%= post.author_username %>">
-                <span><%= post.author_username %></span>
-            </a>
-        </div>
-</div>
     <% if(post.show_title) { %>
-        <div class="blog-title"><%= post.title %></div>
+        <div class="aligned"> 
+            <div class="blog-icon">
+                <img src="/assets/avatar/<%= post.author_username %>" alt="Author icon">
+            </div>
+            <div class="name2">
+                <a href="/blog/<%= post.slug %>">
+                    <span><%= post.title %></span>
+                </a>
+            </div>
+        </div>
     <% } %>
     <% if(authed && user.role > 0) { %>
         <div class="blog-edit-button">
@@ -18,6 +19,11 @@
     <hr>
     <span class="blogdate"><%= date(post.created_on) %></span>
     <div class="blogdesc"><%- renderBBCode(post.content) %></div>
+    <div class="blog-details">
+        <span>Posted by: <a href="/contributor/<%= post.author_username %>"><%= post.author_username %></a></span> |
+        <span><a href="/blog/<%= post.slug %>"><%= date(post.created_on) %></a><span> |
+        <span><a href="/blog/<%= post.slug %>#comments-area">comments (<%= post.comments %>)</a></span>
+    </div>
     <% if(post.tags.length > 0) { %>
         <div class="blog-tags">
             Blog tags:

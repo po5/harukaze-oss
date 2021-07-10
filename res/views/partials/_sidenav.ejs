@@ -2,10 +2,14 @@
     <div id="contributors">
     <% for(contributor of contributors) { with(contributor) { %>
         <div class="contributor">
-            <img class="contributor-avatar" src="/assets/avatar/<%= username %>">
-            <div class="contributor-name">
-                <a href="/contributor/<%= username %>"><%= username %></a>
-            </div>
+            <a href="/contributor/<%= username %>">
+                <div class="contributor-avatar">
+                    <img src="/assets/avatar/<%= username %>">
+                </div>
+                <div class="contributor-name">
+                    <%= username %>
+                </div>
+            </a>
             <div class="contributor-bio">
                 <% if(bio) { %>
                     <%= bio %>
