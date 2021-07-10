@@ -38,19 +38,22 @@
 	height: auto !important;
 }
 
+/* Speech bubble */
 .speech-bubble {
 	position: relative;
-	background-color: rgb(230, 230, 230);
+	background-color: #fff;
 	padding: 1.125em 1.5em;
 	border-radius: 1rem;
 	display: inline-block;
-	margin-left: 60px;
+	margin-left: 20px;
 	margin-top: 60px;
-	bottom: 50px;
-	border-bottom-color: rgb(230, 230, 230);
+	bottom: 10px;
+	border-bottom-color: #fff;
+	transform: scaleY(-1);
 }
 .speech-bubble-content {
 	word-wrap: break-word;
+	transform: scaleY(-1);
 }
 .speech-bubble-content img, .speech-bubble-content video {
 	max-width: 100%;
@@ -63,7 +66,7 @@
 	bottom: 20px;
 	border: .75rem solid transparent;
 	border-top: none;
-	transform: rotate(-95deg) scale(0.8, 2);
+	transform: rotate(-85deg) scale(0.8, 2);
 	border-bottom-color: inherit;
 }
 .speech-bubble-left::before {
@@ -77,6 +80,6 @@
     margin-right: 35px;
 }
 .speech-bubble-right::before {
-	transform: rotate(95deg) scale(-0.8, 4);
+	transform: rotate(85deg) scale(-0.8, 2);
 	right: -20px;
 }
