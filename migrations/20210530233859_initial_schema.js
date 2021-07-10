@@ -89,7 +89,7 @@ exports.up = async function(knex) {
             PRIMARY KEY (\`id\`));
     `)
     await knex.raw(`
-        CREATE TABLE \`harukaze\`.\`moods\` (
+        CREATE TABLE \`moods\` (
             \`id\` INT NOT NULL AUTO_INCREMENT,
             \`mood_name\` VARCHAR(256) NOT NULL,
             \`mood_key\` VARCHAR(256) NOT NULL,
