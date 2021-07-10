@@ -14,7 +14,7 @@ function main() {
                 res.push(str)
         }
 
-        return res.join(',')
+        return res.join(' ')
     }
     function tagsToArray(set) {
         let str = set.trim()
@@ -23,7 +23,7 @@ function main() {
         if(str.length > 0) {
             // Sanitize and remove duplicates
             let res = []
-            let split = str.split(',')
+            let split = str.includes(',') ? str.split(',') : str.split(' ')
             for(element of split) {
                 let elem = element
                     .trim()
@@ -116,6 +116,9 @@ function main() {
                     this.media.comment = this.ogComment
                 } else {
                     this.tagsRaw = arrayToTags(this.media.tags)
+
+                    // Init tag input
+                    setTimeout(() => initTagInput(), 100)
                 }
 
                 this.editing = !this.editing

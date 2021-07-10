@@ -20,6 +20,9 @@ async function refreshTags() {
                 tags.push(tag)
     }
 
+    // Sort by length
+    tags.sort((a, b) => a.length - b.length)
+
     // Store tags
     _tags = tags
 }

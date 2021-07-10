@@ -48,4 +48,9 @@
             <pre><%= comment %></pre>
         </div>
     <% } %>
+    <% if(authed && user.role > 0) { %>
+        <br>
+        <a href="/media/<%= id %>">Media page</a>
+    <% } %>
+    <br><br>
 </div><% } %>

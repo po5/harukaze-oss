@@ -51,7 +51,7 @@
                     Tags:
                     <template v-if="editing">
                         <form @submit.prevent="save()">
-                            <input v-model="tagsRaw" id="tag-input" type="text" maxlength="2048" placeholder="Tags, comment separated (tag1, my_tag, another_tag)">
+                            <input v-model="tagsRaw" id="tag-input" type="text" maxlength="2048" placeholder="Tags, space separated (tag1 my_tag another_tag)">
                         </form>
                     </template>
                     <template v-else>
@@ -86,3 +86,4 @@
 
 <script src="/static/js/api.js"></script>
 <script src="/static/js/media.js"></script>
+<script async defer src="/static/js/taginput.js"></script>
