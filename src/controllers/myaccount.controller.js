@@ -7,6 +7,7 @@ const { generateAvatar } = require('../utils/media.util')
 const fs = require('fs')
 const util = require('util')
 const unlink = util.promisify(fs.unlink)
+const argon2 = require('argon2')
 
 // Puts boilerplate context data
 async function setupCtx(ctx) {
@@ -140,4 +141,26 @@ module.exports.postMyAccount = async (ctx, next) => {
         '/assets/avatar/'+user.username
         :
         '/assets/mood/'+ctx.state.character
+
+    // Update password if specified
+    if(body['current-password'] && body['new-password'] && body['repeat-password']) {
+        let currentPass = body['current-password']
+        let newPass = body['new-password']
+        let repeatPass = body['repeat-password']
+
+        // Fetch user
+        let user = (await usersModel.fetchUserById(ctx.state.user.id))[0]
+
+        // Check hash
+        if(await argon2.verify(user.user_hash, currentPass)) {
+            if(newPass == repeatPass) {
+                // Update password
+                usersUtil.changeUserPassword(user.id, newPass)
+            } else {
+                ctx.state.error = 'New passwords do not match'
+            }
+        } else {
+            ctx.state.error = 'Current password is incorrect'
+        }
+    }
 }
