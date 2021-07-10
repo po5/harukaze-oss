@@ -116,4 +116,8 @@ exports.down = async function(knex) {
     await knex.schema.dropTable('posts')
     await knex.schema.dropTable('comments')
     await knex.schema.dropTable('media')
+    await knex.schema.dropTable('collections')
+    await knex.schema.dropTable('collectionitems')
+    await knex.schema.dropTable('moods')
+    await knex.schema.dropTable('moodchars')
 };
