@@ -12,6 +12,22 @@ function stripTrailingSlash(path) {
 }
 
 /**
+ * Returns a sanitized version of the provided path
+ * @param {string} path The path to sanitize
+ * @returns The sanitized version of the provided path
+ */
+function sanitizePath(path) {
+    let p = path
+
+    while(p.includes('../'))
+        p = p.replace('../', '')
+    while(p.includes('./'))
+        p = p.replace('./', '')
+    
+    return p
+}
+
+/**
  * Processes a string array to be suitable as a MySQL set by making all entries lowercase and removing duplicates and commas
  * @param {Array<string>} stringArray The array of strings to process
  * @returns {string} The MySQL set
@@ -180,6 +196,7 @@ function findMediaIdsInString(str) {
 
 /* Export functions */
 module.exports.stripTrailingSlash = stripTrailingSlash
+module.exports.sanitizePath = sanitizePath
 module.exports.arrayToSet = arrayToSet
 module.exports.setToArray = setToArray
 module.exports.readLine = readLine

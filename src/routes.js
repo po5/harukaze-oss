@@ -61,6 +61,7 @@ module.exports = router => {
     const sitesettingsController = require('./controllers/sitesettings.controller')
     const blogtagController = require('./controllers/blogtag.controller')
     const moodspanelController = require('./controllers/moodspanel.controller')
+    const logospanelController = require('./controllers/logospanel.controller')
     const rssController = require('./controllers/rss.controller')
 
     // API controller imports
@@ -103,6 +104,12 @@ module.exports = router => {
     })
     router.get('/assets/mood/:id/:filename', async (ctx, next) => {
         await assetsController.getMood(ctx, next)
+    })
+    router.get('/assets/logo', async (ctx, next) => {
+        await assetsController.getLogo(ctx, next)
+    })
+    router.get('/assets/logo/:filename', async (ctx, next) => {
+        await assetsController.getLogo(ctx, next)
     })
 
     /* Views */
@@ -219,6 +226,15 @@ module.exports = router => {
     router.get('/panel/admin/moods', async (ctx, next) => {
         await moodspanelController.getMoodsPanel(ctx, next)
         await render('moodspanel', ctx)
+    })
+
+    router.get('/panel/admin/logos', async (ctx, next) => {
+        await logospanelController.getLogosPanel(ctx, next)
+        await render('logospanel', ctx)
+    })
+    router.post('/panel/admin/logos', async (ctx, next) => {
+        await logospanelController.postLogosPanel(ctx, next)
+        await render('logospanel', ctx)
     })
 
     router.get('/tags/:tag', async (ctx, next) => {

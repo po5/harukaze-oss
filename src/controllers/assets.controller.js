@@ -1,6 +1,7 @@
 const mediaModel = require('../models/media.model')
 const usersModel = require('../models/users.model')
-const moodUtils = require('../utils/moods.util')
+const moodsUtil = require('../utils/moods.util')
+const logosUtil = require('../utils/logos.util')
 const utils = require('../utils/misc.util')
 const fs = require('fs')
 
@@ -81,12 +82,6 @@ module.exports.getMedia = async (ctx, next) => {
 module.exports.getThumbnail = async (ctx, next) => {
     let id = ctx.params.id*1
 
-    function notFound(ctx) {
-        ctx.status = 404
-        ctx.type = 'text/plain'
-        ctx.body = 'File not found'
-    }
-
     // Make sure ID is numeric
     if(isNaN(id)) {
         notFound(ctx)
@@ -130,12 +125,6 @@ module.exports.getThumbnail = async (ctx, next) => {
  */
 module.exports.getAvatar = async (ctx, next) => {
     let username = ctx.params.username
-
-    function notFound(ctx) {
-        ctx.status = 404
-        ctx.type = 'text/plain'
-        ctx.body = 'File not found'
-    }
 
     // Fetch user
     let userRes = await usersModel.fetchUserByUsername(username)
@@ -181,12 +170,6 @@ module.exports.getAvatar = async (ctx, next) => {
 module.exports.getMood = async (ctx, next) => {
     let id = ctx.params.id*1
 
-    function notFound(ctx) {
-        ctx.status = 404
-        ctx.type = 'text/plain'
-        ctx.body = 'File not found'
-    }
-
     // Make sure ID is numeric
     if(isNaN(id)) {
         notFound(ctx)
@@ -194,11 +177,11 @@ module.exports.getMood = async (ctx, next) => {
     }
 
     // Fetch mood
-    let mood = await moodUtils.getMoodById(id)
+    let mood = await moodsUtil.getMoodById(id)
 
     // Try to resolve fallback mood if mood does not exist
     if(!mood) {
-        let chars = await moodUtils.getUsableCharacters()
+        let chars = await moodsUtil.getUsableCharacters()
 
         // If there aren't any usable characters, then a mood can't be chosen
         if(chars.length < 1) {
@@ -208,7 +191,7 @@ module.exports.getMood = async (ctx, next) => {
 
         // Fetch first character's default mood and use it
         let char = chars[0]
-        mood = await moodUtils.getMoodById(char.default)
+        mood = await moodsUtil.getMoodById(char.default)
 
         // If that mood can't be found, nothing can be done
         if(!mood) {
@@ -229,4 +212,52 @@ module.exports.getMood = async (ctx, next) => {
 
     // Send file
     ctx.body = fs.createReadStream('media/moods/'+mood.key)
+}
+
+/**
+ * GET controller for logo images
+ * @param {import("koa").Context} ctx The context
+ */
+module.exports.getLogo = async (ctx, next) => {
+    // Disable caching
+    ctx.res
+        .setHeader('Cache-control', 'no-store')
+        .setHeader('Pragma', 'no-cache')
+
+    let filename = utils.sanitizePath(ctx.params.filename || '')
+    let path = await logosUtil.getLogoPathByName(filename)
+
+    // Check if filename is specified and logo exists
+    if(filename && !path) {
+        notFound(ctx)
+        return
+    }
+
+    // Send empty response for HEAD requests
+    if(ctx.method == 'HEAD') {
+        ctx.res.end()
+        return
+    }
+
+    // Use random logo if no filename is specified
+    if(!filename) {
+        // Fetch logo paths
+        let paths = await logosUtil.getLogoPaths()
+
+        // Select path
+        path = paths[utils.random(0, paths.length)]
+    }
+
+    // Figure out logo filename from path
+    let fname = path.substring(path.lastIndexOf('/')+1)
+
+    // Figure out extension
+    let ext = fname.substring(fname.lastIndexOf('.')+1)
+
+    // Set headers
+    ctx.type = 'image/'+ext
+    ctx.res.setHeader('Content-Disposition', `filename="${fname}"`)
+
+    // Send file
+    ctx.body = fs.createReadStream(path)
 }

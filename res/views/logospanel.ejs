@@ -1,0 +1,35 @@
+<link rel="stylesheet" href="/static/css/logospanel.css">
+
+<h1>Site Logos</h1>
+<% if(error) { %>
+    <p id="error" class="form-error"><%= error %></p>
+    <br>
+<% } %>
+
+<div class="container">
+    <div class="container-header">New Logo</div>
+    <form action="" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="upload">
+        <label for="file">Logo file: (height should be around 175 pixels)</label><br>
+        <input type="file" name="file" id="file">
+        <input type="submit" value="Upload">
+    </form>
+    <br><br>
+
+    <div class="container-header">Existing Logos</div>
+    <% for(name of logos) { %>
+        <div class="logo-listing">
+            <img src="/assets/logo/<%= name %>" alt="<%= name %>">
+            <% if(logos.length > 1) { %>
+                <form action="" method="POST">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="name" value="<%= name %>">
+                    <input type="submit" value="Delete">
+                </form>
+            <% } %>
+        </div>
+    <% } %>
+</div>
+
+<script src="/static/js/editor.js"></script>
+<script src="/static/js/sitesettings.js"></script>

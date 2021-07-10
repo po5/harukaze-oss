@@ -4,6 +4,7 @@ const moodsModel = require('./models/moods.model')
 const moodcharsModel = require('./models/moodchars.model')
 const usersUtil = require('./utils/users.util')
 const moodsUtil = require('./utils/moods.util')
+const logosUtil = require('./utils/logos.util')
 const utils = require('./utils/misc.util')
 const fs = require('fs')
 const config = require('../config.json')
@@ -95,6 +96,8 @@ Run without any arguments to start the server.`)
         fs.mkdirSync('media/avatars')
     if(!fs.existsSync('media/moods'))
         fs.mkdirSync('media/moods')
+    if(!fs.existsSync('media/logos'))
+        fs.mkdirSync('media/logos')
 
     // Check for administrator
     console.log('Connecting to database...')
@@ -134,6 +137,10 @@ Run without any arguments to start the server.`)
         // Set character's default mood
         await moodcharsModel.updateCharacterDefaultById(char.id, mood.id)
     }
+
+    // Put site logo if none are present
+    if(fs.readdirSync('media/logos/').length < 1)
+        fs.copyFileSync('res/defaults/logos/logo.png', `media/logos/${utils.generateAlphanumericString(10)}.png`)
 
     // Setup Koa
     const app = new koa()
