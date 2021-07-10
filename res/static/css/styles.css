@@ -290,7 +290,7 @@ input {
 .mood-choice input:checked + img {
 	outline: 2px solid rgb(0, 20, 180);
 }
-.mood-chooser-open {
+.mood-chooser-open, .comment-reply-open {
 	cursor: pointer;
 	display: inline-block;
 }

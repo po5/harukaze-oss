@@ -125,7 +125,8 @@
                         <% } %>
                         <% if(authed) { %>
                             <div class="comment-reply-box">
-                                <form action="" method="POST">
+                                <div class="comment-reply-open">Reply ⯈</div>
+                                <form action="" method="POST" class="comment-reply-form" style="display:block">
                                     <% if(comment.id in replyErrors) { %>
                                         <p class="form-error"><%= replyErrors[comment.id] %></p>
                                         <br>
