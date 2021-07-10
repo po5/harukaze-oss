@@ -6,3 +6,4 @@ config.json
 /media
 key.pem
 cert.pem
+/public
