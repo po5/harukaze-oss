@@ -5,6 +5,7 @@ const moodcharsModel = require('./models/moodchars.model')
 const usersUtil = require('./utils/users.util')
 const moodsUtil = require('./utils/moods.util')
 const logosUtil = require('./utils/logos.util')
+const tagsUtil = require('./utils/tags.util')
 const utils = require('./utils/misc.util')
 const fs = require('fs')
 const config = require('../config.json')
@@ -138,8 +139,12 @@ Run without any arguments to start the server.`)
         await moodcharsModel.updateCharacterDefaultById(char.id, mood.id)
     }
 
+    // Do initial tag loading
+    console.log('Loading tags...')
+    await tagsUtil.refreshTags()
+
     // Put site logo if none are present
-    if(fs.readdirSync('media/logos/').length < 1)
+    if((await logosUtil.getLogoNames()).length < 1)
         fs.copyFileSync('res/defaults/logos/logo.png', `media/logos/${utils.generateAlphanumericString(10)}.png`)
 
     // Setup Koa

@@ -42,6 +42,7 @@ module.exports = router => {
     const collectionController = require('./controllers/booru/collection.controller')
     const userController = require('./controllers/booru/user.controller')
     const actionController = require('./controllers/booru/action.controller')
+    const ajaxTagsController = require('./controllers/booru/tags.controller')
 
     /* Middleware */
     router.use(renderdataMiddleware)
@@ -82,5 +83,10 @@ module.exports = router => {
     router.post(prefix+'/action', async (ctx, next) => {
         await actionController.postAction(ctx, next)
         await render('action', ctx)
+    })
+
+    /* Ajax */
+    router.get(prefix+'/ajax/tags', async (ctx, next) => {
+        await ajaxTagsController.getTags(ctx, next)
     })
 }

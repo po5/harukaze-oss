@@ -62,6 +62,7 @@ module.exports = router => {
     const blogtagController = require('./controllers/blogtag.controller')
     const moodspanelController = require('./controllers/moodspanel.controller')
     const logospanelController = require('./controllers/logospanel.controller')
+    const blogsearchController = require('./controllers/blogsearch.controller')
     const rssController = require('./controllers/rss.controller')
 
     // API controller imports
@@ -244,6 +245,15 @@ module.exports = router => {
     router.get('/tags/:tag/:page', async (ctx, next) => {
         await blogtagController.getBlogTag(ctx, next)
         await render('blogtag', ctx)
+    })
+
+    router.get('/search', async (ctx, next) => {
+        await blogsearchController.getBlogSearch(ctx, next)
+        await render('blogsearch', ctx)
+    })
+    router.get('/search/:page', async (ctx, next) => {
+        await blogsearchController.getBlogSearch(ctx, next)
+        await render('blogsearch', ctx)
     })
 
     router.get('/rss', async (ctx, next) => {

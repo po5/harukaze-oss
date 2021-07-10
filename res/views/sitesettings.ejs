@@ -29,6 +29,9 @@
         <label for="site-description">Site description</label><br>
         <textarea type="text" name="site-description" id="site-description"><%= siteDescription %></textarea>
         <br><br>
+        <label for="show-contributors">Show contributors</label><br>
+        <input type="checkbox" name="show-contributors" id="show-contributors" <%= showContributors ? 'checked' : '' %>>
+        <br><br>
         <div class="container-header">Not Found (404) Page</div>
         <textarea name="not-found-page" id="not-found-page"><%= notFoundPage %></textarea>
         <br><br>

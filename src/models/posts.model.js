@@ -258,7 +258,32 @@ async function fetchPublishedPostInfosByTag(tag, withContent, offset, limit, ord
     return processPostInfoRows(
         await postInfo(withContent)
             .where('post_published', true)
-            .andWhereRaw('FIND_IN_SET(?, post_tags) > 0', [tag])
+            .andWhereRaw('FIND_IN_SET(?, `post_tags`) > 0', [tag])
+            .offset(offset)
+            .limit(limit)
+            .orderByRaw(orderBy(order))
+    )
+}
+
+/**
+ * Fetches info about all published posts with titles/contents/tags like the specified pattern
+ * @param {string} pattern The pattern
+ * @param {boolean} withContent Whether to include post content
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
+ * @returns {Array<Object>} All published posts' info with title/contents/tags like the specified pattern
+ */
+async function fetchPublishedPostInfosWherePostLike(pattern, withContent, offset, limit, order) {
+    return processPostInfoRows(
+        await postInfo(withContent)
+            .where('post_published', true)
+            .andWhere(function() {
+                this
+                    .whereRaw('LOWER(`post_title`) LIKE ? ESCAPE \'|\'', [pattern.toLowerCase()])
+                    .orWhereRaw('LOWER(`post_content`) LIKE ? ESCAPE \'|\'', [pattern.toLowerCase()])
+                    .orWhereRaw('LOWER(`post_tags`) LIKE ? ESCAPE \'|\'', [pattern.toLowerCase()])
+            })
             .offset(offset)
             .limit(limit)
             .orderByRaw(orderBy(order))
@@ -293,7 +318,24 @@ async function fetchPublishedPostCountByTag(tag) {
     return (await knex('posts')
         .count('*', { as: 'count' })
         .where('post_published', true)
-        .andWhereRaw('FIND_IN_SET(?, post_tags) > 0', [tag]))[0].count
+        .andWhereRaw('FIND_IN_SET(?, `post_tags`) > 0', [tag]))[0].count
+}
+
+/**
+ * Fetches the amount of posts with titles/contents/tags like the specified pattern
+ * @param {string} pattern The pattern
+ * @returns {number} The amount of posts with title/contents/tags like the specified pattern
+ */
+async function fetchPublishedPostCountWherePostLike(pattern) {
+    return (await knex('posts')
+        .count('*', { as: 'count' })
+        .where('post_published', true)
+        .andWhere(function() {
+            this
+                .whereRaw('LOWER(`post_title`) LIKE ? ESCAPE \'|\'', [pattern.toLowerCase()])
+                .orWhereRaw('LOWER(`post_content`) LIKE ? ESCAPE \'|\'', [pattern.toLowerCase()])
+                .orWhereRaw('LOWER(`post_tags`) LIKE ? ESCAPE \'|\'', [pattern.toLowerCase()])
+        }))[0].count
 }
 
 /**
@@ -355,9 +397,11 @@ module.exports.fetchPostInfoById = fetchPostInfoById
 module.exports.fetchPostInfoBySlug = fetchPostInfoBySlug
 module.exports.fetchPostInfosByIds = fetchPostInfosByIds
 module.exports.fetchPublishedPostInfosByTag = fetchPublishedPostInfosByTag
+module.exports.fetchPublishedPostInfosWherePostLike = fetchPublishedPostInfosWherePostLike
 module.exports.fetchPostsCount = fetchPostsCount
 module.exports.fetchPostCountBySlugRegex = fetchPostCountBySlugRegex
 module.exports.fetchPublishedPostCountByTag = fetchPublishedPostCountByTag
+module.exports.fetchPublishedPostCountWherePostLike = fetchPublishedPostCountWherePostLike
 module.exports.updatePostById = updatePostById
 module.exports.deletePostById = deletePostById
 module.exports.deletePostsByIds = deletePostsByIds

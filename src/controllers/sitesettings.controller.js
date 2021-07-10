@@ -38,6 +38,7 @@ function setupCtx(ctx) {
     // Config values
     ctx.state.siteTitle = config.site.title
     ctx.state.siteDescription = config.site.description
+    ctx.state.showContributors = config.site.showContributors
     ctx.state.maxUploadSize = config.site.maxUploadSize
     ctx.state.captchaExpireSeconds = config.site.captchaExpireSeconds
     ctx.state.notFoundPage = config.site.notFoundPage
@@ -73,6 +74,7 @@ module.exports.postSiteSettings = async (ctx, next) => {
     let body = ctx.request.body
     let siteTitle = body['site-title']
     let siteDescription = body['site-description']
+    let showContributors = body['show-contributors']?.toLowerCase() == 'on'
     let maxUploadSize = body['max-upload-size']*1
     let captchaExpireSeconds = body['captcha-expire-seconds']*1
     let notFoundPage = body['not-found-page']
@@ -81,7 +83,7 @@ module.exports.postSiteSettings = async (ctx, next) => {
     let booruPageSize = body['booru-page-size']*1
     
     // Check data
-    if(siteTitle && siteDescription && !isNaN(maxUploadSize) && !isNaN(captchaExpireSeconds) && notFoundPage && errorPage && !isNaN(pageSize)) {
+    if(siteTitle && siteDescription && showContributors != undefined && !isNaN(maxUploadSize) && !isNaN(captchaExpireSeconds) && notFoundPage && errorPage && !isNaN(pageSize)) {
         // Set site title
         ctx.state.siteTitle = siteTitle
         config.site.title = siteTitle
@@ -89,6 +91,10 @@ module.exports.postSiteSettings = async (ctx, next) => {
         // Set site description
         ctx.state.siteDescription = siteDescription
         config.site.description = siteDescription
+
+        // Set show contributors
+        ctx.state.showContributors = showContributors
+        config.site.showContributors = showContributors
 
         // Set max upload size
         ctx.state.maxUploadSize = maxUploadSize

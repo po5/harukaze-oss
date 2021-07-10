@@ -286,6 +286,15 @@ async function fetchMediaByHash(hash) {
 }
 
 /**
+ * Returns rows containing only media tags in a column called "tags"
+ * @returns Rows containing only media tags in a column called "tags"
+ */
+async function fetchMediaTags() {
+    return await knex('media')
+        .select(knex.ref('media_tags').as('tags'))
+}
+
+/**
  * Returns the total amount of media
  * @returns {number} The total amount of media
  */
@@ -389,6 +398,7 @@ module.exports.fetchBooruVisibleMediaInfosByTags = fetchBooruVisibleMediaInfosBy
 module.exports.fetchBooruVisibleMediaInfosByCollection = fetchBooruVisibleMediaInfosByCollection
 module.exports.fetchBooruVisibleMediaInfosByUploaderUsername = fetchBooruVisibleMediaInfosByUploaderUsername
 module.exports.fetchMediaByHash = fetchMediaByHash
+module.exports.fetchMediaTags = fetchMediaTags
 module.exports.fetchMediaCount = fetchMediaCount
 module.exports.fetchBooruVisibleMediaCount = fetchBooruVisibleMediaCount
 module.exports.fetchBooruVisibleMediaCountByTags = fetchBooruVisibleMediaCountByTags
