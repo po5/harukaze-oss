@@ -60,6 +60,7 @@ module.exports = router => {
     const adminpanelController = require('./controllers/adminpanel.controller')
     const sitesettingsController = require('./controllers/sitesettings.controller')
     const blogtagController = require('./controllers/blogtag.controller')
+    const moodspanelController = require('./controllers/moodspanel.controller')
     const rssController = require('./controllers/rss.controller')
 
     // API controller imports
@@ -213,6 +214,11 @@ module.exports = router => {
     router.post('/panel/admin/settings', async (ctx, next) => {
         await sitesettingsController.postSiteSettings(ctx, next)
         await render('sitesettings', ctx)
+    })
+
+    router.get('/panel/admin/moods', async (ctx, next) => {
+        await moodspanelController.getMoodsPanel(ctx, next)
+        await render('moodspanel', ctx)
     })
 
     router.get('/tags/:tag', async (ctx, next) => {

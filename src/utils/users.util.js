@@ -1,5 +1,6 @@
 const argon2 = require('argon2')
 const usersModel = require('../models/users.model')
+const moodUtils = require('../utils/moods.util')
 
 /**
  * User roles
@@ -26,13 +27,14 @@ const Roles = {
  * @param {string} hash The user's password
  * @param {number} role The user's role (values defined in Roles object)
  * @param {string} avatarKey The user's avatar key (can be null)
+ * @param {number} character The user's character ID 
  */
-async function createUser(username, bio, password, role, avatarKey) {
+async function createUser(username, bio, password, role, avatarKey, character) {
     // Hash password
     let hash = await argon2.hash(password)
 
     // Create user DB entry
-    await usersModel.createUser(username, bio, hash, role, avatarKey)
+    await usersModel.createUser(username, bio, hash, role, avatarKey, null, character)
 }
 
 /**
@@ -49,8 +51,12 @@ function isUsernameValid(username) {
  * @param {import('koa').Context} ctx The context to identify
  * @param {Object} userRow The database row
  */
-function identifyContextWithUserRow(ctx, userRow) {
+async function identifyContextWithUserRow(ctx, userRow) {
     ctx.user = userRow
+
+    // Fetch user's character
+    let char = await moodUtils.getCharacterById(userRow.user_character)
+
     ctx.state.user = {
         id: userRow.id,
         username: userRow.user_username,
@@ -58,6 +64,9 @@ function identifyContextWithUserRow(ctx, userRow) {
         role: userRow.user_role,
         avatarKey: userRow.user_avatar_key,
         character: userRow.user_character,
+        characterName: char?.name || null,
+        characterDefault: char?.default || null,
+        characterMoods: await moodUtils.getMoodsByCharacter(userRow.user_character),
         info: userRow.user_info,
         banned: userRow.user_banned == 1,
         createdOn: new Date(userRow.user_created_on)

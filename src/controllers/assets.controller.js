@@ -1,6 +1,6 @@
 const mediaModel = require('../models/media.model')
 const usersModel = require('../models/users.model')
-const moodsModel = require('../models/moods.model')
+const moodUtils = require('../utils/moods.util')
 const utils = require('../utils/misc.util')
 const fs = require('fs')
 
@@ -194,15 +194,28 @@ module.exports.getMood = async (ctx, next) => {
     }
 
     // Fetch mood
-    let moodRes = await moodsModel.fetchMoodInfoById(id)
+    let mood = await moodUtils.getMoodById(id)
 
-    // Check if it exists
-    if(moodRes.length < 1) {
-        notFound(ctx)
-        return
+    // Try to resolve fallback mood if mood does not exist
+    if(!mood) {
+        let chars = await moodUtils.getUsableCharacters()
+
+        // If there aren't any usable characters, then a mood can't be chosen
+        if(chars.length < 1) {
+            notFound(ctx)
+            return
+        }
+
+        // Fetch first character's default mood and use it
+        let char = chars[0]
+        mood = await moodUtils.getMoodById(char.default)
+
+        // If that mood can't be found, nothing can be done
+        if(!mood) {
+            notFound(ctx)
+            return
+        }
     }
-
-    let mood = moodRes[0]
 
     // Send empty response for HEAD requests
     if(ctx.method == 'HEAD') {

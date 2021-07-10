@@ -1,5 +1,5 @@
 const config = require('../../config.json')
-const reactsUtil = require('../utils/moods.util')
+const moodUtils = require('../utils/moods.util')
 const usersUtil = require('../utils/users.util')
 const usersModel = require('../models/users.model')
 const { generateAlphanumericString } = require('../utils/misc.util')
@@ -9,18 +9,18 @@ const util = require('util')
 const unlink = util.promisify(fs.unlink)
 
 // Puts boilerplate context data
-function setupCtx(ctx) {
+async function setupCtx(ctx) {
     let user = ctx.state.user
     ctx.state.pageTitle = 'My Account'
     ctx.state.error = null
     ctx.state.bio = user.bio
     ctx.state.info = user.info
-    ctx.state.character = user.character || config.reacts.default
     ctx.state.avatarUrl = ctx.state.user.role >= usersUtil.Roles.CONTRIBUTOR ? 
         '/assets/avatar/'+user.username
         :
-        reactsUtil.characterMoodToUrl(-1, ctx.state.character)
-    ctx.state.characters = reactsUtil.Characters
+        '/assets/mood/'+user.characterDefault
+    ctx.state.characters = await moodUtils.getUsableCharacters()
+    ctx.state.character = ctx.state.user.character
 }
 
 /**
@@ -36,7 +36,7 @@ module.exports.getMyAccount = async (ctx, next) => {
     }
 
     // Setup context
-    setupCtx(ctx)
+    await setupCtx(ctx)
 }
 
 /**
@@ -52,7 +52,7 @@ module.exports.postMyAccount = async (ctx, next) => {
     }
 
     // Setup context
-    setupCtx(ctx)
+    await setupCtx(ctx)
 
     let user = ctx.state.user
 
@@ -60,19 +60,25 @@ module.exports.postMyAccount = async (ctx, next) => {
     let body = ctx.request.body
     let bio = body.bio?.trim()
     let info = body.info?.trim()
-    let character = reactsUtil.characterOrDefault(body.character)
+    let char = await moodUtils.getCharacterById(body.character*1)
+
+    // Make sure character is valid
+    if(!char) {
+        ctx.state.error = 'Invalid character ID'
+        return
+    }
     
     // Validate
     ctx.state.bio = bio
     ctx.state.info = info
-    ctx.state.character = character
+    ctx.state.character = char.id
     if(bio.length > 2048) {
         ctx.state.error = 'Bio is too long (max length is 2048 characters)'
         return
     }
 
     // Update user
-    await usersModel.updateUserInfoById(user.id, bio, character, info)
+    await usersModel.updateUserInfoById(user.id, bio, char.id, info)
 
     // Check if avatar was sent, and the user is a contributor or higher
     if(user.role >= usersUtil.Roles.CONTRIBUTOR) {
@@ -133,5 +139,5 @@ module.exports.postMyAccount = async (ctx, next) => {
     ctx.state.avatarUrl = user.role >= usersUtil.Roles.CONTRIBUTOR ? 
         '/assets/avatar/'+user.username
         :
-        reactsUtil.characterMoodToUrl(-1, ctx.state.character)
+        '/assets/mood/'+ctx.state.character
 }

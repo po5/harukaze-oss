@@ -36,7 +36,6 @@ module.exports.getContributor = async (ctx, next) => {
     ctx.state.info = user.info
     ctx.state.createdOn = user.created_on
     ctx.state.avatarUrl = '/assets/avatar/'+user.username
-    ctx.state.characterUrl = characterMoodToUrl(-1, user.character)
     ctx.state.mediaCount = mediaCount
     ctx.state.posts = posts
 

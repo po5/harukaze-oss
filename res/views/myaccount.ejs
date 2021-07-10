@@ -12,12 +12,15 @@
         <textarea name="bio" id="bio" cols="30" rows="10" maxlength="2048" placeholder="No bio added..."><%= bio %></textarea>
     </div>
     <hr>
-    <label for="character">Comment character:</label>
-    <select name="character" id="character">
-        <% for(char of characters) { %>
-            <option value="<%= char %>" <%= character == char ? 'selected' : '' %>><%= char %></option>
-        <% } %>
-    </select>
+    <label for="character">Comment character:</label><br>
+    <% for(char of characters) { %>
+        <div class="mood-choice">
+            <label>
+                <input type="radio" name="character" value="<%= char.id %>" <%= char.id == character ? 'checked' : '' %>>
+                <img src="/assets/mood/<%= char.default %>" alt="<%= char.name %>" title="<%= char.name %>">
+            </label>
+        </div>
+    <% } %>
     <% if(user.role > 0) { %>
         <link rel="stylesheet" href="/static/css/editor.css">
         <link rel="stylesheet" href="/static/sceditor/minified/themes/default.min.css" id="theme-style">

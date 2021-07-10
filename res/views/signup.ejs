@@ -14,6 +14,16 @@
     <br>
     <input type="password" placeholder="Something good" name="password" maxlength="64" id="password">
     <br><br>
+    <label for="character">Select comment character:</label><br>
+    <% for(char of characters) { %>
+        <div class="mood-choice">
+            <label>
+                <input type="radio" name="character" value="<%= char.id %>">
+                <img src="/assets/mood/<%= char.default %>" alt="<%= char.name %>" title="<%= char.name %>">
+            </label>
+        </div>
+    <% } %>
+    <br><br>
     <%- captchaInput() %>
     <%- captchaImage() %>
     <br>

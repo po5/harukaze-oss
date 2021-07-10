@@ -15,6 +15,8 @@ function userInfo() {
         .select(knex.ref('user_role').as('role'))
         .select(knex.ref('user_avatar_key').as('avatar_key'))
         .select(knex.ref('user_character').as('character'))
+        .select(knex.ref('char_name').as('character_name'))
+        .select(knex.ref('char_default').as('character_default'))
         .select(knex.ref('user_info').as('info'))
         .select(knex.ref('user_banned').as('banned'))
         .select(knex.ref('user_created_on').as('created_on'))
@@ -29,6 +31,7 @@ function userInfo() {
             ORDER BY id DESC
             LIMIT 1
         ) AS \`last_ip\``))
+        .leftJoin('moodchars', 'user_character', 'moodchars.id')
 }
 function processUserInfoRows(rows) {
     for(row of rows) {
@@ -45,9 +48,10 @@ function processUserInfoRows(rows) {
  * @param {string} hash The user's password hash
  * @param {number} role The user's role (values defined in Roles object)
  * @param {string} avatarKey The user's avatar key (can be null)
- * @param {string?} avatarKey The user's info (can be null)
+ * @param {string?} info The user's info (can be null)
+ * @param {number} character The user's character ID
  */
-async function createUser(username, bio, hash, role, avatarKey, info) {
+async function createUser(username, bio, hash, role, avatarKey, info, character) {
     return await knex('users')
         .insert({
             user_username: username,
@@ -55,7 +59,8 @@ async function createUser(username, bio, hash, role, avatarKey, info) {
             user_hash: hash,
             user_role: role,
             user_avatar_key: avatarKey,
-            user_info: info
+            user_info: info,
+            user_character: character
         })
 }
 
@@ -248,7 +253,7 @@ async function updateUserHashById(id, hash) {
  * Updates a user's info
  * @param {number} id The user's ID
  * @param {string?} bio The user's new bio (can be null)
- * @param {string} character The user's new character
+ * @param {number} character The user's new character ID
  * @param {string?} info The user's new info (can be null)
  */
 async function updateUserInfoById(id, bio, character, info) {
@@ -300,6 +305,19 @@ async function updateUserRoleById(id, role) {
         .where('id', id)
 }
 
+/**
+ * Updates all users with the specified old ID to use the provided new ID
+ * @param {number} oldChar The old character ID to replace
+ * @param {number} newChar The new character ID
+ */
+async function updateUserCharacterByCharacter(oldChar, newChar) {
+    return await knex('users')
+        .update({
+            user_character: newChar
+        })
+        .where('user_character', oldChar)
+}
+
 /* Export functions */
 module.exports.createUser = createUser
 module.exports.fetchUserById = fetchUserById
@@ -320,3 +338,4 @@ module.exports.updateUserInfoById = updateUserInfoById
 module.exports.updateUserAvatarKeyById = updateUserAvatarKeyById
 module.exports.updateUserBannedById = updateUserBannedById
 module.exports.updateUserRoleById = updateUserRoleById
+module.exports.updateUserCharacterByCharacter = updateUserCharacterByCharacter

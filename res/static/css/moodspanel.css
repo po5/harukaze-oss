@@ -1,0 +1,42 @@
+.char-listing {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.char-listing-name {
+    font-weight: bold;
+    font-size: 20px;
+    border-bottom: 2px solid gray;
+    margin-bottom: 20px;
+}
+.char-moods {
+    margin-left: 30px;
+}
+.mood-listing {
+    
+}
+.mood-listing-name {
+    display: inline-block;
+    position: relative;
+    bottom: 40px;
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 20px;
+    width: calc(100% - 170px);
+}
+
+.listing-delete {
+    float: right;
+    color: white;
+    background: red;
+    border: 3px solid rgb(139, 0, 0);
+    position: relative;
+    top: 2px;
+    font-weight: bold;
+}
+.listing-delete:active {
+    background: rgb(190, 0, 0);
+    border: 4px solid rgb(139, 0, 0);
+    border-right: 2px solid rgb(139, 0, 0);
+    border-bottom: 2px solid rgb(139, 0, 0);
+}

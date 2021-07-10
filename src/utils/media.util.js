@@ -82,7 +82,7 @@ async function generateAvatar(inputPath, outputPath) {
             '-vframes', '1',
             '-an',
             outputPath,
-            'y'
+            '-y'
         ])
 
         proc.stderr.on('data', d => console.error(d))

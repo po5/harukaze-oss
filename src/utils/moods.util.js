@@ -31,6 +31,22 @@ async function getUsableCharacters() {
 }
 
 /**
+ * Returns the character with the specified ID or null if it doesn't exist
+ * @param {number} id The ID
+ * @returns {Object} The character with the specified ID or null if it doesn't exist
+ */
+async function getCharacterById(id) {
+    if(_charsCache.length < 1)
+        await _refreshCharsCache()
+    
+    for(char of _charsCache)
+        if(char.id == id)
+            return char
+    
+    return null
+}
+
+/**
  * Returns all moods
  * @returns {Array<Object>} All moods
  */
@@ -58,8 +74,26 @@ async function getMoodsByCharacter(character) {
     return moods
 }
 
+/**
+ * Returns the mood with the specified ID or null if it doesn't exist
+ * @param {number} id The ID
+ * @returns {Object} The mood with the specified ID or null if it doesn't exist
+ */
+async function getMoodById(id) {
+    if(_moodsCache.length < 1)
+        await _refreshMoodsCache()
+
+    for(mood of _moodsCache)
+        if(mood.id == id)
+            return mood
+
+    return null
+}
+
 /* Export functions */
 module.exports.clearCaches = clearCaches
 module.exports.getUsableCharacters = getUsableCharacters
+module.exports.getCharacterById = getCharacterById
 module.exports.getMoods = getMoods
 module.exports.getMoodsByCharacter = getMoodsByCharacter
+module.exports.getMoodById = getMoodById

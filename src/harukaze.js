@@ -1,6 +1,9 @@
 const usersModel = require('./models/users.model')
 const ipbansModel = require('./models/ipbans.model')
+const moodsModel = require('./models/moods.model')
+const moodcharsModel = require('./models/moodchars.model')
 const usersUtil = require('./utils/users.util')
+const moodsUtil = require('./utils/moods.util')
 const utils = require('./utils/misc.util')
 const fs = require('fs')
 const config = require('../config.json')
@@ -99,6 +102,38 @@ Run without any arguments to start the server.`)
 
     if(admins.length < 1)
         console.warn('[!] There are no administrator accounts, run with --create-admin option to create one')
+    
+    // Create character if there are none
+    let chars = await moodcharsModel.fetchCharacterInfos(0, 1, moodcharsModel.Order.CREATED_ASC)
+    if(chars.length < 1) {
+        // Create new character
+        await moodcharsModel.createCharacter('Mr. Default', -1)
+
+        // Reload caches and fetch new character
+        moodsUtil.clearCaches()
+        let char = (await moodcharsModel.fetchCharacterInfos(0, 1, moodcharsModel.Order.CREATED_ASC))[0]
+
+        // Create moods based on those in the default moods directory
+        let files = fs.readdirSync('res/defaults/moods/')
+        let keys = []
+        for(file of files) {
+            let name = file.substring(0, file.lastIndexOf('.'))
+            let path = 'res/defaults/moods/'+file
+            let key = utils.generateAlphanumericString(10)+'.png'
+            keys.push(key)
+
+            // Create mood entry
+            await moodsModel.createMood(name, key, char.id, -1)
+
+            // Copy file to assets
+            fs.copyFileSync(path, 'media/moods/'+key)
+        }
+
+        // Fetch first mood
+        let mood = (await moodsModel.fetchMoodInfoByKey(keys[0]))[0]
+        // Set character's default mood
+        await moodcharsModel.updateCharacterDefaultById(char.id, mood.id)
+    }
 
     // Setup Koa
     const app = new koa()

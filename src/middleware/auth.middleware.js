@@ -28,7 +28,7 @@ module.exports = async (ctx, next) => {
                     delete ctx.session.id
                 } else {
                     // Identify context
-                    usersUtil.identifyContextWithUserRow(ctx, user)
+                    await usersUtil.identifyContextWithUserRow(ctx, user)
 
                     // Mark context as authenticated
                     ctx.state.authed = true

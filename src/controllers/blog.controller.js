@@ -3,7 +3,7 @@ const postsModel = require('../models/posts.model')
 const mediaModel = require('../models/media.model')
 const { findMediaIdsInString } = require('../utils/misc.util')
 const paginationUtil = require('../utils/pagination.util')
-const { moodOrDefault } = require('../utils/moods.util')
+const moodUtils = require('../utils/moods.util')
 const { Roles } = require('../utils/users.util')
 
 // Returns the post or 404s
@@ -99,8 +99,8 @@ module.exports.postBlog = async (ctx, next) => {
             // Check action
             if(action == 'comment' && post.enable_comments) {
                 // Collect data
-                let content = body.content ? body.content.trim() : null
-                let mood = moodOrDefault(body.mood)
+                let content = body.content?.trim() || null
+                let mood = await moodUtils.getMoodById(body.mood*1)
                 let reply = isNaN(body.reply) ? null : body.reply*1
 
                 function showError(msg) {
@@ -110,6 +110,14 @@ module.exports.postBlog = async (ctx, next) => {
                         ctx.state.replyErrors[reply] = msg
                 }
 
+                // Make sure mood is valid
+                if(!mood) {
+                    showError(`The mood ID "${body.mood}" does not exist`)
+                    await fetchAndPutPageData(ctx, post)
+                    return
+                }
+
+                // Make sure content is not blank or null
                 if(content) {
                     // Check if parent exists if the comment is a reply to another
                     let parent = null
@@ -126,7 +134,7 @@ module.exports.postBlog = async (ctx, next) => {
                     }
 
                     // Create comment
-                    await commentsModel.createComment(post.id, parent == null ? null : parent.id, ctx.state.user.id, content, mood)
+                    await commentsModel.createComment(post.id, parent?.id || null, ctx.state.user.id, content, mood.id)
 
                     // Redirect to first page if a normal comment, otherwise redirect to same page (to avoid reloading causing another POST)
                     ctx.state.noRender = true

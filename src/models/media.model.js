@@ -249,7 +249,7 @@ async function fetchBooruVisibleMediaInfosByTags(tags, offset, limit, order) {
  * @param {number} order The order of results to return
  * @returns {Array<Object>} All booru-visible media infos with the specified tags
  */
- async function fetchBooruVisibleMediaInfosByCollection(collection, offset, limit, order) {
+async function fetchBooruVisibleMediaInfosByCollection(collection, offset, limit, order) {
     return processMediaInfoRows(
         await mediaInfo()
             .leftJoin('collectionitems', 'item_media', 'media.id')
@@ -258,6 +258,19 @@ async function fetchBooruVisibleMediaInfosByTags(tags, offset, limit, order) {
             .offset(offset)
             .limit(limit)
             .orderByRaw(orderBy(order))
+    )
+}
+
+/**
+ * Returns all booru-visible media's info uploaded by the specified uploader
+ * @param {string} username The uploader's username
+ * @returns {Array<object>} All booru-visible media's info uploaded by the specified uploader
+ */
+async function fetchBooruVisibleMediaInfosByUploaderUsername(username) {
+    return processMediaInfoRows(
+        await mediaInfo()
+            .where('media_booru_visible', true)
+            .andWhere(knex.raw('LOWER(`user_username`)'), username.toLowerCase())
     )
 }
 
@@ -313,7 +326,7 @@ async function fetchBooruVisibleMediaCountByTags(tags) {
  * @param {string} username The uploader's username
  * @returns {number} The amount of booru-visible media uploaded by the specified uploader
  */
- async function fetchBooruVisibleMediaCountByUploaderUsername(username) {
+async function fetchBooruVisibleMediaCountByUploaderUsername(username) {
     return (await knex('media')
         .count('*', { as: 'count' })
         .where('media_booru_visible', true)
@@ -374,6 +387,7 @@ module.exports.fetchMediaInfosByIds = fetchMediaInfosByIds
 module.exports.fetchBooruVisibleMediaInfosByIds = fetchBooruVisibleMediaInfosByIds
 module.exports.fetchBooruVisibleMediaInfosByTags = fetchBooruVisibleMediaInfosByTags
 module.exports.fetchBooruVisibleMediaInfosByCollection = fetchBooruVisibleMediaInfosByCollection
+module.exports.fetchBooruVisibleMediaInfosByUploaderUsername = fetchBooruVisibleMediaInfosByUploaderUsername
 module.exports.fetchMediaByHash = fetchMediaByHash
 module.exports.fetchMediaCount = fetchMediaCount
 module.exports.fetchBooruVisibleMediaCount = fetchBooruVisibleMediaCount

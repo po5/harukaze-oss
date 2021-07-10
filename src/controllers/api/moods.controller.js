@@ -1,6 +1,8 @@
+const usersModel = require('../../models/users.model')
 const moodsModel = require('../../models/moods.model')
 const moodcharsModel = require('../../models/moodchars.model')
 const moodUtils = require('../../utils/moods.util')
+const { generateAlphanumericString } = require('../../utils/misc.util')
 const fs = require('fs')
 const util = require('util')
 const unlink = util.promisify(fs.unlink)
@@ -20,7 +22,7 @@ async function deleteMood(moodInfoRow) {
  */
 module.exports.getCharacters = async ctx => {
     // Fetch characters
-    let characters = await moodUtils.getUsableCharacters()
+    let characters = await moodcharsModel.fetchCharacterInfos(0, Number.MAX_SAFE_INTEGER, moodcharsModel.Order.CREATED_ASC)
 
     // Fetch total characters
     let total = characters.length
@@ -70,7 +72,7 @@ module.exports.postSetCharacterDefault = async ctx => {
         }
 
         // Change default and clear caches
-        await moodcharsModel.updateCharacterDefaultById(CharId, def)
+        await moodcharsModel.updateCharacterDefaultById(charId, def)
         moodUtils.clearCaches()
 
         // Success
@@ -113,6 +115,15 @@ module.exports.postDeleteCharacter = async ctx => {
     if(!isNaN(body.id)) {
         let id = body.id*1
 
+        // Fetch total characters
+        let total = await moodcharsModel.fetchCharactersCount()
+        
+        // Don't allow deletion if this is the only character
+        if(total < 2) {
+            ctx.apiError('cannot_delete_only_character')
+            return
+        }
+
         // Fetch character
         let charRes = await moodcharsModel.fetchCharacterInfoById(id)
 
@@ -139,6 +150,10 @@ module.exports.postDeleteCharacter = async ctx => {
 
         // Clear caches after operation
         moodUtils.clearCaches()
+
+        // Fetch first character and update all user characters to it if they're using the deleted character
+        let newChar = (await moodUtils.getUsableCharacters())[0]
+        await usersModel.updateUserCharacterByCharacter(id, newChar.id)
 
         // Success
         ctx.apiSuccess()
@@ -234,7 +249,7 @@ module.exports.postCreateMood = async (ctx, next) => {
         }
 
         // Create mood entry
-        await moodsModel.createMood(name, key, ctx.state.user.id)
+        await moodsModel.createMood(name, key, charId, ctx.state.user.id)
 
         // Fetch newly created mood
         let mood = (await moodsModel.fetchMoodInfoByKey(key))[0]
@@ -281,7 +296,7 @@ module.exports.postCreateMood = async (ctx, next) => {
     let mood = moodRes[0]
 
     // Fetch character
-    let char = (await moodcharsModel.fetchCharacterInfoById(mood.character))
+    let char = (await moodcharsModel.fetchCharacterInfoById(mood.character))[0]
 
     // Delete mood
     await deleteMood(mood)
@@ -297,6 +312,9 @@ module.exports.postCreateMood = async (ctx, next) => {
             await moodcharsModel.updateCharacterDefaultById(char.id, null)
         }
     }
+
+    // Clear caches
+    moodUtils.clearCaches()
 
     // Success
     ctx.apiSuccess()

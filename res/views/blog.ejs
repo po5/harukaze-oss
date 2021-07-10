@@ -60,7 +60,7 @@
                             <% for(mood of user.characterMoods) { %>
                                 <div class="mood-choice">
                                     <label>
-                                        <input type="radio" name="mood" value="<%= mood.id %>" <%= mood.id == user.character_default ? 'checked' : '' %>>
+                                        <input type="radio" name="mood" value="<%= mood.id %>" <%= mood.id == user.characterDefault ? 'checked' : '' %>>
                                         <img src="/assets/mood/<%= mood.id %>" alt="<%= mood.name %>">
                                     </label>
                                 </div>
@@ -101,7 +101,7 @@
                                 <div class="comment-reply">
                                     <div class="alignedcom"> 
                                         <div class="comment-mood">
-                                            <img src="/assets/mood/<%= comment.mood %>" alt="<%= comment.mood_name %>" title="<%= comment.mood_name %>">
+                                            <img src="/assets/mood/<%= reply.mood %>" alt="<%= reply.mood_name %>" title="<%= reply.mood_name %>">
                                         </div>
                                         <div class="name2"><span><%= reply.author_username %></span></div>
                                     </div>
@@ -131,11 +131,11 @@
                                     <div class="mood-chooser">
                                         <div class="mood-chooser-open">Moods ⯈</div>
                                         <div class="mood-chooser-moods" style="display:block">
-                                            <% for(i in characterMoods) { %>
+                                            <% for(mood of user.characterMoods) { %>
                                                 <div class="mood-choice">
                                                     <label>
-                                                        <input type="radio" name="mood" value="<%= i %>" <%= i == 0 ? 'checked' : '' %>>
-                                                        <img src="<%= characterMoodToUrl(i, user.character) %>" alt="<%= characterMoods[i] %>">
+                                                        <input type="radio" name="mood" value="<%= mood.id %>" <%= mood.id == user.characterDefault ? 'checked' : '' %>>
+                                                        <img src="/assets/mood/<%= mood.id %>" alt="<%= mood.name %>">
                                                     </label>
                                                 </div>
                                             <% } %>

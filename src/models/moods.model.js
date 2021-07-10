@@ -67,13 +67,15 @@ function orderBy(order) {
  * Creates a new mood entry
  * @param {string} name The name
  * @param {string} key The key of the underlying file on disk
+ * @param {number} character The ID of the character this mood belongs to
  * @param {number} creator The creator's ID
  */
-async function createMood(name, key, creator) {
+async function createMood(name, key, character, creator) {
     return await knex('moods')
         .insert({
             mood_name: name,
             mood_key: key,
+            mood_character: character,
             mood_creator: creator
         })
 }
@@ -98,7 +100,7 @@ async function fetchMoodInfoById(id) {
 async function fetchMoodInfoByKey(key) {
     return processMoodInfoRows(
         await moodInfo()
-            .where('moods_key', key)
+            .where('mood_key', key)
     )
 }
 

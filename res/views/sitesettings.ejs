@@ -35,14 +35,6 @@
         <div class="container-header">Error Page</div>
         <textarea name="error-page" id="error-page"><%= errorPage %></textarea>
         <br><br>
-        <div class="container-header">Comment Reacts</div>
-        <label for="default-react">[!] Default react character</label><br>
-        <input type="text" name="default-react" id="default-react" value="<%= defaultReact %>">
-        <br><br>
-        <label for="moods">[!] Moods</label><br>
-        <p>These values must be in order, or else comments will not have their original moods. This is primarily for adding new moods. One line per mood.</p>
-        <textarea name="moods" id="moods"><%= moods.join('\n') %></textarea>
-        <br><br>
         <div class="container-header">Miscellaneous</div>
         <label for="page-size">Page size</label><br>
         <p>Applies to homepage, blog tag search, and most other pages that have pagination.</p>

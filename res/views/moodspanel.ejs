@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="/static/css/moodspanel.css">
+
+<h1>Moods Panel</h1>
+<div id="app">
+    <div id="error" v-if="error != null">
+        {{ error }}
+    </div>
+
+    <div class="container">
+        <div class="container-header">Characters & Moods</div>
+
+        <form action="" @submit.prevent="createCharForm()">
+            <p>Create new character</p>
+            <input type="text" placeholder="Name" id="create-char-name">
+            <input type="submit" value="Create">
+        </form>
+        <p>Remember that characters need a default in order to be used.</p>
+        <br><br>
+
+        <template v-if="loading">
+            <h1 id="title">Loading...</h1>
+        </template>
+        <template v-else>
+            <div id="chars-container">
+                <div v-for="char in chars" class="char-listing">
+                    <button @click="deleteChar" :data-char="char.id" class="listing-delete">[X]</button>
+                    <div class="char-listing-name">{{ char.name }} (default: {{ char.default_name || 'UNSET' }})</div>
+                    <div class="char-moods">
+                        <div v-for="mood in char.moods" class="mood-listing">
+                            <img class="mood-listing-image" :src="'/assets/mood/'+mood.id" :alt="mood.name">
+                            <div class="mood-listing-name">
+                                {{ mood.name }}
+                                <button @click="makeDefault" v-if="mood.id != char.default" :data-mood="mood.id" :data-char="char.id">Make default</button>
+                                <button @click="deleteMood" :data-mood="mood.id" :data-char="char.id" class="listing-delete">[X]</button>
+                            </div>
+                        </div>
+
+                        <form class="create-mood" :data-char="char.id" @submit.prevent="createMoodForm">
+                            <p>Create new mood:</p>
+                            <input type="file" :id="char.id+'-mood-file'"><br>
+                            <input type="text" placeholder="Name" :id="char.id+'-mood-name'">
+                            <input type="submit" value="Create">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/moodspanel.js"></script>

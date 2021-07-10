@@ -1,6 +1,5 @@
 const config = require('../../knexfile')
 const knex = require('knex')(config)
-const { characterMoodToUrl } = require('../utils/moods.util')
 
 /**
  * Orders comment results can be returned in
@@ -71,9 +70,11 @@ function commentInfo() {
         .select(knex.ref('user_character').as('author_character'))
         .select(knex.ref('comment_content').as('content'))
         .select(knex.ref('comment_mood').as('mood'))
+        .select('mood_name')
         .select(knex.ref('comment_created_on').as('created_on'))
         .leftJoin('users', 'comment_author', 'users.id')
         .leftJoin('posts', 'comment_post', 'posts.id')
+        .leftJoin('moods', 'comment_mood', 'moods.id')
     
     return query
 }
@@ -83,7 +84,6 @@ function commentInfo() {
 function processCommentInfoRows(rows) {
     for(row of rows) {
         row.created_on = new Date(row.created_on)
-        row.author_character_url = characterMoodToUrl(row.mood, row.author_character)
     }
     return rows
 }

@@ -399,6 +399,13 @@ input {
 .site-logo {
 	margin-bottom: 20px;
 }
+.comment-mood {
+	width: 50px;
+}
+.comment-mood img {
+	width: 100%;
+	height: 100%;
+}
 
 #contributors {
 	

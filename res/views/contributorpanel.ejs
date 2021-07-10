@@ -82,7 +82,7 @@
             <template v-if="comments.length > 0">
                 <div v-for="comment in comments" :id="'comment-'+comment.id" class="comment-listing">
                     <div class="comment-listing-left">
-                        <img :src="comment.author_character_url" :alt="comment.author_username+'\'s character'">
+                        <img :src="'/assets/mood/'+comment.mood" :alt="comment.author_username+'\'s character'">
                         <br>
                         <b>{{ comment.author_username }}</b>
                     </div>
