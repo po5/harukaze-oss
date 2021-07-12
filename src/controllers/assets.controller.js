@@ -39,9 +39,8 @@ module.exports.getMedia = async (ctx, next) => {
     let media = mediaRes[0]
 
     // Set headers
-    ctx.res
-        .setHeader('Accept-Ranges', 'bytes')
-        .setHeader('Vary', 'accept-encoding')
+    ctx.res.setHeader('Accept-Ranges', 'bytes')
+    ctx.res.setHeader('Vary', 'accept-encoding')
     if(!ctx.params.filename)
         ctx.res.setHeader('Content-Disposition', `filename="${media.media_filename.replace(/[^\x00-\x7F]/g, '_')}"`)
 
@@ -220,9 +219,8 @@ module.exports.getMood = async (ctx, next) => {
  */
 module.exports.getLogo = async (ctx, next) => {
     // Disable caching
-    ctx.res
-        .setHeader('Cache-control', 'no-store')
-        .setHeader('Pragma', 'no-cache')
+    ctx.res.setHeader('Cache-control', 'no-store')
+    ctx.res.setHeader('Pragma', 'no-cache')
 
     let filename = utils.sanitizePath(ctx.params.filename || '')
     let path = await logosUtil.getLogoPathByName(filename)
