@@ -8,7 +8,9 @@ const utils = require('../../utils/misc.util')
  */
 module.exports.getSearch = async ctx => {
     // Parse tags
-    let tagsRaw = ctx.request.query.query?.replace(/ /g, ',')
+    let tagsRaw = ctx.request.query.query
+    if(tagsRaw)
+        tagsRaw = tagsRaw.replace(/ /g, ',')
     let tags = []
     if(tagsRaw)
         tags = utils.setToArray(tagsRaw)

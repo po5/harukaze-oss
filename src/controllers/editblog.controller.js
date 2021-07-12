@@ -97,12 +97,16 @@ module.exports.postEditblog = async ctx => {
 
     // Collect data
     let body = ctx.request.body
-    let slug = utils.titleToSlug(body.slug?.trim())
+    let slug = utils.titleToSlug((body.slug || '').trim())
     let enableComments = body.comments == 'on'
     let published = body.published == 'on'
     let showTitle = body.showtitle == 'on'
-    let title = body.title?.trim()
-    let content = body.content?.trim()
+    let title = body.title
+    if(title)
+        title = title.trim()
+    let content = body.content
+    if(content)
+        content = content.trim()
     let tags = utils.setToArray(body.tags || '')
 
     // Set state

@@ -33,7 +33,7 @@ module.exports.getBannedUsers = async ctx => {
     // Check for correct data
     if(body.username != undefined && body.banned != undefined) {
         let username = body.username
-        let banned = body.banned?.toLowerCase() == 'true'
+        let banned = (body.banned || '').toLowerCase() == 'true'
 
         // Make sure user cannot ban self
         if(username.toLowerCase() == ctx.state.user.username.toLowerCase()) {

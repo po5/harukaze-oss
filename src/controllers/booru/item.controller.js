@@ -17,7 +17,9 @@ module.exports.getItem = async (ctx, next) => {
     }
     
     // Parse tags
-    let tagsRaw = ctx.request.query.tags?.replace(/ /g, ',')
+    let tagsRaw = ctx.request.query.tags
+    if(tagsRaw)
+        tagsRaw = tagsRaw.replace(/ /g, ',')
     let tags = []
     if(tagsRaw)
         tags = utils.setToArray(tagsRaw)

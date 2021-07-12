@@ -59,8 +59,8 @@ module.exports.postMyAccount = async (ctx, next) => {
 
     // Collect data
     let body = ctx.request.body
-    let bio = body.bio?.trim()
-    let info = body.info?.trim()
+    let bio = (body.bio || '').trim()
+    let info = (body.info || '').trim()
     let char = await moodUtils.getCharacterById(body.character*1)
 
     // Make sure character is valid

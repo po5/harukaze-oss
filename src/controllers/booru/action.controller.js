@@ -100,8 +100,12 @@ module.exports.postAction = async (ctx, next) => {
     
     if(action == 'create-collection') {
         // Collect data
-        let title = body.title?.trim()
-        let comment = body.comment?.trim()
+        let title = body.title
+        if(title)
+            title = title.trim()
+        let comment = body.comment
+        if(comment)
+            comment = comment.trim()
 
         // Create collection
         await collectionsModel.createCollection(title, comment ? comment : null, ctx.state.user.id)

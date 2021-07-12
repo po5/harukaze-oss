@@ -99,7 +99,11 @@ module.exports.postBlog = async (ctx, next) => {
             // Check action
             if(action == 'comment' && post.enable_comments) {
                 // Collect data
-                let content = body.content?.trim() || null
+                let content = body.content
+                if(content)
+                    content = content.trim()
+                else
+                    content = null
                 let mood = await moodUtils.getMoodById(body.mood*1)
                 let reply = isNaN(body.reply) ? null : body.reply*1
 
@@ -134,7 +138,7 @@ module.exports.postBlog = async (ctx, next) => {
                     }
 
                     // Create comment
-                    await commentsModel.createComment(post.id, parent?.id || null, ctx.state.user.id, content, mood.id)
+                    await commentsModel.createComment(post.id, (parent || {}).id || null, ctx.state.user.id, content, mood.id)
 
                     // Redirect to first page if a normal comment, otherwise redirect to same page (to avoid reloading causing another POST)
                     ctx.state.noRender = true

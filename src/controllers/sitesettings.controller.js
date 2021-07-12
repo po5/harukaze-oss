@@ -74,7 +74,7 @@ module.exports.postSiteSettings = async (ctx, next) => {
     let body = ctx.request.body
     let siteTitle = body['site-title']
     let siteDescription = body['site-description']
-    let showContributors = body['show-contributors']?.toLowerCase() == 'on'
+    let showContributors = (body['show-contributors'] || '').toLowerCase() == 'on'
     let maxUploadSize = body['max-upload-size']*1
     let captchaExpireSeconds = body['captcha-expire-seconds']*1
     let notFoundPage = body['not-found-page']

@@ -62,8 +62,8 @@ module.exports.postNewblog = async ctx => {
     let enableComments = body.comments == 'on'
     let publish = body.publish == 'on'
     let showTitle = body.showtitle == 'on'
-    let title = body.title?.trim()
-    let content = body.content?.trim()
+    let title = (body.title || '').trim()
+    let content = (body.content || '').trim()
     let tags = utils.setToArray(body.tags || '')
 
     // Set state

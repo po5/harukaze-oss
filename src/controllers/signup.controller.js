@@ -83,7 +83,9 @@ module.exports.postSignup = async ctx => {
     }
 
     // Collect data
-    let username = body.username?.trim()
+    let username = body.username
+    if(username)
+        username = username.trim()
     let password = body.password
     let charId = body.character*1
 

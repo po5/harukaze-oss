@@ -111,7 +111,9 @@ module.exports.postLogin = async ctx => {
     }
 
     // Collect data
-    let username = body.username?.trim()
+    let username = body.username
+    if(username)
+        username = username.trim()
     let password = body.password
 
     // Fill in username
