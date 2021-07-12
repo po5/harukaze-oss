@@ -112,6 +112,9 @@ a:hover {
 	white-space: pre-wrap;
 	padding: 10px;
 }
+.blogdesc img {
+	max-width: 100%;
+}
 .blogdate {
 	margin-left: 4px;
 	font-size: 11px;
