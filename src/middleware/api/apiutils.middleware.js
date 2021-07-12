@@ -4,6 +4,10 @@
  * @param {Function} next The next route to call
  */
 module.exports = async (ctx, next) => {
+    // Disable caching
+    ctx.res.setHeader('Cache-control', 'no-store')
+    ctx.res.setHeader('Pragma', 'no-cache')
+
     ctx.apiError = function(msg, extra = {}) {
         ctx.state.json = {
             status: 'error',
