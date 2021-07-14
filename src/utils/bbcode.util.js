@@ -73,6 +73,15 @@ xbbcode.addTags({
             return `</h3>`
         }
     },
+    hr: {
+        openTag(params, content) {
+            return 'hr'
+        },
+        closeTag(params, content) {
+            return ''
+        },
+        displayContent: false
+    },
     youtube: {
         openTag(params, content) {
             if(content.includes('&'))
