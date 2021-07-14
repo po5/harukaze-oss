@@ -260,7 +260,7 @@ xbbcode.addTags({
  */
 function renderBBCode(bbcode) {
     return xbbcode.process({
-        text: bbcode,
+        text: bbcode.replace(/\[hr\]/g, '[hr][/hr]'),
         removeMisalignedTags: false,
         addInLineBreaks: true
     }).html
