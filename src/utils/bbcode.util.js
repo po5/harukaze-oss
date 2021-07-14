@@ -75,7 +75,7 @@ xbbcode.addTags({
     },
     hr: {
         openTag(params, content) {
-            return 'hr'
+            return '<hr>'
         },
         closeTag(params, content) {
             return ''
