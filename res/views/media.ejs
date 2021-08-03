@@ -56,7 +56,7 @@
                     </template>
                     <template v-else>
                         <template v-if="media.tags.length > 0">
-                            <a v-for="tag in tags" class="tag" :href="'/booru/tags?query='+tag">
+                            <a v-for="tag in tags" class="tag" :href="'/booru/tags?query='+tag.replace(/ /g, '_')">
                                 {{ tag }}
                             </a>
                         </template>
