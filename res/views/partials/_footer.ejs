@@ -17,21 +17,5 @@
 <% } } %>
 <div id="footer">
     Powered by <a href="https://git.termer.net/trigex/harukaze">Harukaze</a> |
-    <% if(authed) { %>
-        <a href="/myaccount">My Account</a> |
-        <a href="/logout">Log out!</a>
-        <% if(user.role > 0) { %>
-            | <a href="/panel">Contributor Panel</a>
-            | <a href="/blogs/new">Make a new blog!</a>
-        <% } %>
-        <% if(user.role > 1) { %>
-            | <a href="/panel/admin">Administrator Panel</a>
-        <% } %>
-    <% } else { %>
-        <a href="/login">Log In!</a> |
-        <a href="/signup">Sign Up!</a>
-    <% } %> |
-    <a href="/search">Search posts</a> |
-    <a href="/booru">Booru</a> |
     <a href="/rss">RSS feed</a>
 </div>

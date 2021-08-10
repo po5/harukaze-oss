@@ -422,14 +422,19 @@ input {
 	text-align: left;
 	position: absolute;
 	right: calc(50vw - 625px);
-	top: 207px;
+	top: 295px;
 }
-#footer {
+#footer, #header-links {
 	text-align: center;
 	padding-top: 30px;
 	padding-bottom: 30px;
 	text-transform: lowercase;
 	margin-bottom: 10px;
+}
+#header-links {
+	margin-top: 0px;
+	padding: 0px;
+	margin-bottom: 20px;
 }
 #comments-area {
 	background-color: #eee;
