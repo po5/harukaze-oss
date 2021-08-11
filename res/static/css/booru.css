@@ -111,6 +111,12 @@ body {
     display: inline-block;
     margin-top: 20px;
     word-wrap: break-word;
+    max-width: calc(100% - 50px);
+}
+#item-comment pre {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    text-align: left;
 }
 
 #pagination {
