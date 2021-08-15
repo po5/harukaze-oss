@@ -225,7 +225,7 @@ async function fetchBooruVisibleMediaInfosByIds(ids) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All booru-visible media infos with the specified tags
+ * @returns {Promise<Array<Object>>} All booru-visible media infos with the specified tags
  */
 async function fetchBooruVisibleMediaInfosByTags(tags, offset, limit, order) {
     let query = mediaInfo()
@@ -264,13 +264,19 @@ async function fetchBooruVisibleMediaInfosByCollection(collection, offset, limit
 /**
  * Returns all booru-visible media's info uploaded by the specified uploader
  * @param {string} username The uploader's username
- * @returns {Array<object>} All booru-visible media's info uploaded by the specified uploader
+ * @param {number} offset The offset to return results
+ * @param {number} limit The amount of results to return
+ * @param {number} order The order of results to return
+ * @returns {Promise<Array<object>>} All booru-visible media's info uploaded by the specified uploader
  */
-async function fetchBooruVisibleMediaInfosByUploaderUsername(username) {
+async function fetchBooruVisibleMediaInfosByUploaderUsername(username, offset, limit, order) {
     return processMediaInfoRows(
         await mediaInfo()
             .where('media_booru_visible', true)
             .andWhere(knex.raw('LOWER(`user_username`)'), username.toLowerCase())
+            .offset(offset)
+            .limit(limit)
+            .orderByRaw(orderBy(order))
     )
 }
 
@@ -315,7 +321,7 @@ async function fetchBooruVisibleMediaCount() {
 /**
  * Returns the total amount of booru-visible media with the specified tags
  * @param {Array<string>} tags The tags to search for
- * @returns {number} The total amount of booru-visible media with the specified tags
+ * @returns {Promise<number>} The total amount of booru-visible media with the specified tags
  */
 async function fetchBooruVisibleMediaCountByTags(tags) {
     // Start query
@@ -333,7 +339,7 @@ async function fetchBooruVisibleMediaCountByTags(tags) {
 /**
  * Returns the amount of booru-visible media uploaded by the specified uploader
  * @param {string} username The uploader's username
- * @returns {number} The amount of booru-visible media uploaded by the specified uploader
+ * @returns {Promise<number>} The amount of booru-visible media uploaded by the specified uploader
  */
 async function fetchBooruVisibleMediaCountByUploaderUsername(username) {
     return (await knex('media')

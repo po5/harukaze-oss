@@ -101,7 +101,7 @@ async function fetchUserByUsername(username) {
 /**
  * Fetches a user's info by its username
  * @param {string} username The user's username
- * @return {Array<Object>} An array with the row containing the user's info or an empty array if none exists
+ * @return {Promise<Array<Object>>} An array with the row containing the user's info or an empty array if none exists
  */
 async function fetchUserInfoByUsername(username) {
     return processUserInfoRows(

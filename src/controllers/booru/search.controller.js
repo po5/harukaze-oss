@@ -29,8 +29,8 @@ module.exports.getSearch = async ctx => {
 
     // Enumerate tags from items
     let resultTags = []
-    for(file of media)
-        for(tag of file.tags)
+    for(let file of media)
+        for(let tag of file.tags)
             if(!resultTags.includes(tag))
                 resultTags.push(tag)
     
@@ -41,7 +41,7 @@ module.exports.getSearch = async ctx => {
     ctx.state.pagination = pagination
 
     // Put metadata if present
-    let s = n => n == 1 ? '' : 's'
+    let s = n => n === 1 ? '' : 's'
     ctx.state.metaDescription = tags.length > 0 ? `View ${totalMedia} result${s(totalMedia)} for the tag${s(tags.length)} "${tags.join(' ')}" on the booru` : `View all ${totalMedia} item${s(totalMedia)} on the booru`
 
     // Put data

@@ -32,8 +32,8 @@ module.exports.getUser = async (ctx, next) => {
 
     // Enumerate tags from items
     let resultTags = []
-    for(file of media)
-        for(tag of file.tags)
+    for(let file of media)
+        for(let tag of file.tags)
             if(!resultTags.includes(tag))
                 resultTags.push(tag)
     
