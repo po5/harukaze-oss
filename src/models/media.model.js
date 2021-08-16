@@ -108,7 +108,7 @@ function orderBy(order) {
  * @param {string?} thumbnailKey The key of the underlying thumbnail file on disk (null if no thumbnail)
  * @param {number} size The file's size in bytes
  * @param {string} hash The file's hash
- * @param {string?} comment The file's comemnt (can be null)
+ * @param {string?} comment The file's comment (can be null)
  */
 async function createMedia(uploader, title, filename, mime, key, tags, booruVisible, thumbnailKey, size, hash, comment) {
     return await knex('media')
