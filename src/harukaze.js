@@ -29,7 +29,7 @@ const { putEssentialState } = require('./utils/render.util')
 global.root = path.join(__dirname, '../')
 
 // Whether the server has started
-var started = false
+let started = false
 
 /**
  * @param {Array<string>} args 
@@ -72,10 +72,10 @@ Run without any arguments to start the server.`)
         // Confirm password
         let confirm = await utils.readLine('Confirm password:', true)
 
-        if(password == confirm) {
+        if(password === confirm) {
             // Create account
             console.log('Creating account...')
-            await usersUtil.createUser(username, null, password, usersUtil.Roles.ADMIN, null)
+            await usersUtil.createUser(username, null, password, usersUtil.Roles.ADMIN, null, -1)
             console.log(`New administrator account "${username}" created, you may now start the server and log into it.`)
         } else {
             console.log('The passwords do not match')
@@ -122,7 +122,7 @@ Run without any arguments to start the server.`)
         // Create moods based on those in the default moods directory
         let files = fs.readdirSync('res/defaults/moods/')
         let keys = []
-        for(file of files) {
+        for(let file of files) {
             let name = file.substring(0, file.lastIndexOf('.'))
             let path = 'res/defaults/moods/'+file
             let key = utils.generateAlphanumericString(10)+'.png'
@@ -231,7 +231,7 @@ Run without any arguments to start the server.`)
     // Start redirect server if enabled
     if(httpsSettings.enable && httpsSettings.redirectEnable) {
         http.createServer((req, res) => {
-            res.statusCode = '301'
+            res.statusCode = 301
             res.statusMessage = 'Found'
 
             // Work out appropriate host
