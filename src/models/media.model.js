@@ -386,7 +386,7 @@ async function updateMediaById(id, title, tags, booruVisible, comment) {
 async function deleteMediaById(id) {
     return knex('media')
         .del()
-        .where('media.id', id.toString())
+        .where('media.id', id)
 }
 
 /* Export functions */
