@@ -63,7 +63,7 @@ function orderBy(order) {
 /**
  * Creates a new collection
  * @param {string} title The collection title
- * @param {string?} comment The collection comment (can be null)
+ * @param {?string} comment The collection comment (can be null)
  * @param {number} creator The ID of the collection creator
  */
 async function createCollection(title, comment, creator) {

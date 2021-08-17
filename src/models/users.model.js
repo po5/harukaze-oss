@@ -44,11 +44,11 @@ function processUserInfoRows(rows) {
  * Creates a new user entry.
  * To create a new user normally, you should use createUser in users.util.js.
  * @param {string} username The user's username
- * @param {string?} bio The user's bio (can be null)
+ * @param {?string} bio The user's bio (can be null)
  * @param {string} hash The user's password hash
  * @param {number} role The user's role (values defined in Roles object)
- * @param {string} avatarKey The user's avatar key (can be null)
- * @param {string?} info The user's info (can be null)
+ * @param {?string} avatarKey The user's avatar key (can be null)
+ * @param {?string} info The user's info (can be null)
  * @param {number} character The user's character ID
  */
 async function createUser(username, bio, hash, role, avatarKey, info, character) {
@@ -252,9 +252,9 @@ async function updateUserHashById(id, hash) {
 /**
  * Updates a user's info
  * @param {number} id The user's ID
- * @param {string?} bio The user's new bio (can be null)
+ * @param {?string} bio The user's new bio (can be null)
  * @param {number} character The user's new character ID
- * @param {string?} info The user's new info (can be null)
+ * @param {?string} info The user's new info (can be null)
  */
 async function updateUserInfoById(id, bio, character, info) {
     return knex('users')

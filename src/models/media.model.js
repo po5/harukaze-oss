@@ -103,10 +103,10 @@ function orderBy(order) {
  * @param {string} key The key of the underlying file on disk
  * @param {Array<string>} tags The media tags
  * @param {boolean} booruVisible Whether the media is visible on the booru
- * @param {string?} thumbnailKey The key of the underlying thumbnail file on disk (null if no thumbnail)
+ * @param {?string} thumbnailKey The key of the underlying thumbnail file on disk (null if no thumbnail)
  * @param {number} size The file's size in bytes
  * @param {string} hash The file's hash
- * @param {string?} comment The file's comment (can be null)
+ * @param {?string} comment The file's comment (can be null)
  */
 async function createMedia(uploader, title, filename, mime, key, tags, booruVisible, thumbnailKey, size, hash, comment) {
     return knex('media')
@@ -366,7 +366,7 @@ async function fetchBooruVisibleMediaCountByUploaderUsername(username) {
  * @param {string} title The new title
  * @param {Array<string>} tags The new tags
  * @param {boolean} booruVisible Whether it will be visible on the booru
- * @param {string} comment The new comment (can be null)
+ * @param {?string} comment The new comment (can be null)
  */
 async function updateMediaById(id, title, tags, booruVisible, comment) {
     return knex('media')
