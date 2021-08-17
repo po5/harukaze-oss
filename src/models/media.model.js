@@ -381,7 +381,7 @@ async function updateMediaById(id, title, tags, booruVisible, comment) {
 
 /**
  * Deletes the media entry with the specified ID, if it exists
- * @param {Promise<number>} id The ID
+ * @param {number} id The ID
  */
 async function deleteMediaById(id) {
     return knex('media')
