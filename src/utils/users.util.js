@@ -23,10 +23,10 @@ const Roles = {
 /**
  * Creates a new user
  * @param {string} username The user's username
- * @param {string} bio The user's bio (can be null)
+ * @param {?string} bio The user's bio (can be null)
  * @param {string} password The user's password
  * @param {number} role The user's role (values defined in Roles object)
- * @param {string} avatarKey The user's avatar key (can be null)
+ * @param {?string} avatarKey The user's avatar key (can be null)
  * @param {number} character The user's character ID 
  */
 async function createUser(username, bio, password, role, avatarKey, character) {
