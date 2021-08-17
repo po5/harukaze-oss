@@ -41,7 +41,7 @@ function moodInfo() {
  * @param {Array<Object>} rows 
  */
 function processMoodInfoRows(rows) {
-    for(row of rows) {
+    for(let row of rows) {
         row.created_on = new Date(row.created_on)
     }
     return rows
@@ -71,7 +71,7 @@ function orderBy(order) {
  * @param {number} creator The creator's ID
  */
 async function createMood(name, key, character, creator) {
-    return await knex('moods')
+    return knex('moods')
         .insert({
             mood_name: name,
             mood_key: key,
@@ -83,7 +83,7 @@ async function createMood(name, key, character, creator) {
 /**
  * Fetches the mood's info with the specified ID
  * @param {number} id The ID
- * @return {Array<Object>} An array with the row containing the mood's info or an empty array if none exists
+ * @return {Promise<Array<Object>>} An array with the row containing the mood's info or an empty array if none exists
  */
 async function fetchMoodInfoById(id) {
     return processMoodInfoRows(
@@ -95,7 +95,7 @@ async function fetchMoodInfoById(id) {
 /**
  * Fetches the mood's info with the specified key
  * @param {number} key The key
- * @return {Array<Object>} An array with the row containing the mood's info or an empty array if none exists
+ * @return {Promise<Array<Object>>} An array with the row containing the mood's info or an empty array if none exists
  */
 async function fetchMoodInfoByKey(key) {
     return processMoodInfoRows(
@@ -109,7 +109,7 @@ async function fetchMoodInfoByKey(key) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @return {Array<Object>} All moods' info
+ * @return {Promise<Array<Object>>} All moods' info
  */
 async function fetchMoodInfos(offset, limit, order) {
     return processMoodInfoRows(
@@ -126,7 +126,7 @@ async function fetchMoodInfos(offset, limit, order) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @return {Array<Object>} All moods' info
+ * @return {Promise<Array<Object>>} All moods' info
  */
 async function fetchMoodInfosByCharacter(character, offset, limit, order) {
     return processMoodInfoRows(
@@ -140,7 +140,7 @@ async function fetchMoodInfosByCharacter(character, offset, limit, order) {
 
 /**
  * Fetches the amount of moods
- * @returns {number} The amount of moods
+ * @returns {Promise<number>} The amount of moods
  */
 async function fetchMoodsCount() {
     return (await knex('moods').count('*', { as: 'count' }))[0].count
@@ -151,7 +151,7 @@ async function fetchMoodsCount() {
  * @param {number} id The mood ID
  */
 async function deleteMoodById(id) {
-    return await knex('moods')
+    return knex('moods')
         .del()
         .where('moods.id', id)
 }
@@ -161,7 +161,7 @@ async function deleteMoodById(id) {
  * @param {number} character The character ID
  */
 async function deleteMoodsByCharacter(character) {
-    return await knex('moods')
+    return knex('moods')
         .del()
         .where('mood_character', character)
 }
