@@ -28,8 +28,5 @@
     "read": "^1.0.7",
     "trek-captcha": "^0.4.0",
     "xbbcode-parser": "^0.1.2"
-  },
-  "devDependencies": {
-    "prisma": "^2.22.1"
   }
 }
