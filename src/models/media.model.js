@@ -366,7 +366,7 @@ async function fetchBooruVisibleMediaCountByUploaderUsername(username) {
  * @param {string} title The new title
  * @param {Array<string>} tags The new tags
  * @param {boolean} booruVisible Whether it will be visible on the booru
- * @param {Promise<string>} comment The new comment (can be null)
+ * @param {string} comment The new comment (can be null)
  */
 async function updateMediaById(id, title, tags, booruVisible, comment) {
     return knex('media')
