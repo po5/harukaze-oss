@@ -24,7 +24,7 @@ const Roles = {
  * Creates a new user
  * @param {string} username The user's username
  * @param {string} bio The user's bio (can be null)
- * @param {string} hash The user's password
+ * @param {string} password The user's password
  * @param {number} role The user's role (values defined in Roles object)
  * @param {string} avatarKey The user's avatar key (can be null)
  * @param {number} character The user's character ID 
@@ -68,7 +68,7 @@ async function identifyContextWithUserRow(ctx, userRow) {
         characterDefault: (char || {}).default || null,
         characterMoods: await moodUtils.getMoodsByCharacter(userRow.user_character),
         info: userRow.user_info,
-        banned: userRow.user_banned == 1,
+        banned: userRow.user_banned === 1,
         createdOn: new Date(userRow.user_created_on)
     }
 }
