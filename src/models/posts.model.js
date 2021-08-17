@@ -1,7 +1,6 @@
 const config = require('../../knexfile')
 const knex = require('knex')(config)
 const utils = require('../utils/misc.util')
-const { Knex } = require('knex')
 
 /**
  * Orders post results can be returned in
@@ -58,7 +57,7 @@ function postInfo(withContent) {
  * @param {Array<Object>} rows 
  */
 function processPostInfoRows(rows) {
-    for(row of rows) {
+    for(let row of rows) {
         row.tags = utils.setToArray(row.tags)
         row.referenced_media = utils.setToArray(row.referenced_media)
         row.created_on = new Date(row.created_on)
@@ -95,7 +94,7 @@ function orderBy(order) {
  * @param {Array<number>} referencedMedia The media IDs that were referenced/linked/embedded in the post
  */
 async function createPost(author, title, slug, content, tags, enableComments, published, showTitle, referencedMedia) {
-    return await knex('posts')
+    return knex('posts')
         .insert({
             post_author: author,
             post_title: title,
@@ -114,10 +113,10 @@ async function createPost(author, title, slug, content, tags, enableComments, pu
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @return {Array<Object>} All posts
+ * @return {Promise<Array<Object>>} All posts
  */
 async function fetchPosts(offset, limit, order) {
-    return await knex('posts')
+    return knex('posts')
         .select('*')
         .offset(offset)
         .limit(limit)
@@ -129,10 +128,10 @@ async function fetchPosts(offset, limit, order) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @return {Array<Object>} All published posts
+ * @return {Promise<Array<Object>>} All published posts
  */
 async function fetchPublishedPosts(offset, limit, order) {
-    return await knex('posts')
+    return knex('posts')
         .select('*')
         .where('post_published', true)
         .offset(offset)
@@ -146,7 +145,7 @@ async function fetchPublishedPosts(offset, limit, order) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All posts' info
+ * @returns {Promise<Array<Object>>} All posts' info
  */
 async function fetchPostInfos(withContent, offset, limit, order) {
     return processPostInfoRows(
@@ -163,7 +162,7 @@ async function fetchPostInfos(withContent, offset, limit, order) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All published posts' info
+ * @returns {Promise<Array<Object>>} All published posts' info
  */
 async function fetchPublishedPostInfos(withContent, offset, limit, order) {
     return processPostInfoRows(
@@ -182,7 +181,7 @@ async function fetchPublishedPostInfos(withContent, offset, limit, order) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All published posts' info
+ * @returns {Promise<Array<Object>>} All published posts' info
  */
  async function fetchPublishedPostInfosByAuthor(author, withContent, offset, limit, order) {
     return processPostInfoRows(
@@ -198,10 +197,10 @@ async function fetchPublishedPostInfos(withContent, offset, limit, order) {
 /**
  * Fetches a post by its slug
  * @param {string} slug The post slug
- * @returns {Array<Object>} An array with the row containing the post or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the post or an empty array if none exists
  */
 async function fetchPostBySlug(slug) {
-    return await knex('posts')
+    return knex('posts')
         .select('*')
         .where('post_slug', slug)
 }
@@ -210,7 +209,7 @@ async function fetchPostBySlug(slug) {
  * Fetches a post's info by its ID
  * @param {boolean} withContent Whether to include post content
  * @param {number} id The post's ID
- * @returns {Array<Object>} An array with the row containing the post's info or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the post's info or an empty array if none exists
  */
  async function fetchPostInfoById(withContent, id) {
     return processPostInfoRows(
@@ -223,7 +222,7 @@ async function fetchPostBySlug(slug) {
  * Fetches a post's info by its slug
  * @param {boolean} withContent Whether to include post content
  * @param {string} slug The post slug
- * @returns {Array<Object>} An array with the row containing the post's info or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the post's info or an empty array if none exists
  */
 async function fetchPostInfoBySlug(withContent, slug) {
     return processPostInfoRows(
@@ -236,7 +235,7 @@ async function fetchPostInfoBySlug(withContent, slug) {
  * Fetches post infos by their IDs
  * @param {boolean} withContent Whether to include post content
  * @param {Array<number>} ids The IDs
- * @returns {Array<Object>} All post infos with the specified IDs
+ * @returns {Promise<Array<Object>>} All post infos with the specified IDs
  */
 async function fetchPostInfosByIds(withContent, ids) {
     return processPostInfoRows(
@@ -252,7 +251,7 @@ async function fetchPostInfosByIds(withContent, ids) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All published posts' info
+ * @returns {Promise<Array<Object>>} All published posts' info
  */
 async function fetchPublishedPostInfosByTag(tag, withContent, offset, limit, order) {
     return processPostInfoRows(
@@ -272,7 +271,7 @@ async function fetchPublishedPostInfosByTag(tag, withContent, offset, limit, ord
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All published posts' info with title/contents/tags like the specified pattern
+ * @returns {Promise<Array<Object>>} All published posts' info with title/contents/tags like the specified pattern
  */
 async function fetchPublishedPostInfosWherePostLike(pattern, withContent, offset, limit, order) {
     return processPostInfoRows(
@@ -292,7 +291,7 @@ async function fetchPublishedPostInfosWherePostLike(pattern, withContent, offset
 
 /**
  * Returns the total amount of posts
- * @returns {number} The total amount of posts
+ * @returns {Promise<number>} The total amount of posts
  */
 async function fetchPostsCount() {
     return (await knex('posts').count('*', { as: 'count' }))[0].count
@@ -301,7 +300,7 @@ async function fetchPostsCount() {
 /**
  * Fetches the amount of posts with a slug that matches the provided regular expression
  * @param {string} slugRegex The regular expression
- * @returns {number} The amount of posts that match the provided regular expression
+ * @returns {Promise<number>} The amount of posts that match the provided regular expression
  */
 async function fetchPostCountBySlugRegex(slugRegex) {
     return (await knex('posts')
@@ -312,7 +311,7 @@ async function fetchPostCountBySlugRegex(slugRegex) {
 /**
  * Fetches the amount of posts with the specified tag
  * @param {string} tag The tag to search for
- * @returns {number} The amount of posts with the specified tag
+ * @returns {Promise<number>} The amount of posts with the specified tag
  */
 async function fetchPublishedPostCountByTag(tag) {
     return (await knex('posts')
@@ -324,7 +323,7 @@ async function fetchPublishedPostCountByTag(tag) {
 /**
  * Fetches the amount of posts with titles/contents/tags like the specified pattern
  * @param {string} pattern The pattern
- * @returns {number} The amount of posts with title/contents/tags like the specified pattern
+ * @returns {Promise<number>} The amount of posts with title/contents/tags like the specified pattern
  */
 async function fetchPublishedPostCountWherePostLike(pattern) {
     return (await knex('posts')
@@ -351,7 +350,7 @@ async function fetchPublishedPostCountWherePostLike(pattern) {
  * @param {Array<string>} referencedMedia All media that the post now references
  */
 async function updatePostById(id, title, slug, content, tags, enableComments, published, showTitle, referencedMedia) {
-    return await knex('posts')
+    return knex('posts')
         .update({
             post_title: title,
             post_slug: slug,
@@ -370,7 +369,7 @@ async function updatePostById(id, title, slug, content, tags, enableComments, pu
  * @param {number} id The post ID
  */
 async function deletePostById(id) {
-    return await knex('posts')
+    return knex('posts')
         .del()
         .where('posts.id', id)
 }
@@ -380,7 +379,7 @@ async function deletePostById(id) {
  * @param {Array<number>} ids The post IDs
  */
 async function deletePostsByIds(ids) {
-    return await knex('posts')
+    return knex('posts')
         .del()
         .whereIn('posts.id', ids)
 }
