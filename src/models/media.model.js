@@ -42,7 +42,7 @@ const Order = {
 
 /* Utility functions */
 function mediaInfo() {
-    let query = knex('media')
+    return knex('media')
         .select('media.id')
         .select(knex.ref('media_uploader').as('uploader'))
         .select(knex.ref('user_username').as('uploader_username'))
@@ -58,14 +58,12 @@ function mediaInfo() {
         .select(knex.ref('media_comment').as('comment'))
         .select(knex.ref('media_created_on').as('created_on'))
         .leftJoin('users', 'media_uploader', 'users.id')
-    
-    return query
 }
 /**
  * @param {Array<Object>} rows 
  */
 function processMediaInfoRows(rows) {
-    for(row of rows) {
+    for(let row of rows) {
         row.tags = utils.setToArray(row.tags)
         row.created_on = new Date(row.created_on)
     }
@@ -111,7 +109,7 @@ function orderBy(order) {
  * @param {string?} comment The file's comment (can be null)
  */
 async function createMedia(uploader, title, filename, mime, key, tags, booruVisible, thumbnailKey, size, hash, comment) {
-    return await knex('media')
+    return knex('media')
         .insert({
             media_uploader: uploader,
             media_title: title,
@@ -132,10 +130,10 @@ async function createMedia(uploader, title, filename, mime, key, tags, booruVisi
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @return {Array<Object>} All media
+ * @return {Promise<Array<Object>>} All media
  */
 async function fetchMedia(offset, limit, order) {
-    return await knex('media')
+    return knex('media')
         .select('*')
         .offset(offset)
         .limit(limit)
@@ -147,7 +145,7 @@ async function fetchMedia(offset, limit, order) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All media's info
+ * @returns {Promise<Array<Object>>} All media's info
  */
 async function fetchMediaInfos(offset, limit, order) {
     return processMediaInfoRows(
@@ -161,10 +159,10 @@ async function fetchMediaInfos(offset, limit, order) {
 /**
  * Fetches media by its ID
  * @param {number} id The ID
- * @returns {Array<Object>} An array with the row containing the media or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the media or an empty array if none exists
  */
 async function fetchMediaById(id) {
-    return await knex('media')
+    return knex('media')
         .select('*')
         .where('media.id', id)
 }
@@ -172,7 +170,7 @@ async function fetchMediaById(id) {
 /**
  * Fetches a media's info by its ID
  * @param {number} id The ID
- * @returns {Array<Object>} An array with the row containing the media info or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the media info or an empty array if none exists
  */
 async function fetchMediaInfoById(id) {
     return processMediaInfoRows(
@@ -184,7 +182,7 @@ async function fetchMediaInfoById(id) {
 /**
  * Fetches a booru-visible media's info by its ID
  * @param {number} id The ID
- * @returns {Array<Object>} An array with the row containing the media info or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the media info or an empty array if none exists
  */
  async function fetchBooruVisibleMediaInfoById(id) {
     return processMediaInfoRows(
@@ -197,7 +195,7 @@ async function fetchMediaInfoById(id) {
 /**
  * Fetches media infos by their IDs
  * @param {Array<number>} ids The IDs
- * @returns {Array<Object>} All media infos with the specified IDs
+ * @returns {Promise<Array<Object>>} All media infos with the specified IDs
  */
 async function fetchMediaInfosByIds(ids) {
     return processMediaInfoRows(
@@ -209,7 +207,7 @@ async function fetchMediaInfosByIds(ids) {
 /**
  * Fetches booru-visible media infos by their IDs
  * @param {Array<number>} ids The IDs
- * @returns {Array<Object>} All booru-visible media infos with the specified IDs
+ * @returns {Promise<Array<Object>>} All booru-visible media infos with the specified IDs
  */
 async function fetchBooruVisibleMediaInfosByIds(ids) {
     return processMediaInfoRows(
@@ -235,7 +233,7 @@ async function fetchBooruVisibleMediaInfosByTags(tags, offset, limit, order) {
             .orderByRaw(orderBy(order))
     
     // Add tags to query
-    for(tag of tags)
+    for(let tag of tags)
         query.andWhereRaw('FIND_IN_SET(?, media_tags) > 0', [tag])
 
     return processMediaInfoRows(await query)
@@ -247,7 +245,7 @@ async function fetchBooruVisibleMediaInfosByTags(tags, offset, limit, order) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All booru-visible media infos with the specified tags
+ * @returns {Promise<Array<Object>>} All booru-visible media infos with the specified tags
  */
 async function fetchBooruVisibleMediaInfosByCollection(collection, offset, limit, order) {
     return processMediaInfoRows(
@@ -283,26 +281,26 @@ async function fetchBooruVisibleMediaInfosByUploaderUsername(username, offset, l
 /**
  * Fetches a media file by its hash
  * @param {string} hash The hash to search for
- * @returns {Array<Object>} An array with the row containing the media or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the media or an empty array if none exists
  */
 async function fetchMediaByHash(hash) {
-    return await knex('media')
+    return knex('media')
         .select('*')
         .where('media_hash', hash)
 }
 
 /**
  * Returns rows containing only media tags in a column called "tags"
- * @returns Rows containing only media tags in a column called "tags"
+ * @returns {Promise<Object>} Rows containing only media tags in a column called "tags"
  */
 async function fetchMediaTags() {
-    return await knex('media')
+    return knex('media')
         .select(knex.ref('media_tags').as('tags'))
 }
 
 /**
  * Returns the total amount of media
- * @returns {number} The total amount of media
+ * @returns {Promise<number>} The total amount of media
  */
 async function fetchMediaCount() {
     return (await knex('media').count('*', { as: 'count' }))[0].count
@@ -310,7 +308,7 @@ async function fetchMediaCount() {
 
 /**
  * Returns the total amount of booru-visible media
- * @returns {number} The total amount of booru-visible media
+ * @returns {Promise<number>} The total amount of booru-visible media
  */
 async function fetchBooruVisibleMediaCount() {
     return (await knex('media')
@@ -330,7 +328,7 @@ async function fetchBooruVisibleMediaCountByTags(tags) {
         .where('media_booru_visible', true)
     
     // Add tags to query
-    for(tag of tags)
+    for(let tag of tags)
         query.andWhereRaw('FIND_IN_SET(?, media_tags) > 0', [tag])
     
     return (await query)[0].count
@@ -352,7 +350,7 @@ async function fetchBooruVisibleMediaCountByUploaderUsername(username) {
 /**
  * Returns the amount of booru-visible media in the specified collection
  * @param {number} collection The collection ID
- * @returns {number} The amount of booru-visible media in the specified collection
+ * @returns {Promise<number>} The amount of booru-visible media in the specified collection
  */
  async function fetchBooruVisibleMediaCountByCollection(collection) {
     return (await knex('media')
@@ -368,10 +366,10 @@ async function fetchBooruVisibleMediaCountByUploaderUsername(username) {
  * @param {string} title The new title
  * @param {Array<string>} tags The new tags
  * @param {boolean} booruVisible Whether it will be visible on the booru
- * @param {string?} comment The new comment (can be null)
+ * @param {Promise<string>} comment The new comment (can be null)
  */
 async function updateMediaById(id, title, tags, booruVisible, comment) {
-    return await knex('media')
+    return knex('media')
         .update({
             media_title: title,
             media_tags: utils.arrayToSet(tags),
@@ -383,12 +381,12 @@ async function updateMediaById(id, title, tags, booruVisible, comment) {
 
 /**
  * Deletes the media entry with the specified ID, if it exists
- * @param {number} id The ID
+ * @param {Promise<number>} id The ID
  */
 async function deleteMediaById(id) {
-    return await knex('media')
+    return knex('media')
         .del()
-        .where('media.id', id)
+        .where('media.id', id.toString())
 }
 
 /* Export functions */
