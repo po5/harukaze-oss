@@ -17,7 +17,7 @@ const knex = require('knex')(config)
 
 /* Utility functions */
 function collectionInfo() {
-    let query = knex('collections')
+    return knex('collections')
         .select('collections.id')
         .select(knex.ref('collection_title').as('title'))
         .select(knex.ref('collection_comment').as('comment'))
@@ -37,14 +37,12 @@ function collectionInfo() {
             LIMIT 1
         ) AS \`first_item\``))
         .leftJoin('users', 'collection_creator', 'users.id')
-    
-    return query
 }
 /**
  * @param {Array<Object>} rows 
  */
 function processCollectionInfoRows(rows) {
-    for(row of rows) {
+    for(let row of rows) {
         row.created_on = new Date(row.created_on)
     }
     return rows
@@ -69,7 +67,7 @@ function orderBy(order) {
  * @param {number} creator The ID of the collection creator
  */
 async function createCollection(title, comment, creator) {
-    return await knex('collections')
+    return knex('collections')
         .insert({
             collection_title: title,
             collection_comment: comment,
@@ -84,7 +82,7 @@ async function createCollection(title, comment, creator) {
  * @param {number} creator The ID of the user who added the item (not the user who created the media or collection)
  */
  async function createCollectionItem(media, collection, creator) {
-    return await knex('collectionitems')
+    return knex('collectionitems')
         .insert({
             item_media: media,
             item_collection: collection,
@@ -95,7 +93,7 @@ async function createCollection(title, comment, creator) {
 /**
  * Fetches a collection's info by its ID
  * @param {number} id The ID
- * @returns {Array<Object>} An array with the row containing the collection's info or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the collection's info or an empty array if none exists
  */
  async function fetchCollectionInfoById(id) {
     return processCollectionInfoRows(
@@ -109,7 +107,7 @@ async function createCollection(title, comment, creator) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All collections' info
+ * @returns {Promise<Array<Object>>} All collections' info
  */
  async function fetchCollectionInfos(offset, limit, order) {
     return processCollectionInfoRows(
@@ -126,7 +124,7 @@ async function createCollection(title, comment, creator) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All collections' info by the specified creator
+ * @returns {Promise<Array<Object>>} All collections' info by the specified creator
  */
  async function fetchCollectionInfosByCreator(creator, offset, limit, order) {
     return processCollectionInfoRows(
@@ -144,7 +142,7 @@ async function createCollection(title, comment, creator) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All collections' info that contain the specified media ID
+ * @returns {Promise<Array<Object>>} All collections' info that contain the specified media ID
  */
  async function fetchCollectionInfosWithMedia(media, offset, limit, order) {
     return processCollectionInfoRows(
@@ -165,7 +163,7 @@ async function createCollection(title, comment, creator) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All collections' info that do not contain the specified media ID
+ * @returns {Promise<Array<Object>>} All collections' info that do not contain the specified media ID
  */
  async function fetchCollectionInfosWithoutMedia(media, offset, limit, order) {
     return processCollectionInfoRows(
@@ -182,7 +180,7 @@ async function createCollection(title, comment, creator) {
 
 /**
  * Returns the total amount of collections
- * @returns {number} The total amount of collections
+ * @returns {Promise<number>} The total amount of collections
  */
 async function fetchCollectionsCount() {
     return (await knex('collections').count('*', { as: 'count' }))[0].count
@@ -191,7 +189,7 @@ async function fetchCollectionsCount() {
 /**
  * Returns the total amount of collections by the specified creator
  * @param {number} creator The ID of the creator
- * @returns {number} The total amount of collections by the specified creator
+ * @returns {Promise<number>} The total amount of collections by the specified creator
  */
 async function fetchCollectionsCountByCreator(creator) {
     return (await knex('collections')
@@ -204,7 +202,7 @@ async function fetchCollectionsCountByCreator(creator) {
  * Returns whether the specified media exists in the provided list
  * @param {number} media The media ID
  * @param {number} collection The collection ID
- * @returns {boolean} Whether the specified media exists in the provided list
+ * @returns {Promise<boolean>} Whether the specified media exists in the provided list
  */
 async function fetchMediaExistsInCollection(media, collection) {
     return (await knex('collectionitems')
@@ -218,7 +216,7 @@ async function fetchMediaExistsInCollection(media, collection) {
  * @param {number} id The ID
  */
 async function deleteCollectionById(id) {
-    return await knex('collections')
+    return knex('collections')
         .del()
         .where('id', id)
 }
@@ -229,7 +227,7 @@ async function deleteCollectionById(id) {
  * @param {number} collection The collection ID
  */
 async function deleteCollectionItemByMediaAndCollection(media, collection) {
-    return await knex('collectionitems')
+    return knex('collectionitems')
         .del()
         .where('item_media', media)
         .andWhere('item_collection', collection)
