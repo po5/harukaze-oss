@@ -11,7 +11,7 @@ function loginInfo() {
         .leftJoin('users', 'login_user', 'users.id')
 }
 function processLoginInfoRows(rows) {
-    for(row of rows) {
+    for(let row of rows) {
         row.created_on = new Date(row.created_on)
     }
     return rows
@@ -23,7 +23,7 @@ function processLoginInfoRows(rows) {
  * @param {string} ip The IP used to login
  */
 async function createLogin(user, ip) {
-    return await knex('userlogins')
+    return knex('userlogins')
         .insert({
             login_user: user,
             login_ip: ip
@@ -33,10 +33,10 @@ async function createLogin(user, ip) {
 /**
  * Fetches all logins by the specified user with a unique IP address
  * @param {number} user The user's ID
- * @returns {Array<Object>} All logins
+ * @returns {Promise<Array<Object>>} All logins
  */
 async function fetchUniqueIpLoginsByUser(user) {
-    return await knex('userlogins')
+    return knex('userlogins')
         .select('*')
         .where('login_user', user)
         .groupBy('login_ip')
@@ -45,7 +45,7 @@ async function fetchUniqueIpLoginsByUser(user) {
 /**
  * Fetches all login infos by the specified user with a unique IP address
  * @param {number} user The user's ID
- * @returns {Array<Object>} All logins' info
+ * @returns {Promise<Array<Object>>} All logins' info
  */
 async function fetchUniqueIpLoginInfosByUser(user) {
     return processLoginInfoRows(
