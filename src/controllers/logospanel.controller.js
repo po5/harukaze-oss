@@ -7,9 +7,9 @@ const copyFile = util.promisify(fs.copyFile)
 const unlink = util.promisify(fs.unlink)
 
 /**
- * @param {import('koa').Context} ctx 
- * @param {Function} next 
- * @returns {boolean}
+ * @param {import('koa').Context} ctx
+ * @param {Function} next
+ * @returns {Promise<boolean>}
  */
 async function handleUnauthorized(ctx, next) {
     // Deal with unauthenticated and unauthorized users
@@ -46,6 +46,7 @@ async function setupCtx(ctx) {
 /**
  * GET controller for logos panel page
  * @param {import("koa").Context} ctx The context
+ * @param {Function} next
  */
 module.exports.getLogosPanel = async (ctx, next) => {
     if(!(await handleUnauthorized(ctx, next)))
@@ -57,7 +58,8 @@ module.exports.getLogosPanel = async (ctx, next) => {
 
 /**
  * POST controller for logos panel page
- * @param {import('koa').Context} ctx 
+ * @param {import('koa').Context} ctx
+ * @param {Function} next
  */
 module.exports.postLogosPanel = async (ctx, next) => {
     if(!(await handleUnauthorized(ctx, next)))
@@ -71,7 +73,7 @@ module.exports.postLogosPanel = async (ctx, next) => {
     let action = body.action
     
     // Handle actions
-    if(action == 'delete') {
+    if(action === 'delete') {
         let name = body.name
 
         // Check for name
@@ -93,7 +95,7 @@ module.exports.postLogosPanel = async (ctx, next) => {
         } else {
             ctx.state.error = 'Cannot delete logos when there are only 1'
         }
-    } else if(action == 'upload') {
+    } else if(action === 'upload') {
         // Check for file
         let files = ctx.request.files
 
