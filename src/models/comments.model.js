@@ -59,7 +59,7 @@ const Mood = {
 
 /* Utility functions */
 function commentInfo() {
-    let query = knex('comments')
+    return knex('comments')
         .select('comments.id')
         .select(knex.ref('comment_post').as('post'))
         .select('post_title')
@@ -75,14 +75,12 @@ function commentInfo() {
         .leftJoin('users', 'comment_author', 'users.id')
         .leftJoin('posts', 'comment_post', 'posts.id')
         .leftJoin('moods', 'comment_mood', 'moods.id')
-    
-    return query
 }
 /**
  * @param {Array<Object>} rows 
  */
 function processCommentInfoRows(rows) {
-    for(row of rows) {
+    for(let row of rows) {
         row.created_on = new Date(row.created_on)
     }
     return rows
@@ -103,13 +101,13 @@ function orderBy(order) {
 /**
  * Creates a new comment
  * @param {number} post The ID of the post this comment was made on
- * @param {number} parent The ID of the comment this is in reply to (should be null if not a reply)
+ * @param {?number} parent The ID of the comment this is in reply to (should be null if not a reply)
  * @param {number} author The ID of the comment author
  * @param {string} content The comment's content
  * @param {number} mood The comment's mood type
  */
 async function createComment(post, parent, author, content, mood) {
-    return await knex('comments')
+    return knex('comments')
         .insert({
             comment_post: post,
             comment_parent: parent,
@@ -124,7 +122,7 @@ async function createComment(post, parent, author, content, mood) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All comments' info
+ * @returns {Promise<Array<Object>>} All comments' info
  */
  async function fetchCommentInfos(offset, limit, order) {
     return processCommentInfoRows(
@@ -141,7 +139,7 @@ async function createComment(post, parent, author, content, mood) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Array<Object>} All normal comments' info
+ * @returns {Promise<Array<Object>>} All normal comments' info
  */
 async function fetchNormalCommentInfosByPost(post, offset, limit, order) {
     return processCommentInfoRows(
@@ -157,7 +155,7 @@ async function fetchNormalCommentInfosByPost(post, offset, limit, order) {
 /**
  * Fetches all reply comments on the specified parent comment IDs
  * @param {Array<number>} ids The comment parent IDs
- * @returns {Array<Object>} All reply comments' info
+ * @returns {Promise<Array<Object>>} All reply comments' info
  */
 async function fetchReplyCommentsByParentIds(ids) {
     return processCommentInfoRows(
@@ -169,7 +167,7 @@ async function fetchReplyCommentsByParentIds(ids) {
 /**
  * Fetches a comment's info by its ID
  * @param {number} id The ID
- * @returns {Array<Object>} An array with the row containing the comment's info or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the comment's info or an empty array if none exists
  */
 async function fetchCommentInfoById(id) {
     return processCommentInfoRows(
@@ -181,10 +179,10 @@ async function fetchCommentInfoById(id) {
 /**
  * Fetches a normal comment by its ID
  * @param {number} id The comment ID
- * @returns {Array<Object>} An array with the row containing the comment or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the comment or an empty array if none exists
  */
 async function fetchNormalCommentById(id) {
-    return await knex('comments')
+    return knex('comments')
         .select('*')
         .whereNull('comment_parent')
         .andWhere('comments.id', id)
@@ -192,7 +190,7 @@ async function fetchNormalCommentById(id) {
 
 /**
  * Returns the total amount of comments
- * @returns {number} The total amount of comments
+ * @returns {Promise<number>} The total amount of comments
  */
  async function fetchCommentsCount() {
     return (await knex('comments')
@@ -203,7 +201,7 @@ async function fetchNormalCommentById(id) {
 /**
  * Returns the total amount of comments on a post
  * @param {number} post The post ID
- * @returns {number} The total amount of comments on the specified post
+ * @returns {Promise<number>} The total amount of comments on the specified post
  */
 async function fetchCommentsCountByPost(post) {
     return (await knex('comments')
@@ -217,7 +215,7 @@ async function fetchCommentsCountByPost(post) {
  * @param {number} id The ID
  */
 async function deleteCommentById(id) {
-    return await knex('comments')
+    return knex('comments')
         .del()
         .where('id', id)
 }
@@ -227,7 +225,7 @@ async function deleteCommentById(id) {
  * @param {Array<number>} ids The IDs
  */
 async function deleteCommentsByIds(ids) {
-    return await knex('comments')
+    return knex('comments')
         .del()
         .whereIn('ids', ids)
 }
@@ -237,7 +235,7 @@ async function deleteCommentsByIds(ids) {
  * @param {number} author The author's ID
  */
 async function deleteCommentsByAuthor(author) {
-    return await knex('comments')
+    return knex('comments')
         .del()
         .where('comment_author', author)
 }
@@ -247,7 +245,7 @@ async function deleteCommentsByAuthor(author) {
  * @param {number} parent The parent comment ID
  */
 async function deleteCommentsByParent(parent) {
-    return await knex('comments')
+    return knex('comments')
         .del()
         .where('comment_parent', parent)
 }
