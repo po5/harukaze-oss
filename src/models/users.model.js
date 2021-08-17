@@ -34,7 +34,7 @@ function userInfo() {
         .leftJoin('moodchars', 'user_character', 'moodchars.id')
 }
 function processUserInfoRows(rows) {
-    for(row of rows) {
+    for(let row of rows) {
         row.created_on = new Date(row.created_on)
     }
     return rows
@@ -52,7 +52,7 @@ function processUserInfoRows(rows) {
  * @param {number} character The user's character ID
  */
 async function createUser(username, bio, hash, role, avatarKey, info, character) {
-    return await knex('users')
+    return knex('users')
         .insert({
             user_username: username,
             user_bio: bio,
@@ -67,10 +67,10 @@ async function createUser(username, bio, hash, role, avatarKey, info, character)
 /**
  * Fetches a user by its ID
  * @param {number} id The user's ID
- * @return {Array<Object>} An array with the row containing the user or an empty array if none exists
+ * @return {Promise<Array<Object>>} An array with the row containing the user or an empty array if none exists
  */
 async function fetchUserById(id) {
-    return await knex('users')
+    return knex('users')
         .select('*')
         .where('id', id)
 }
@@ -78,7 +78,7 @@ async function fetchUserById(id) {
 /**
  * Fetches a user's info by its ID
  * @param {number} id The user's ID
- * @return {Array<Object>} An array with the row containing the user's info or an empty array if none exists
+ * @return {Promise<Array<Object>>} An array with the row containing the user's info or an empty array if none exists
  */
 async function fetchUserInfoById(id) {
     return processUserInfoRows(
@@ -90,7 +90,7 @@ async function fetchUserInfoById(id) {
 /**
  * Fetches a user by its username
  * @param {string} username The user's username
- * @return {Array<Object>} An array with the row containing the user or an empty array if none exists
+ * @return {Promise<Array<Object>>} An array with the row containing the user or an empty array if none exists
  */
 async function fetchUserByUsername(username) {
     return await knex('users')
@@ -114,7 +114,7 @@ async function fetchUserInfoByUsername(username) {
  * Fetches all contributors' info
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
- * @returns {Array<Object>} All contributors' info
+ * @returns {Promise<Array<Object>>} All contributors' info
  */
 async function fetchContributorInfos(offset, limit) {
     return processUserInfoRows(
@@ -130,7 +130,7 @@ async function fetchContributorInfos(offset, limit) {
  * Fetches all admins' info
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
- * @returns {Array<Object>} All admins' info
+ * @returns {Promise<Array<Object>>} All admins' info
  */
 async function fetchAdminInfos(offset, limit) {
     return processUserInfoRows(
@@ -145,10 +145,10 @@ async function fetchAdminInfos(offset, limit) {
  * Fetches a user by its ID and a row containing when the provided IP was banned, or null if not banned
  * @param {number} id The user's ID
  * @param {string} ip The IP to check if banned
- * @returns {Array<Object>} An array with the row containing the user or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the user or an empty array if none exists
  */
 async function fetchUserAndIpBanById(id, ip) {
-    return await knex('users')
+    return knex('users')
         .select('*')
         .select(knex.raw(`(
             SELECT \`ban_created_on\`
@@ -162,10 +162,10 @@ async function fetchUserAndIpBanById(id, ip) {
  * Fetches a user by its username and a row containing when the provided IP was banned, or null if not banned
  * @param {string} username The user's username
  * @param {string} ip The IP to check if banned
- * @returns {Array<Object>} An array with the row containing the user or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the user or an empty array if none exists
  */
 async function fetchUserAndIpBanByUsername(username, ip) {
-    return await knex('users')
+    return knex('users')
         .select('*')
         .select(knex.raw(`(
             SELECT \`ban_created_on\`
@@ -179,7 +179,7 @@ async function fetchUserAndIpBanByUsername(username, ip) {
  * Fetches all banned users' info
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
- * @returns {Array<Object>} All banned users' info
+ * @returns {Promise<Array<Object>>} All banned users' info
  */
 async function fetchBannedUserInfos(offset, limit) {
     return processUserInfoRows(
@@ -195,7 +195,7 @@ async function fetchBannedUserInfos(offset, limit) {
  * @param {Array<number>} roles The roles
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
- * @returns {Array<Object>} All users' info with the specified roles
+ * @returns {Promise<Array<Object>>} All users' info with the specified roles
  */
 async function fetchUserInfosByRoles(roles, offset, limit) {
     return processUserInfoRows(
@@ -208,7 +208,7 @@ async function fetchUserInfosByRoles(roles, offset, limit) {
 
 /**
  * Returns the total amount of users
- * @returns {number} The total amount of users
+ * @returns {Promise<number>} The total amount of users
  */
 async function fetchUsersCount() {
     return (await knex('users').count('*', { as: 'count' }))[0].count
@@ -216,7 +216,7 @@ async function fetchUsersCount() {
 
 /**
  * Returns the total amount of banned users
- * @returns {number} The total amount of banned users
+ * @returns {Promise<number>} The total amount of banned users
  */
 async function fetchBannedUsersCount() {
     return (await knex('users')
@@ -227,7 +227,7 @@ async function fetchBannedUsersCount() {
 /**
  * Returns the total amount of users with the specified roles
  * @param {Array<number>} roles The roles
- * @returns {Array<number>} The total amount of users with the specified roles
+ * @returns {Promise<Array<number>>} The total amount of users with the specified roles
  */
  async function fetchUsersCountByRoles(roles) {
     return (await knex('users')
@@ -242,7 +242,7 @@ async function fetchBannedUsersCount() {
  * @param {string} hash The new password hash
  */
 async function updateUserHashById(id, hash) {
-    return await knex('users')
+    return knex('users')
         .update({
             user_hash: hash
         })
@@ -257,7 +257,7 @@ async function updateUserHashById(id, hash) {
  * @param {string?} info The user's new info (can be null)
  */
 async function updateUserInfoById(id, bio, character, info) {
-    return await knex('users')
+    return knex('users')
         .update({
             user_bio: bio,
             user_character: character,
@@ -269,10 +269,10 @@ async function updateUserInfoById(id, bio, character, info) {
 /**
  * Updates a user's avatar key
  * @param {number} id The user's ID
- * @param {string?} bio The user's new avatar key (can be null)
+ * @param {string} avatarKey The user's new avatar key (can be null)
  */
 async function updateUserAvatarKeyById(id, avatarKey) {
-    return await knex('users')
+    return knex('users')
         .update({
             user_avatar_key: avatarKey
         })
@@ -285,7 +285,7 @@ async function updateUserAvatarKeyById(id, avatarKey) {
  * @param {boolean} banned Whether the user is banned
  */
 async function updateUserBannedById(id, banned) {
-    return await knex('users')
+    return knex('users')
         .update({
             user_banned: banned
         })
@@ -298,7 +298,7 @@ async function updateUserBannedById(id, banned) {
  * @param {number} role The user's new role
  */
 async function updateUserRoleById(id, role) {
-    return await knex('users')
+    return knex('users')
         .update({
             user_role: role
         })
@@ -311,7 +311,7 @@ async function updateUserRoleById(id, role) {
  * @param {number} newChar The new character ID
  */
 async function updateUserCharacterByCharacter(oldChar, newChar) {
-    return await knex('users')
+    return knex('users')
         .update({
             user_character: newChar
         })
