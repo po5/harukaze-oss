@@ -3,11 +3,11 @@ const mediaModel = require('../../models/media.model')
 const usersUtil = require('../../utils/users.util')
 
 /**
- * @param {import('koa').Context} ctx 
- * @param {Function} next 
- * @returns {boolean}
+ * @param {import('koa').Context} ctx
+ * @param {Function} next
+ * @returns {Promise<boolean>}
  */
- async function handleUnauthorized(ctx, next) {
+async function handleUnauthorized(ctx, next) {
     // Deal with unauthenticated and unauthorized users
     if(!ctx.state.authed) {
         ctx.state.noRender = true
@@ -45,6 +45,7 @@ function setupCtx(ctx) {
 /**
  * GET controller for booru action page
  * @param {import("koa").Context} ctx The context
+ * @param {Function} next
  */
 module.exports.getAction = async (ctx, next) => {
     if(!(await handleUnauthorized(ctx, next)))
@@ -56,9 +57,9 @@ module.exports.getAction = async (ctx, next) => {
     // Determine what to do based on action
     let action = ctx.state.action
 
-    if(action == 'create-collection') {
+    if(action === 'create-collection') {
         // No data to put into context
-    } else if(action == 'add-to-collection') {
+    } else if(action === 'add-to-collection') {
         let item = ctx.query.item*1 || -1
         let collection = ctx.query.collection*1 || -1
 
@@ -67,25 +68,24 @@ module.exports.getAction = async (ctx, next) => {
         ctx.state.collection = collection
 
         // Fetch collections without the specified item and put them into context
-        ctx.state.collections = await collectionsModel.fetchCollectionInfosWithoutMedia(item, 0, Number.MAX_SAFE_INTEGER)
-    } else if(action == 'remove-from-collection') {
+        ctx.state.collections = await collectionsModel.fetchCollectionInfosWithoutMedia(item, 0, Number.MAX_SAFE_INTEGER, 0)
+    } else if(action === 'remove-from-collection') {
         let item = ctx.query.item*1 || -1
         let collection = ctx.query.collection*1 || -1
 
         // Put item and collection IDs into context
         ctx.state.itemId = item
         ctx.state.collection = collection
-    } else if(action == 'delete-collection') {
-        let collection = ctx.query.collection*1 || -1
-
+    } else if(action === 'delete-collection') {
         // Put collection ID into context
-        ctx.state.collection = collection
+        ctx.state.collection = ctx.query.collection * 1 || -1
     }
 }
 
 /**
  * POST controller for booru action page
- * @param {import('koa').Context} ctx 
+ * @param {import('koa').Context} ctx
+ * @param {Function} next
  */
 module.exports.postAction = async (ctx, next) => {
     if(!(await handleUnauthorized(ctx, next)))
@@ -98,7 +98,7 @@ module.exports.postAction = async (ctx, next) => {
     let body = ctx.request.body
     let action = body.action
     
-    if(action == 'create-collection') {
+    if(action === 'create-collection') {
         // Collect data
         let title = body.title
         if(title)
@@ -113,7 +113,7 @@ module.exports.postAction = async (ctx, next) => {
         // Redirect to collections
         ctx.state.noRender = true
         ctx.redirect('/booru/collections')
-    } else if(action == 'add-to-collection') {
+    } else if(action === 'add-to-collection') {
         // Collect data
         let item = body.item*1
         let collection = body.collection*1
@@ -142,7 +142,7 @@ module.exports.postAction = async (ctx, next) => {
         } else {
             ctx.state.error = 'Missing item or collection'
         }
-    } else if(action == 'remove-from-collection') {
+    } else if(action === 'remove-from-collection') {
         // Collect data
         let item = body.item*1
         let collection = body.collection*1
@@ -158,7 +158,7 @@ module.exports.postAction = async (ctx, next) => {
         } else {
             ctx.state.error = 'Missing item or collection'
         }
-    } else if(action == 'delete-collection') {
+    } else if(action === 'delete-collection') {
         // Collect data
         let collection = body.collection*1
 
