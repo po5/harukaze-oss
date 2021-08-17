@@ -1,6 +1,5 @@
 const config = require('../../knexfile')
 const knex = require('knex')(config)
-const utils = require('../utils/misc.util')
 const { Knex } = require('knex')
 
 /* Utility functions */
@@ -13,7 +12,7 @@ function banInfo() {
         .select(knex.ref('ban_created_on').as('created_on'))
 }
 function processBanInfoRows(rows) {
-    for(row of rows) {
+    for(let row of rows) {
         row.created_on = new Date(row.created_on)
     }
     return rows
@@ -24,7 +23,7 @@ function processBanInfoRows(rows) {
  * @param {string} ip The IP to ban
  */
 async function createBan(ip) {
-    return await knex('ipbans')
+    return knex('ipbans')
         .insert({ ip })
         .onConflict('ip')
         .ignore()
@@ -36,12 +35,12 @@ async function createBan(ip) {
  */
 async function createBans(ips) {
     let rows = new Array(ips.length)
-    for(i in ips)
+    for(let i in ips)
         rows[i] = {
             ip: ips[i]
         }
     
-    return await knex('ipbans')
+    return knex('ipbans')
         .insert(rows)
         .onConflict('ip')
         .ignore()
@@ -51,10 +50,10 @@ async function createBans(ips) {
  * Fetches all IP bans
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
- * @return {Array<Object>} All bans
+ * @return {Promise<Array<Object>>} All bans
  */
 async function fetchBans(offset, limit) {
-    return await knex('ipbans')
+    return knex('ipbans')
         .select('*')
         .offset(offset)
         .limit(limit)
@@ -64,7 +63,7 @@ async function fetchBans(offset, limit) {
  * Fetches info about all IP bans
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
- * @returns {Array<Object>} All bans' info
+ * @returns {Promise<Array<Object>>} All bans' info
  */
 async function fetchBanInfos(offset, limit) {
     return processBanInfoRows(
@@ -77,10 +76,10 @@ async function fetchBanInfos(offset, limit) {
 /**
  * Fetches an IP ban by it IP
  * @param {string} ip The IP
- * @returns {Array<Object>} An array with the row containing the IP ban or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the IP ban or an empty array if none exists
  */
 async function fetchBanByIp(ip) {
-    return await knex('ipbans')
+    return knex('ipbans')
         .select('*')
         .where('ip', ip)
 }
@@ -88,7 +87,7 @@ async function fetchBanByIp(ip) {
 /**
  * Fetches an IP ban's info by its IP
  * @param {string} ip The IP
- * @returns {Array<Object>} An array with the row containing the ban's info or an empty array if none exists
+ * @returns {Promise<Array<Object>>} An array with the row containing the ban's info or an empty array if none exists
  */
 async function fetchBanInfoByIp(ip) {
     return processBanInfoRows(
@@ -99,7 +98,7 @@ async function fetchBanInfoByIp(ip) {
 
 /**
  * Returns the total amount of bans
- * @returns {number} The total amount of bans
+ * @returns {Promise<number>} The total amount of bans
  */
 async function fetchBansCount() {
     return (await knex('ipbans').count('*', { as: 'count' }))[0].count
@@ -110,7 +109,7 @@ async function fetchBansCount() {
  * @param {string} ip The IP
  */
 async function deleteBanByIp(ip) {
-    return await knex('ipbans')
+    return knex('ipbans')
         .del()
         .where('ip', ip)
 }
@@ -120,7 +119,7 @@ async function deleteBanByIp(ip) {
  * @param {Array<string>} ips The IPs
  */
 async function deleteBansByIps(ips) {
-    return await knex('ipbans')
+    return knex('ipbans')
         .del()
         .whereIn('ip', ips)
 }
@@ -129,7 +128,7 @@ async function deleteBansByIps(ips) {
  * Deletes all IP bans
  */
 async function deleteAllBans() {
-    return await knex('ipbans')
+    return knex('ipbans')
         .del()
 }
 
