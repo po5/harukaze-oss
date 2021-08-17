@@ -33,10 +33,10 @@ function sanitizePath(path) {
  * @returns {string} The MySQL set
  */
 function arrayToSet(stringArray) {
-    var res = []
+    const res = []
 
-    for(string of stringArray) {
-        var str = (string+'')
+    for(let string of stringArray) {
+        const str = (string + '')
             .trim()
             .toLowerCase()
             .replace(/,/g, '')
@@ -60,7 +60,7 @@ function setToArray(set) {
         // Sanitize and remove duplicates
         let res = []
         let split = str.split(',')
-        for(element of split) {
+        for(let element of split) {
             let elem = element
                 .trim()
                 .toLowerCase()
@@ -79,11 +79,11 @@ function setToArray(set) {
  * Reads a line from the terminal
  * @param {string} prompt The prompt to print before the input is accepted
  * @param {boolean} silent Whether to hide typed characters
- * @returns {string} The line that was read
+ * @returns {Promise<string>} The line that was read
  */
 function readLine(prompt, silent) {
     return new Promise((res, rej) => {
-        read({ prompt, silent: silent ? true : false }, (err, ln) => {
+        read({ prompt, silent: !!silent }, (err, ln) => {
             if(err)
                 rej(err)
             else
@@ -100,7 +100,7 @@ function readLine(prompt, silent) {
 function titleToSlug(title) {
     return title
     .replace(/[ _]/g, '-')
-    .replace(/[`~@#\$%\^&\*\(\)+=\\\[\]'";:<>,\./\?!]/g, '')
+    .replace(/[`~@#$%^&*()+=\\\[\]'";:<>,./?!]/g, '')
     .toLowerCase()
 }
 
@@ -108,7 +108,7 @@ function titleToSlug(title) {
  * Returns a psuedo-random between a minimum and maximum
  * @param {number} min The minimum number to return
  * @param {number} max The maximum number to return
- * @returns {string} A random number between a minimum and maximum
+ * @returns {number} A random number between a minimum and maximum
  */
  function random(min, max) {
     return Math.floor(Math.random() * (max - min)) + min
@@ -120,7 +120,7 @@ function titleToSlug(title) {
  * @returns {string} A new random alphanumeric string of the specified length
  */
  function generateAlphanumericString(length) {
-    var str = ''
+    let str = ''
 
     for(let i = 0; i < length; i++)
         str += alphanumericChars[random(0, alphanumericChars.length-1)]
@@ -181,7 +181,7 @@ function findMediaIdsInString(str) {
     if(matches) {
         let ids = []
         
-        for(match of matches) {
+        for(let match of matches) {
             let id = match.substring(match.lastIndexOf('/')+1)*1
 
             if(!isNaN(id) && !ids.includes(id))
