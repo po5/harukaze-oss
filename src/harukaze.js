@@ -7,6 +7,7 @@ const moodsUtil = require('./utils/moods.util')
 const logosUtil = require('./utils/logos.util')
 const tagsUtil = require('./utils/tags.util')
 const utils = require('./utils/misc.util')
+const logging = require('./utils/logging.util')
 const fs = require('fs')
 const config = require('../config.json')
 const http = require('http')
@@ -89,6 +90,10 @@ Run without any arguments to start the server.`)
 
         process.exit(0)
     }
+
+    // Setup logging utility if not disabled
+    if(!config.server.disableLogs && !args.includes('--disable-logs'))
+        await logging.init()
 
     // Create required files and directories
     if(!fs.existsSync('media/'))

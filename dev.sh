@@ -1,2 +1,2 @@
 #!/bin/bash
-pm2 start src/harukaze.js --watch --ignore-watch "node_modules" --ignore-watch "media" --ignore-watch "media/avatars" --ignore-watch "media/thumbnails" --ignore-watch "media/moods" --ignore-watch ".git" --ignore-watch "config.json" --attach --no-daemon
+pm2 start src/harukaze.js --watch --ignore-watch "node_modules/ media/ media/avatars media/thumbnails media/moods .git config.json *.log" --attach --no-daemon

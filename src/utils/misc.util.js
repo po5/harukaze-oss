@@ -194,6 +194,17 @@ function findMediaIdsInString(str) {
     }
 }
 
+/**
+ * Returns a promise that is resolved in the specified number of milliseconds
+ * @param {number} ms The amount of time in milliseconds to sleep
+ * @return {Promise} The promise
+ */
+function sleep(ms) {
+    return new Promise(res => {
+        setTimeout(() => res(), ms)
+    })
+}
+
 /* Export functions */
 module.exports.stripTrailingSlash = stripTrailingSlash
 module.exports.sanitizePath = sanitizePath
@@ -206,3 +217,4 @@ module.exports.generateAlphanumericString = generateAlphanumericString
 module.exports.splitFilename = splitFilename
 module.exports.filenameToTitle = filenameToTitle
 module.exports.findMediaIdsInString = findMediaIdsInString
+module.exports.sleep = sleep
