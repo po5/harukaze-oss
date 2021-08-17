@@ -1,5 +1,6 @@
 const mediaModel = require('../../models/media.model')
 const collectionsModel = require('../../models/collections.model')
+const tagsUtil = require('../../utils/tags.util')
 const utils = require('../../utils/misc.util')
 
 /**
@@ -36,6 +37,13 @@ module.exports.getItem = async (ctx, next) => {
 
     let item = itemRes[0]
 
+    // Fetch tags from cache and find out how many items use them
+    let resultTagNames = item.tags
+    resultTagNames.sort()
+    let resultTags = {}
+    for(let tag of resultTagNames)
+        resultTags[tag] = Math.max(tagsUtil.getTagUseCount(tag), 1)
+
     // Sort tags alphabetically
     item.tags.sort()
 
@@ -48,17 +56,12 @@ module.exports.getItem = async (ctx, next) => {
 
         // Check if it exists
         if(colRes.length > 0) {
-            let collection = colRes[0]
-
             // Put collection into context
-            ctx.state.collection = collection
+            ctx.state.collection = colRes[0]
         }
     } else {
         // Fetch collections this media is a part of, if any
-        let collections = await collectionsModel.fetchCollectionInfosWithMedia(id)
-
-        // Put collections into context
-        ctx.state.collections = collections
+        ctx.state.collections = await collectionsModel.fetchCollectionInfosWithMedia(id, 0, Number.MAX_SAFE_INTEGER, 0)
     }
     
     // Set page title
@@ -72,6 +75,6 @@ module.exports.getItem = async (ctx, next) => {
 
     // Put data
     ctx.state.item = item
-    ctx.state.resultTags = item.tags
+    ctx.state.resultTags = resultTags
     ctx.state.queryTags = tags
 }

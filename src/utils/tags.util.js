@@ -1,7 +1,7 @@
 const mediaModel = require('../models/media.model')
 const utils = require('./misc.util')
 
-var _tags = []
+let _tags = {}
 
 /**
  * Refreshes all media tags in memory
@@ -11,17 +11,20 @@ async function refreshTags() {
     let rows = await mediaModel.fetchMediaTags()
 
     // Enumerate and remove duplicates
-    let tags = []
-    for(row of rows) {
+    let tags = {}
+    for(let row of rows) {
         let arr = utils.setToArray(row.tags)
 
-        for(tag of arr)
-            if(!tags.includes(tag))
-                tags.push(tag)
+        for(let tag of arr) {
+            if(tag in tags)
+                tags[tag]++
+            else
+                tags[tag] = 1
+        }
     }
 
-    // Sort by length
-    tags.sort((a, b) => a.length - b.length)
+    // Sort by name length
+    tags = Object.keys(tags).sort((a, b) => a.length - b.length).reduce((res, key) => (res[key] = tags[key], res), {})
 
     // Store tags
     _tags = tags
@@ -29,7 +32,7 @@ async function refreshTags() {
 
 /**
  * Returns all media tags
- * @returns All media tags
+ * @returns {Object} All media tags
  */
 function getTags() {
     return _tags
@@ -38,16 +41,26 @@ function getTags() {
 /**
  * Returns all tags containing the provided substring
  * @param {string} substr The substring to check for
- * @returns All tags containing the provided substring
+ * @returns {Object} All tags containing the provided substring
  */
 function getTagsContaining(substr) {
     let str = substr.trim().toLowerCase()
-    let tags = []
-    for(tag of _tags)
+    let tags = {}
+    let tagNames = Object.keys(_tags)
+    for(let tag of tagNames)
         if(tag.includes(str))
-            tags.push(tag)
+            tags[tag] = _tags[tag]
     
     return tags
+}
+
+/**
+ * Returns the amount of uses a tag has
+ * @param {string} tag The tag to check
+ * @return {number} The amount of uses the specified tag has
+ */
+function getTagUseCount(tag) {
+    return tag in _tags ? _tags[tag] : 0
 }
 
 // Refresh tags every minute
@@ -64,3 +77,4 @@ setInterval(async () => {
 module.exports.refreshTags = refreshTags
 module.exports.getTags = getTags
 module.exports.getTagsContaining = getTagsContaining
+module.exports.getTagUseCount = getTagUseCount

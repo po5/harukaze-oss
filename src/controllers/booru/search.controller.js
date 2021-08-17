@@ -1,5 +1,6 @@
 const mediaModel = require('../../models/media.model')
 const paginationUtil = require('../../utils/pagination.util')
+const tagsUtil = require('../../utils/tags.util')
 const utils = require('../../utils/misc.util')
 
 /**
@@ -28,14 +29,15 @@ module.exports.getSearch = async ctx => {
     let media = await mediaModel.fetchBooruVisibleMediaInfosByTags(tags, pagination.queryOffset, pagination.queryLimit, mediaModel.Order.CREATED_DESC)
 
     // Enumerate tags from items
-    let resultTags = []
+    let resultTagNames = []
+    let resultTags = {}
     for(let file of media)
         for(let tag of file.tags)
-            if(!resultTags.includes(tag))
-                resultTags.push(tag)
-    
-    // Sort tags alphabetically
-    resultTags.sort()
+            if(!resultTagNames.includes(tag))
+                resultTagNames.push(tag)
+    resultTagNames.sort()
+    for(let tag of resultTagNames)
+        resultTags[tag] = Math.max(tagsUtil.getTagUseCount(tag), 1)
     
     // Put pagination information
     ctx.state.pagination = pagination

@@ -34,27 +34,27 @@ function initTagInput() {
             }
 
             // Fetch tags containing provided tag
-            let res = await api.get('/booru/ajax/tags', { query: tag })
+            let res = await api.get('/booru/ajax/tags', {
+                query: tag,
+                limit: 10
+            })
 
-            if(res.status == 'success') {
+            if(res.status === 'success') {
                 let tags = res.tags
+                let tagNames = Object.keys(tags)
 
-                // Trim
-                if(tags.length > 5)
-                    tags.splice(10, tags.length-10)
-
-                if(tags.length > 0) {
+                if(tagNames.length > 0) {
                     // Put tags as attribute
-                    boxElem.setAttribute('data-tags', tags.join(','))
+                    boxElem.setAttribute('data-tags', tagNames.join(','))
 
                     // Populate box
                     boxElem.innerHTML = ''
-                    for(tag of tags) {
+                    for(tag of tagNames) {
                         let elem = document.createElement('div')
                         elem.classList.add('tag-suggestion')
                         elem.style.cursor = 'pointer'
                         elem.setAttribute('data-tag', tag)
-                        elem.innerText = tag
+                        elem.innerText = tag+' ('+tags[tag]+')'
                         elem.onmousedown = e => {
                             let tag = e.target.getAttribute('data-tag')
 
@@ -77,7 +77,7 @@ function initTagInput() {
 
         // Hook up events
         tagInput.addEventListener('keydown', e => {
-            if(tagInput.selectionStart == tagInput.value.length && (e.key == 'Enter' || e.key == 'Tab')) {
+            if(tagInput.selectionStart === tagInput.value.length && (e.key === 'Enter' || e.key === 'Tab')) {
                 // Insert suggestion if present
                 if(boxElem.getAttribute('data-tags')) {
                     let tags = boxElem.getAttribute('data-tags').split(',')
@@ -99,7 +99,7 @@ function initTagInput() {
                 let str = tagInput.value
 
                 // Suggest tag if cursor is at end of input
-                if(tagInput.selectionStart == str.length) {
+                if(tagInput.selectionStart === str.length) {
                     // Get currently typed tag
                     let tag = str.substring(str.lastIndexOf(' ')+1).replace(/,/g, '')
 
@@ -107,7 +107,7 @@ function initTagInput() {
                 }
             }, 5)
         })
-        tagInput.addEventListener('blur', e => setTimeout(() => hideBox(), 50))
+        tagInput.addEventListener('blur', () => setTimeout(() => hideBox(), 50))
     }
 }
 

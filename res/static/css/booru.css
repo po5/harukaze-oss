@@ -47,6 +47,9 @@ body {
 .item-container {
     text-align: center;
 }
+.tag-listing-count {
+    font-size: 15px;
+}
 
 #header {
     width: 100%;

@@ -12,9 +12,9 @@
     <div class="sidebar-section">
         <label for="" class="container-header sidebar-section">Tags</label>
         <div id="tags-container">
-            <% for(tag of resultTags) { %>
+            <% for(let tag of Object.keys(resultTags)) { %>
                 <div class="tag-listing">
-                    <a href="/booru/tags?query=<%= tag %>"><%= tag %></a>
+                    <a href="/booru/tags?query=<%= tag %>"><%= tag %></a> <span class="tag-listing-count">(<%= resultTags[tag] %>)</span>
                 </div>
             <% } %>
         </div>
@@ -36,7 +36,6 @@
 
         <% if(authed && user.role > 0) { %>
             <span><a href="/booru/action?action=add-to-collection&item=<%= id %>">Add to collection...</a></span>
-        </form>
         <% } %>
     </div>
 <% } } %>

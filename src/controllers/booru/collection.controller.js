@@ -1,10 +1,12 @@
 const collectionsModel = require('../../models/collections.model')
 const mediaModel = require('../../models/media.model')
 const paginationUtil = require('../../utils/pagination.util')
+const tagsUtil = require('../../utils/tags.util')
 
 /**
  * GET controller for booru collection page
  * @param {import("koa").Context} ctx The context
+ * @param {Function} next
  */
 module.exports.getCollection = async (ctx, next) => {
     let id = ctx.params.id*1
@@ -38,14 +40,15 @@ module.exports.getCollection = async (ctx, next) => {
     let media = await mediaModel.fetchBooruVisibleMediaInfosByCollection(id, pagination.queryOffset, pagination.queryLimit, mediaModel.Order.CREATED_DESC)
 
     // Enumerate tags from items
-    let resultTags = []
-    for(file of media)
-        for(tag of file.tags)
-            if(!resultTags.includes(tag))
-                resultTags.push(tag)
-    
-    // Sort tags alphabetically
-    resultTags.sort()
+    let resultTagNames = []
+    let resultTags = {}
+    for(let file of media)
+        for(let tag of file.tags)
+            if(!resultTagNames.includes(tag))
+                resultTagNames.push(tag)
+    resultTagNames.sort()
+    for(let tag of resultTagNames)
+        resultTags[tag] = Math.max(tagsUtil.getTagUseCount(tag), 1)
 
     // Put pagination information
     ctx.state.pagination = pagination
@@ -55,7 +58,7 @@ module.exports.getCollection = async (ctx, next) => {
 
     // Put metadata if present
     let itemCount = collection.items
-    ctx.state.metaDescription = collection.comment ? collection.comment : `View ${itemCount} item${itemCount == 1 ? '' : 's'} in collection "${collection.title}" on the booru`
+    ctx.state.metaDescription = collection.comment ? collection.comment : `View ${itemCount} item${itemCount === 1 ? '' : 's'} in collection "${collection.title}" on the booru`
     if(collection.first_item != null)
         ctx.state.metaImage = '/assets/thumbnail/'+collection.first_item
 
