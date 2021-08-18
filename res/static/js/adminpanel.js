@@ -283,7 +283,7 @@ In case you lock yourself out, you can run Harukaze with the --reset-ip-bans to 
             },
 
             date(d) {
-                var date = d
+                let date = d
                 if(typeof d == 'string')
                     date = new Date(d)
 
@@ -293,19 +293,21 @@ In case you lock yourself out, you can run Harukaze with the --reset-ip-bans to 
                 let yesterday = new Date()
                 yesterday.setDate(now.getDate()-1)
                 let day = date.getDate()
-                if(day == now.getDate())
-                    day = 'Today'
-                else if(day == tomorrow.getDate())
-                    day = 'Tomorrow'
-                else if(day == yesterday.getDate())
-                    day = 'Yesterday'
-                else
-                    day = 
-                        (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][date.getMonth()])+' '+date.getDate()
-                
-                if(now.getFullYear() != date.getFullYear())
+                if(now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth()) {
+                    if(day === now.getDate())
+                        day = 'Today'
+                    else if(day === tomorrow.getDate())
+                        day = 'Tomorrow'
+                    else if(day === yesterday.getDate())
+                        day = 'Yesterday'
+                } else {
+                    day =
+                        (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][date.getMonth()]) + ' ' + date.getDate()
+                }
+
+                if(now.getFullYear() !== date.getFullYear())
                     day += ', '+date.getFullYear()
-                
+
                 let hour = date.getHours()
                 let pm = hour > 12
                 if(pm)
@@ -313,9 +315,9 @@ In case you lock yourself out, you can run Harukaze with the --reset-ip-bans to 
                 let minute = date.getMinutes().toString()
                 if(minute.length < 2)
                     minute = '0'+minute
-        
+
                 return `${day} at ${hour}:${minute} ${pm ? 'PM' : 'AM'}`
-            }
+            },
         }
     })
 
