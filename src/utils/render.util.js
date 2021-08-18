@@ -42,17 +42,19 @@ async function putEssentialState(ctx, fetchContributors = true) {
         let yesterday = new Date()
         yesterday.setDate(now.getDate()-1)
         let day = date.getDate()
-        if(day == now.getDate())
-            day = 'Today'
-        else if(day == tomorrow.getDate())
-            day = 'Tomorrow'
-        else if(day == yesterday.getDate())
-            day = 'Yesterday'
-        else
-            day = 
-                (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][date.getMonth()])+' '+date.getDate()
+        if(now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth()) {
+            if(day === now.getDate())
+                day = 'Today'
+            else if(day === tomorrow.getDate())
+                day = 'Tomorrow'
+            else if(day === yesterday.getDate())
+                day = 'Yesterday'
+        } else {
+            day =
+                (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][date.getMonth()]) + ' ' + date.getDate()
+        }
         
-        if(now.getFullYear() != date.getFullYear())
+        if(now.getFullYear() !== date.getFullYear())
             day += ', '+date.getFullYear()
         
         let hour = date.getHours()
@@ -78,7 +80,7 @@ async function putEssentialState(ctx, fetchContributors = true) {
     ctx.state.encodeURIComponent = encodeURIComponent
 
     // English pluralization util
-    ctx.state.s = sum => sum == 1 ? '' : 's'
+    ctx.state.s = sum => sum === 1 ? '' : 's'
 
     if(fetchContributors && config.site.showContributors) {
         // Fetch contributors
@@ -90,7 +92,7 @@ async function putEssentialState(ctx, fetchContributors = true) {
  * Renders an EJS template and returns its content
  * @param {string} template The template name or relative path to render
  * @param {Object} state The state data to provide to the template
- * @returns {string} The rendered template
+ * @returns {Promise<string>} The rendered template
  */
 async function renderTemplate(template, state) {
     return await new Promise((res, rej) => {
