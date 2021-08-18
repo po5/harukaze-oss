@@ -185,7 +185,8 @@ Run without any arguments to start the server.`)
         multipart: true,
         formidable: {
             hash: 'sha1',
-            keepExtensions: true
+            keepExtensions: true,
+            maxFileSize: config.site.maxUploadSize
         }
     }))
     app.use(koaMount('/static', koaStatic(path.join(__dirname, '../res/static'))))
