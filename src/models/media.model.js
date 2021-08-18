@@ -1,6 +1,7 @@
 const config = require('../../knexfile')
 const knex = require('knex')(config)
 const utils = require('../utils/misc.util')
+const commentsModel = require('./comments.model')
 
 /**
  * Orders media results can be returned in
@@ -57,6 +58,12 @@ function mediaInfo() {
         .select(knex.ref('media_hash').as('hash'))
         .select(knex.ref('media_comment').as('comment'))
         .select(knex.ref('media_created_on').as('created_on'))
+        .select(knex.raw(`(
+            SELECT COUNT(*)
+            FROM \`comments\`
+            WHERE \`comment_post\` = \`media\`.\`id\`
+            AND \`comment_type\` = ${commentsModel.Type.BOORU}
+        ) AS \`comments\``))
         .leftJoin('users', 'media_uploader', 'users.id')
 }
 /**

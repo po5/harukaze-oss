@@ -33,13 +33,15 @@ async function fetchAndPutPageData(ctx, post) {
     
     if(enableComments) {
         // Fetch total comments
-        let totalComments = await commentsModel.fetchCommentsCountByPost(post.id)
+        let totalComments = await commentsModel.fetchNormalCommentsCountByPost(post.id, commentsModel.Type.POST)
 
         // Get pagination info
         let pagination = paginationUtil.paginatedRouteInfo(ctx, totalComments)
 
         // Fetch comments
-        let comments = await commentsModel.fetchNormalCommentInfosByPost(post.id, pagination.queryOffset, pagination.queryLimit, commentsModel.Order.CREATED_DESC)
+        console.log(`offset: ${pagination.queryOffset}, limit: ${pagination.queryLimit}`)
+        let comments = await commentsModel.fetchNormalCommentInfosByPost(post.id, commentsModel.Type.POST, pagination.queryOffset, pagination.queryLimit, commentsModel.Order.CREATED_DESC)
+        console.log(comments.length)
 
         // Fetch replies
         let commentIds = new Array(comments.length)
@@ -138,7 +140,7 @@ module.exports.postBlog = async (ctx, next) => {
                     }
 
                     // Create comment
-                    await commentsModel.createComment(post.id, (parent || {}).id || null, ctx.state.user.id, content, mood.id)
+                    await commentsModel.createComment(post.id, (parent || {}).id || null, ctx.state.user.id, content, mood.id, commentsModel.Type.POST)
 
                     // Redirect to first page if a normal comment, otherwise redirect to same page (to avoid reloading causing another POST)
                     ctx.state.noRender = true

@@ -1,6 +1,7 @@
 const config = require('../../knexfile')
 const knex = require('knex')(config)
 const utils = require('../utils/misc.util')
+const commentsModel = require('./comments.model')
 
 /**
  * Orders post results can be returned in
@@ -45,6 +46,7 @@ function postInfo(withContent) {
             SELECT COUNT(*)
             FROM \`comments\`
             WHERE \`comment_post\` = \`posts\`.\`id\`
+            AND \`comment_type\` = ${commentsModel.Type.POST}
         ) AS \`comments\``))
         .leftJoin('users', 'post_author', 'users.id')
 

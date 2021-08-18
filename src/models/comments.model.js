@@ -57,13 +57,25 @@ const Mood = {
     YUCK: 8
 }
 
+/**
+ * Comment types
+ */
+const Type = {
+    /**
+     * Post comment
+     */
+    POST: 0,
+    /**
+     * Booru item comment
+     */
+    BOORU: 1
+}
+
 /* Utility functions */
-function commentInfo() {
-    return knex('comments')
+function commentInfo(type) {
+    const query = knex('comments')
         .select('comments.id')
         .select(knex.ref('comment_post').as('post'))
-        .select('post_title')
-        .select('post_slug')
         .select(knex.ref('comment_parent').as('parent'))
         .select(knex.ref('comment_author').as('author'))
         .select(knex.ref('user_username').as('author_username'))
@@ -71,10 +83,43 @@ function commentInfo() {
         .select(knex.ref('comment_content').as('content'))
         .select(knex.ref('comment_mood').as('mood'))
         .select('mood_name')
+        .select(knex.ref('comment_type').as('type'))
         .select(knex.ref('comment_created_on').as('created_on'))
         .leftJoin('users', 'comment_author', 'users.id')
-        .leftJoin('posts', 'comment_post', 'posts.id')
         .leftJoin('moods', 'comment_mood', 'moods.id')
+
+    // Select post or media info, depending on which type is specified
+    // If no type is specified, use a less performant method that can detect it dynamically
+    if(type === Type.POST)
+        query
+            .select('post_title')
+            .select('post_slug')
+            .leftJoin('posts', 'comment_post', 'posts.id')
+    else if(type === Type.BOORU)
+        query
+            .select(knex.ref('media_title').as('post_title'))
+            .select(knex.ref('media.id').as('post_slug'))
+            .leftJoin('media', 'comment_post', 'media.id')
+    else
+        query
+            .select(knex.raw(`(
+                CASE
+                WHEN \`comment_type\` = 0 THEN
+                    (SELECT \`post_title\` FROM \`posts\` WHERE \`posts\`.\`id\` = \`comment_post\`)
+                WHEN \`comment_type\` = 1 THEN
+                    (SELECT \`media_title\` FROM \`media\` WHERE \`media\`.\`id\` = \`comment_post\`)
+                END
+            ) AS \`post_title\``))
+            .select(knex.raw(`(
+                CASE
+                WHEN \`comment_type\` = 0 THEN
+                    (SELECT \`post_slug\` FROM \`posts\` WHERE \`posts\`.\`id\` = \`comment_post\`)
+                WHEN \`comment_type\` = 1 THEN
+                    (SELECT \`comment_post\`)
+                END
+            ) AS \`post_slug\``))
+
+    return query
 }
 /**
  * @param {Array<Object>} rows 
@@ -105,15 +150,17 @@ function orderBy(order) {
  * @param {number} author The ID of the comment author
  * @param {string} content The comment's content
  * @param {number} mood The comment's mood type
+ * @param {number} type The comment's type
  */
-async function createComment(post, parent, author, content, mood) {
+async function createComment(post, parent, author, content, mood, type) {
     return knex('comments')
         .insert({
             comment_post: post,
             comment_parent: parent,
             comment_author: author,
             comment_content: content,
-            comment_mood: mood
+            comment_mood: mood,
+            comment_type: type
         })
 }
 
@@ -134,18 +181,20 @@ async function createComment(post, parent, author, content, mood) {
 }
 
 /**
- * Fetches normal (non-reply) comments on the specified post
+ * Fetches normal (non-reply) comments on the specified post with the specified type
  * @param {number} post The post ID
+ * @param {number} type The type of comment
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
  * @returns {Promise<Array<Object>>} All normal comments' info
  */
-async function fetchNormalCommentInfosByPost(post, offset, limit, order) {
+async function fetchNormalCommentInfosByPost(post, type, offset, limit, order) {
     return processCommentInfoRows(
-        await commentInfo()
+        await commentInfo(type)
             .whereNull('comment_parent')
-            .where('comment_post', post)
+            .andWhere('comment_post', post)
+            .andWhere('comment_type', type)
             .offset(offset)
             .limit(limit)
             .orderByRaw(orderBy(order))
@@ -201,12 +250,29 @@ async function fetchNormalCommentById(id) {
 /**
  * Returns the total amount of comments on a post
  * @param {number} post The post ID
+ * @param {number} type The comment type
  * @returns {Promise<number>} The total amount of comments on the specified post
  */
-async function fetchCommentsCountByPost(post) {
+async function fetchCommentsCountByPost(post, type) {
     return (await knex('comments')
         .count('*', { as: 'count' })
         .where('comment_post', post)
+        .andWhere('comment_type', type)
+    )[0].count
+}
+
+/**
+ * Returns the total amount of comments on a post
+ * @param {number} post The post ID
+ * @param {number} type The comment type
+ * @returns {Promise<number>} The total amount of comments on the specified post
+ */
+async function fetchNormalCommentsCountByPost(post, type) {
+    return (await knex('comments')
+            .count('*', { as: 'count' })
+            .whereNull('comment_parent')
+            .andWhere('comment_post', post)
+            .andWhere('comment_type', type)
     )[0].count
 }
 
@@ -259,6 +325,7 @@ module.exports.fetchCommentInfoById = fetchCommentInfoById
 module.exports.fetchNormalCommentById = fetchNormalCommentById
 module.exports.fetchCommentsCount = fetchCommentsCount
 module.exports.fetchCommentsCountByPost = fetchCommentsCountByPost
+module.exports.fetchNormalCommentsCountByPost = fetchNormalCommentsCountByPost
 module.exports.deleteCommentById = deleteCommentById
 module.exports.deleteCommentsByIds = deleteCommentsByIds
 module.exports.deleteCommentsByAuthor = deleteCommentsByAuthor
@@ -267,3 +334,4 @@ module.exports.deleteCommentsByParent = deleteCommentsByParent
 /* Export values */
 module.exports.Order = Order
 module.exports.Mood = Mood
+module.exports.Type = Type
