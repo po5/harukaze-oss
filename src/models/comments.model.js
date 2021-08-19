@@ -316,6 +316,18 @@ async function deleteCommentsByParent(parent) {
         .where('comment_parent', parent)
 }
 
+/**
+ * Deletes all comments with the specified post IDs, and of the specified type
+ * @param {Array<number>} ids The post IDs
+ * @param {number} type The type of comments to delete
+ */
+async function deleteCommentsByPostIds(ids, type) {
+    return knex('comments')
+        .del()
+        .whereIn('comment_post', ids)
+        .andWhere('comment_type', type)
+}
+
 /* Export functions */
 module.exports.createComment = createComment
 module.exports.fetchCommentInfos = fetchCommentInfos
@@ -330,6 +342,7 @@ module.exports.deleteCommentById = deleteCommentById
 module.exports.deleteCommentsByIds = deleteCommentsByIds
 module.exports.deleteCommentsByAuthor = deleteCommentsByAuthor
 module.exports.deleteCommentsByParent = deleteCommentsByParent
+module.exports.deleteCommentsByPostIds = deleteCommentsByPostIds
 
 /* Export values */
 module.exports.Order = Order

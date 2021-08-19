@@ -1,4 +1,5 @@
 const postsModel = require('../../models/posts.model')
+const commentsModel = require('../../models/comments.model')
 const utils = require('../../utils/misc.util')
 
 /**
@@ -67,6 +68,9 @@ module.exports.postDeletePosts = async ctx => {
 
         // Delete posts
         await postsModel.deletePostsByIds(ids)
+
+        // Delete comments on posts
+        await commentsModel.deleteCommentsByPostIds(ids, commentsModel.Type.POST)
 
         // Success
         ctx.apiSuccess()
