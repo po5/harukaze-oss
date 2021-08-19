@@ -4,6 +4,7 @@ const util = require('util')
 const unlink = util.promisify(fs.unlink)
 const copyFile = util.promisify(fs.copyFile)
 const mediaModel = require('../../models/media.model')
+const commentsModel = require('../../models/comments.model')
 const utils = require('../../utils/misc.util')
 const mediaUtils = require('../../utils/media.util')
 const FileType = require('file-type')
@@ -98,7 +99,7 @@ module.exports.postUploadMedia = async ctx => {
 
                 // Determine file MIME
                 let mime = file.type
-                if(!mime || mime == 'application/octet-stream')
+                if(!mime || mime === 'application/octet-stream')
                     // Probe file in filesystem to try to determine the true type, since sometimes clients return "application/octet-stream" if they don't know the type of the file that's being uploaded
                     mime = await (await FileType.fromFile(file.path)).mime
 
@@ -158,11 +159,11 @@ module.exports.postUploadMedia = async ctx => {
     let body = ctx.request.body
 
     // Check for correct data
-    if(!isNaN(body.id) && body.title && body.tags != undefined && body.booru_visible != undefined && body.comment != undefined) {
+    if(!isNaN(body.id) && body.title && body.tags !== undefined && body.booru_visible !== undefined && body.comment !== undefined) {
         let id = body.id*1
         let title = body.title.trim()
         let tags = utils.setToArray(body.tags)
-        let booruVisible = body.booru_visible == 'true' || body.booru_visible == true
+        let booruVisible = body.booru_visible === 'true' || body.booru_visible === true
         let comment = body.comment.trim()
         if(comment.length < 1)
             comment = null
@@ -211,7 +212,7 @@ module.exports.postDeleteMedia = async ctx => {
         let media = await mediaModel.fetchMediaInfosByIds(ids)
 
         // Handle each entry
-        for(file of media) {
+        for(let file of media) {
             // Delete files
             await unlink('media/'+file.key)
             if(file.thumbnail_key)
@@ -220,6 +221,9 @@ module.exports.postDeleteMedia = async ctx => {
             // Delete entry
             await mediaModel.deleteMediaById(file.id)
         }
+
+        // Delete comments on media
+        await commentsModel.deleteCommentsByPostIds(ids, commentsModel.Type.BOORU)
 
         // Success
         ctx.apiSuccess()
