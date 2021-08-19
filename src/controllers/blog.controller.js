@@ -39,13 +39,11 @@ async function fetchAndPutPageData(ctx, post) {
         let pagination = paginationUtil.paginatedRouteInfo(ctx, totalComments)
 
         // Fetch comments
-        console.log(`offset: ${pagination.queryOffset}, limit: ${pagination.queryLimit}`)
         let comments = await commentsModel.fetchNormalCommentInfosByPost(post.id, commentsModel.Type.POST, pagination.queryOffset, pagination.queryLimit, commentsModel.Order.CREATED_DESC)
-        console.log(comments.length)
 
         // Fetch replies
         let commentIds = new Array(comments.length)
-        for(i in comments)
+        for(let i in comments)
             commentIds[i] = comments[i].id
         let replies = await commentsModel.fetchReplyCommentsByParentIds(commentIds)
 
