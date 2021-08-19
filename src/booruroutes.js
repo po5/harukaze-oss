@@ -1,7 +1,12 @@
 const Router = require('koa-router')
 const ejs = require('ejs')
 const path = require('path')
+
 const { renderTemplate } = require('./utils/render.util')
+const { apiRes, apiError } = require('./utils/api.util')
+
+const ajaxTagsController = require('./controllers/booru/tags.controller')
+const ajaxCommentsController = require('./controllers/booru/comments.controller')
 
 // Prefix for all routes
 const prefix = '/booru'
@@ -43,6 +48,7 @@ module.exports = router => {
     const userController = require('./controllers/booru/user.controller')
     const actionController = require('./controllers/booru/action.controller')
     const ajaxTagsController = require('./controllers/booru/tags.controller')
+    const ajaxCommentsController = require('./controllers/booru/comments.controller')
 
     /* Middleware */
     router.use(renderdataMiddleware)
@@ -87,6 +93,11 @@ module.exports = router => {
 
     /* Ajax */
     router.get(prefix+'/ajax/tags', async (ctx, next) => {
-        await ajaxTagsController.getTags(ctx, next)
+        try {
+            await ajaxTagsController.getTags(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
     })
 }

@@ -38,8 +38,5 @@ module.exports.getTags = async ctx => {
     }
 
     // Return them
-    ctx.body = {
-        status: 'success',
-        tags
-    }
+    ctx.apiSuccess({ tags })
 }
