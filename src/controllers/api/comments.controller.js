@@ -62,7 +62,7 @@ module.exports.postDeleteComments = async ctx => {
             // Parse author ID
             let author = body.author*1
 
-            // Delete posts
+            // Delete comments
             await commentsModel.deleteCommentsByAuthor(author)
         } else {
             // Parse IDs
@@ -72,8 +72,8 @@ module.exports.postDeleteComments = async ctx => {
                 if(!isNaN(id))
                     ids.push(id)
 
-            // Delete posts
-            await postsModel.deletePostsByIds(ids)
+            // Delete comments
+            await commentsModel.deleteCommentsByIds(ids)
         }
 
         // Success

@@ -293,7 +293,7 @@ async function deleteCommentById(id) {
 async function deleteCommentsByIds(ids) {
     return knex('comments')
         .del()
-        .whereIn('ids', ids)
+        .whereIn('id', ids)
 }
 
 /**
