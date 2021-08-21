@@ -2,6 +2,7 @@ const mediaModel = require('../../models/media.model')
 const collectionsModel = require('../../models/collections.model')
 const tagsUtil = require('../../utils/tags.util')
 const utils = require('../../utils/misc.util')
+const config = require('../../../config.json')
 
 /**
  * GET controller for booru item page
@@ -77,4 +78,5 @@ module.exports.getItem = async (ctx, next) => {
     ctx.state.item = item
     ctx.state.resultTags = resultTags
     ctx.state.queryTags = tags
+    ctx.state.pageSize = config.pagination.pageSize
 }

@@ -100,4 +100,31 @@ module.exports = router => {
         }
         apiRes(ctx)
     })
+
+    router.get(prefix+'/ajax/comments', async (ctx, next) => {
+        try {
+            await ajaxCommentsController.getComments(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+
+    router.post(prefix+'/ajax/comments/delete', async (ctx, next) => {
+        try {
+            await ajaxCommentsController.postDeleteComment(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+
+    router.post(prefix+'/ajax/comments/create', async (ctx, next) => {
+        try {
+            await ajaxCommentsController.postCreateComment(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
 }
