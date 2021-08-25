@@ -7,6 +7,7 @@ const { apiRes, apiError } = require('./utils/api.util')
 
 const ajaxTagsController = require('./controllers/booru/tags.controller')
 const ajaxCommentsController = require('./controllers/booru/comments.controller')
+const actionController = require('./controllers/booru/action.controller')
 
 // Prefix for all routes
 const prefix = '/booru'
@@ -47,6 +48,7 @@ module.exports = router => {
     const collectionController = require('./controllers/booru/collection.controller')
     const userController = require('./controllers/booru/user.controller')
     const actionController = require('./controllers/booru/action.controller')
+    const navController = require('./controllers/booru/nav.controller')
     const ajaxTagsController = require('./controllers/booru/tags.controller')
     const ajaxCommentsController = require('./controllers/booru/comments.controller')
 
@@ -89,6 +91,9 @@ module.exports = router => {
     router.post(prefix+'/action', async (ctx, next) => {
         await actionController.postAction(ctx, next)
         await render('action', ctx)
+    })
+    router.get(prefix+'/item/:id/nav', async (ctx, next) => {
+        await navController.getNav(ctx, next)
     })
 
     /* Ajax */

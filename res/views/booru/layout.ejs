@@ -32,6 +32,8 @@
 </head>
 <body>
     <script>
+        const nextUrl = "<%- typeof nextUrl == 'undefined' ? 'null' : nextUrl %>";
+		const prevUrl = "<%- typeof prevUrl == 'undefined' ? 'null' : prevUrl %>";
     <% if(authed) { %>
         const authed = true;
         const user = {

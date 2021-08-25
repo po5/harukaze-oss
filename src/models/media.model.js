@@ -359,12 +359,42 @@ async function fetchBooruVisibleMediaCountByUploaderUsername(username) {
  * @param {number} collection The collection ID
  * @returns {Promise<number>} The amount of booru-visible media in the specified collection
  */
- async function fetchBooruVisibleMediaCountByCollection(collection) {
+async function fetchBooruVisibleMediaCountByCollection(collection) {
     return (await knex('media')
         .count('*', { as: 'count' })
         .where('media_booru_visible', true)
         .andWhere('item_collection', collection)
         .leftJoin('collectionitems', 'item_media', 'media.id'))[0].count
+}
+
+async function fetchBooruVisibleMediaIdAfterOrBeforeId(isAfter, relativeTo, tags, collection, uploaderUsername) {
+    const query = knex('media')
+        .select('media.id')
+        .orderBy('media.id', isAfter ? 'asc' : 'desc')
+        .limit(1)
+        .where('media_booru_visible', true)
+        .andWhere('media.id', isAfter ? '>' : '<', relativeTo)
+
+    if(tags && tags.length > 0)
+        for(let tag of tags)
+            query.andWhereRaw('FIND_IN_SET(?, media_tags) > 0', [tag])
+
+    if(!isNaN(collection))
+        query
+            .andWhere('item_collection', collection)
+            .leftJoin('collectionitems', 'item_media', 'media.id')
+
+    if(uploaderUsername)
+        query
+            .andWhere(knex.raw('LOWER(`user_username`)'), uploaderUsername.toLowerCase())
+            .leftJoin('users', 'media_uploader', 'users.id')
+
+    const res = await query
+
+    if(res.length > 0)
+        return res[0].id
+    else
+        return null
 }
 
 /**
@@ -415,6 +445,7 @@ module.exports.fetchBooruVisibleMediaCount = fetchBooruVisibleMediaCount
 module.exports.fetchBooruVisibleMediaCountByTags = fetchBooruVisibleMediaCountByTags
 module.exports.fetchBooruVisibleMediaCountByUploaderUsername = fetchBooruVisibleMediaCountByUploaderUsername
 module.exports.fetchBooruVisibleMediaCountByCollection = fetchBooruVisibleMediaCountByCollection
+module.exports.fetchBooruVisibleMediaIdAfterOrBeforeId = fetchBooruVisibleMediaIdAfterOrBeforeId
 module.exports.updateMediaById = updateMediaById
 module.exports.deleteMediaById = deleteMediaById
 

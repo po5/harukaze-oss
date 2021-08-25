@@ -79,4 +79,6 @@ module.exports.getItem = async (ctx, next) => {
     ctx.state.resultTags = resultTags
     ctx.state.queryTags = tags
     ctx.state.pageSize = config.pagination.pageSize
+    ctx.state.nextUrl = `/booru/item/${id}/nav?${ctx.querystring}&to=before`
+    ctx.state.prevUrl = `/booru/item/${id}/nav?${ctx.querystring}&to=after`
 }

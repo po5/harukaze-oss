@@ -36,7 +36,16 @@
         <span><a href="/assets/media/<%= id %>/<%= encodeURIComponent(filename) %>">File link</a></span><br>
 
         <% if(authed && user.role > 0) { %>
-            <span><a href="/booru/action?action=add-to-collection&item=<%= id %>">Add to collection...</a></span>
+            <span><a href="/booru/action?action=add-to-collection&item=<%= id %>">Add to collection...</a></span><br>
+        <% } %>
+
+        <% if(typeof nextUrl != 'undefined') { %>
+            <br>
+            <span><a href="<%= nextUrl %>">Next item</a></span>
+        <% } %>
+        <% if(typeof prevUrl != 'undefined') { %>
+            <br>
+            <span><a href="<%= prevUrl %>">Previous item</a></span>
         <% } %>
     </div>
 <% } } %>
