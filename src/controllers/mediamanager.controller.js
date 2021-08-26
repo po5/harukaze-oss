@@ -1,4 +1,5 @@
 const usersUtil = require('../utils/users.util')
+const config = require('../../config.json')
 
 /**
  * GET controller for media manager page
@@ -21,4 +22,5 @@ module.exports.getMediaManager = async (ctx, next) => {
 
     // Page title
     ctx.state.pageTitle = 'Media Manager'
+    ctx.state.maxUploadSize = config.site.maxUploadSize
 }

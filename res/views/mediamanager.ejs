@@ -25,23 +25,26 @@
         <div class="container-header">
             <span>Upload</span>
         </div>
-        <form action="/api/media/upload" method="post" enctype="multipart/form-data">
-            <template v-if="uploading">
-                Uploading {{ uploadingFile.name }}...
-                <br>
-                <progress max="100" :value="uploadProgress">{{ uploadProgress }}%</progress> ({{ uploadProgress }}%)
-                <br>
-                <button @click="cancelUpload()">Cancel Upload</button>
-            </template>
-            <template v-else>
-                <form @submit.prevent="uploadFile">
-                    Select a file to upload:
-                    <br>
-                    <input id="file" type="file">
-                    <input type="submit" value="Upload">
-                </form>
-            </template>
+        <form @submit.prevent="uploadFile">
+            Select a file (or multiple) to upload:
+            <br>
+            <input id="file" type="file" multiple>
+            <input type="submit" value="Upload">
         </form>
+        <template :key="uplKey" v-if="uploads.length > 0">
+            <div v-for="upload in uploads" class="file-upload">
+                Uploading {{ upload.file.name }}...
+                <br>
+                <template v-if="upload.error">
+                    <p class="form-error">{{ upload.error }}</p>
+                </template>
+                <template v-else>
+                    <progress max="100" :key="upload.progress" :value="upload.progress">{{ upload.progress }}%</progress> ({{ upload.progress }}%)
+                    <br>
+                    <button @click="cancelUpload(upload.id)">Cancel Upload</button>
+                </template>
+            </div>
+        </template>
     </div>
 
     <div id="media" class="container">
@@ -99,5 +102,9 @@
     </div>
 </div>
 
+<script>
+    const maxUploadSize = <%= maxUploadSize %>;
+</script>
 <script src="/static/js/api.js"></script>
+<script src="/static/js/axios.js"></script>
 <script src="/static/js/mediamanager.js"></script>

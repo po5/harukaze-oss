@@ -406,6 +406,11 @@ input {
 	font-weight: bold;
 	text-align: right;
 }
+.file-upload {
+	border-top: 1px solid gray;
+	margin-top: 10px;
+	padding-top: 10px;
+}
 
 #site-logo {
 	margin-bottom: 20px;

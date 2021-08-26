@@ -22,10 +22,8 @@ function main() {
                 ['Size, descending', 7]
             ],
             selected: [],
-            uploading: false,
-            uploadingFile: null,
-            uploadProgress: 0,
-            uploadXhr: null
+            uploads: [],
+            uplKey: 0
         },
         methods: {
             handleError(err) {
@@ -54,7 +52,7 @@ function main() {
                         order: this.order
                     })
 
-                    if(res.status == 'success') {
+                    if(res.status === 'success') {
                         this.totalMedia = res.total
                         this.pages = Math.max(1, Math.ceil(res.total/pageSize))
                         this.media = res.media
@@ -82,7 +80,7 @@ function main() {
             },
             selectAll() {
                 this.selected = []
-                for(file of this.media)
+                for(let file of this.media)
                     this.selected.push(file.id)
             },
             selectNone() {
@@ -107,7 +105,7 @@ function main() {
                                 ids: ids.join(',')
                             })
 
-                            if(res.status == 'success')
+                            if(res.status === 'success')
                                 this.loadMedia()
                             else
                                 console.error('Failed to delete media: '+res.error)
@@ -121,52 +119,96 @@ function main() {
                     }
                 }
             },
-            uploadFile() {
-                let files = document.getElementById('file').files
+            async uploadFile() {
+                const uplElem = document.getElementById('file')
 
-                if(files.length > 0) {
-                    let file = files[0]
-                    
+                // Copy files into array and clear selected files from element
+                const rawFiles = uplElem.files
+                let files = new Array(rawFiles.length)
+                for(let i in rawFiles)
+                    files[i] = rawFiles[i]
+                uplElem.value = null
+
+                for(let file of files) {
+                    const uplId = Math.random()
+                    const uplObj = {
+                        id: uplId,
+                        file,
+                        progress: 0,
+                        cancelToken: axios.CancelToken.source(),
+                        error: null
+                    }
+
                     // Upload
-                    this.uploadingFile = file
-                    this.uploading = true
-                    this.uploadProgress = 0
                     let form = new FormData()
                     form.append('file', file, file.name)
-                    var xhr = new XMLHttpRequest()
-                    this.uploadXhr = xhr
-                    xhr.onprogress = e => {
-                        console.log(e)
-                        console.log(`Uploading ${e.loaded}/${e.total}`)
-                        this.uploadProgress = Math.round((e.loaded/e.total)*100)
-                    }
-                    xhr.onreadystatechange = () => {
-                        if(xhr.readyState == 4) {
-                            if(xhr.status == 200) {
-                                let res = JSON.parse(xhr.responseText)
+                    this.uploads.push(uplObj)
 
-                                if(res.status == 'success') {
-                                    if(res.existing)
-                                        alert('The file you uploaded already exists')
-                                    else
-                                        setTimeout(() => this.loadMedia(), 250)
-                                } else {
-                                    this.error = 'Failed to upload! Server returned error: '+res.error
-                                }
-                            } else {
-                                this.error = 'Failed to upload! Server returned status: '+xhr.status
+                    const vm = this
+
+                    function remove() {
+                        for(let i in vm.uploads) {
+                            if(vm.uploads[i].id === uplId) {
+                                vm.uploads.splice(i, 1)
+                                break
                             }
-
-                            this.uploading = false
                         }
                     }
-                    xhr.open('POST', '/api/media/upload', true)
-                    xhr.send(form)
+                    function error(msg) {
+                        vm.uplKey = Math.random()
+                        uplObj.error = msg
+                    }
+
+                    // Check size
+                    if(file.size > maxUploadSize) {
+                        error(`File "${file.name}" exceeds the max upload size`)
+                        return
+                    }
+
+                    // Upload file
+                    axios.post(
+                        '/api/media/upload',
+                        form,
+                        {
+                            cancelToken: uplObj.cancelToken.token,
+                            onUploadProgress(e) {
+                                uplObj.progress = Math.round((e.loaded / e.total) * 100)
+                            }
+                        }
+                    ).then(response => {
+                        const res = response.data
+                        if(res.status === 'success') {
+                            if(res.existing) {
+                                error('This file already exists')
+                            } else {
+                                remove()
+                                setTimeout(() => this.loadMedia(), 250)
+                            }
+                        } else {
+                            this.uplKey = Math.random()
+                            uplObj.error = 'Failed to upload! Server returned error: ' + res.error
+                        }
+                    }).catch(e => {
+                        console.error('Failed to upload:')
+                        console.error(e)
+                        error('Failed to upload! Server returned status: '+e)
+                    })
                 }
             },
-            cancelUpload() {
-                this.uploadXhr.abort()
-                this.uploading = false
+            cancelUpload(id) {
+                let upl = null
+
+                for(let i in this.uploads) {
+                    const upload = this.uploads[i]
+                    if(upload.id === id) {
+                        upl = upload
+                        this.uploads.splice(i, 1)
+                        break
+                    }
+                }
+
+                if(upl)
+                    upl.cancelToken.cancel()
             }
         }
     })
