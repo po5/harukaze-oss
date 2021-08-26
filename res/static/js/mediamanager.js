@@ -214,6 +214,27 @@ function main() {
     })
 
     app.reloadMedia()
+
+    // Ask for confirmation on exit while there are pending uploads
+    window.onbeforeunload = function(e) {
+        let cancel = false
+        for(let upload of app.uploads) {
+            if(upload.error === null) {
+                cancel = true
+                break
+            }
+        }
+
+        if(cancel) {
+            e.returnValue = 'Are you sure you want to leave? There are pending uploads!'
+            e.cancelBubble = true
+
+            if(e.stopPropagation)
+                e.stopPropagation()
+            if(e.preventDefault)
+                e.preventDefault()
+        }
+    }
 }
 
 // Load Vue if not present
