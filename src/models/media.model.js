@@ -367,6 +367,15 @@ async function fetchBooruVisibleMediaCountByCollection(collection) {
         .leftJoin('collectionitems', 'item_media', 'media.id'))[0].count
 }
 
+/**
+ * Fetches the ID of a media entry either after or before the specified ID, and with the provided parameters
+ * @param {boolean} isAfter Whether to fetch after the provided ID, otherwise fetches before
+ * @param {number} relativeTo The ID to use as a reference point
+ * @param {?Array<string>} tags The tags the media entry should have (or null to not require any)
+ * @param {?number} collection The ID of the collection the media entry should be in (or null to not require any)
+ * @param {?string} uploaderUsername The username of the media entry's uploader (or null to not require any)
+ * @return {Promise<?number>} The ID of a media entry matching the provided criteria, or null if none exists
+ */
 async function fetchBooruVisibleMediaIdAfterOrBeforeId(isAfter, relativeTo, tags, collection, uploaderUsername) {
     const query = knex('media')
         .select('media.id')
