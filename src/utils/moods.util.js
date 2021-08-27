@@ -1,8 +1,8 @@
 const moodsModel = require('../models/moods.model')
 const moodcharsModel = require('../models/moodchars.model')
 
-var _charsCache = []
-var _moodsCache = []
+let _charsCache = []
+let _moodsCache = []
 
 async function _refreshCharsCache() {
     _charsCache = await moodcharsModel.fetchCharacterInfosWithDefault(0, Number.MAX_SAFE_INTEGER, moodcharsModel.Order.CREATED_ASC)
@@ -21,7 +21,7 @@ function clearCaches() {
 
 /**
  * Returns all usable characters
- * @returns {Array<Object>} All usable characters
+ * @returns {Promise<Array<Object>>} All usable characters
  */
 async function getUsableCharacters() {
     if(_charsCache.length < 1)
@@ -33,14 +33,14 @@ async function getUsableCharacters() {
 /**
  * Returns the character with the specified ID or null if it doesn't exist
  * @param {number} id The ID
- * @returns {Object} The character with the specified ID or null if it doesn't exist
+ * @returns {Promise<Object>} The character with the specified ID or null if it doesn't exist
  */
 async function getCharacterById(id) {
     if(_charsCache.length < 1)
         await _refreshCharsCache()
     
-    for(char of _charsCache)
-        if(char.id == id)
+    for(let char of _charsCache)
+        if(char.id === id)
             return char
     
     return null
@@ -48,7 +48,7 @@ async function getCharacterById(id) {
 
 /**
  * Returns all moods
- * @returns {Array<Object>} All moods
+ * @returns {Promise<Array<Object>>} All moods
  */
 async function getMoods() {
     if(_moodsCache.length < 1)
@@ -59,7 +59,7 @@ async function getMoods() {
 
 /**
  * Returns all moods with the specified character
- * @param {number} character The character ID
+ * @param {Promise<number>} character The character ID
  * @returns 
  */
 async function getMoodsByCharacter(character) {
@@ -67,8 +67,8 @@ async function getMoodsByCharacter(character) {
         await _refreshMoodsCache()
     
     let moods = []
-    for(mood of _moodsCache)
-        if(mood.character == character)
+    for(let mood of _moodsCache)
+        if(mood.character === character)
             moods.push(mood)
     
     return moods
@@ -77,14 +77,14 @@ async function getMoodsByCharacter(character) {
 /**
  * Returns the mood with the specified ID or null if it doesn't exist
  * @param {number} id The ID
- * @returns {Object} The mood with the specified ID or null if it doesn't exist
+ * @returns {Promise<Object>} The mood with the specified ID or null if it doesn't exist
  */
 async function getMoodById(id) {
     if(_moodsCache.length < 1)
         await _refreshMoodsCache()
 
-    for(mood of _moodsCache)
-        if(mood.id == id)
+    for(let mood of _moodsCache)
+        if(mood.id === id)
             return mood
 
     return null
