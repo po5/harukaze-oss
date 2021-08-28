@@ -34,7 +34,7 @@ module.exports.getNav = async (ctx, next) => {
 	if(tagsRaw)
 		tags = utils.setToArray(tagsRaw)
 	const collection = query.collection*1
-	const user = query.user*1
+	const user = query.user
 
 	function destination(item) {
 		let str = '/booru/item/'+item
