@@ -68,10 +68,10 @@ module.exports = router => {
         await assetsController.getMedia(ctx, next)
     })
     router.get('/assets/thumbnail/:id/:filename', async (ctx, next) => {
-        await assetsController.getThumbnail(ctx, next)
+        await assetsController.getThumbnail(ctx)
     })
     router.get('/assets/thumbnail/:id', async (ctx, next) => {
-        await assetsController.getThumbnail(ctx, next)
+        await assetsController.getThumbnail(ctx)
     })
     router.get('/assets/avatar/:username', async (ctx, next) => {
         await assetsController.getAvatar(ctx, next)
