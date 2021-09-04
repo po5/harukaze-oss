@@ -96,7 +96,34 @@ async function generateAvatar(inputPath, outputPath) {
     })
 }
 
+/**
+ * Generates scales an image
+ * @param {string} inputPath The path of the image to scale
+ * @param {?number} width The width (use -1 or null to maintain aspect ratio)
+ * @param {?number} height The height (use -1 or null to maintain aspect ratio)
+ * @param {string} outputPath The path to write the scaled image
+ */
+async function scaleImage(inputPath, width, height, outputPath) {
+    await new Promise((res, rej) => {
+        let proc = execFile(config.ffmpeg.ffmpegPath, [
+            '-i',
+            inputPath,
+            '-vf', `scale=min'('${width*1 || -1}\\, iw')':min'('${height*1 || -1}\\, ih')'`,
+            outputPath,
+            '-y'
+        ])
+
+        proc.on('close', code => {
+            if(code > 0)
+                rej('FFmpeg exited with code '+code)
+            else
+                res()
+        })
+    })
+}
+
 /* Export functions */
 module.exports.generateThumbnail = generateThumbnail
 module.exports.generateAvatar = generateAvatar
 module.exports.generateMood = generateMood
+module.exports.scaleImage = scaleImage

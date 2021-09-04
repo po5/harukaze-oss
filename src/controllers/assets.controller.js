@@ -3,7 +3,11 @@ const usersModel = require('../models/users.model')
 const moodsUtil = require('../utils/moods.util')
 const logosUtil = require('../utils/logos.util')
 const utils = require('../utils/misc.util')
+const mediaUtils = require('../utils/media.util')
 const fs = require('fs')
+const { promisify } = require('util')
+const exists = promisify(fs.exists)
+const stat = promisify(fs.stat)
 
 /**
  * @param {import('koa').Context} ctx 
@@ -18,7 +22,7 @@ function notFound(ctx) {
  * GET controller for media assets
  * @param {import("koa").Context} ctx The context
  */
-module.exports.getMedia = async (ctx, next) => {
+module.exports.getMedia = async ctx => {
     let id = ctx.params.id*1
 
     // Make sure ID is numeric
@@ -29,7 +33,7 @@ module.exports.getMedia = async (ctx, next) => {
 
     // Fetch media
     let mediaRes = await mediaModel.fetchMediaById(id)
-        
+
     // Check if it exists
     if(mediaRes.length < 1) {
         notFound(ctx)
@@ -38,21 +42,68 @@ module.exports.getMedia = async (ctx, next) => {
 
     let media = mediaRes[0]
 
+    // Collect file info
+    const key = media.media_key
+    const keyParts = utils.splitFilename(key)
+    let path = 'media/'+key
+    let filename = media.media_filename
+    let size = media.media_size
+    let mime = media.media_mime.toLowerCase()
+    let scaled = false
+
+    // Check if a scaled file needs to be sent
+    if(mime.startsWith('image/') && mime !== 'image/gif' && mime !== 'image/webp') {
+        const query = ctx.query
+        const defExt = keyParts.length > 1 ? keyParts[1].toLowerCase() : 'jpg'
+        const okExts = ['jpg', 'png']
+        let ext = (query.format || defExt).toLowerCase()
+        if(ext === 'jpeg')
+            ext = 'jpg'
+
+        if(!okExts.includes(ext))
+            ext = defExt
+
+        // Make sure at least one dimension was specified
+        const width = query.width*1
+        const height = query.height*1
+        if(!isNaN(width) || !isNaN(height)) {
+            // Create dimensions string and check for cached version
+            const dimensionStr = (width || 'X')+'x'+(height || 'X')
+            const baseKey = utils.splitFilename(key)[0]
+            const cachePath = 'media/scaled/'+baseKey+'_'+dimensionStr+'.'+ext
+            if(!await exists(cachePath)) {
+                // Create scaled version
+                const scaleWidth = width > 0 ? Math.min(width, 1000) : -1
+                const scaleHeight = height > 0 ? Math.min(height, 1000) : -1
+                await mediaUtils.scaleImage('media/'+media.media_key, scaleWidth, scaleHeight, cachePath)
+            }
+
+            // Stat scaled file and set appropriate data
+            const info = await stat(cachePath)
+            path = cachePath
+            filename = utils.splitFilename(media.media_filename)[0]+'.'+ext
+            size = info.size
+            mime = ext === 'jpg' ? 'image/jpeg' : 'image/'+ext
+            scaled = true
+        }
+    }
+
     // Set headers
     ctx.res.setHeader('Accept-Ranges', 'bytes')
     ctx.res.setHeader('Vary', 'accept-encoding')
     if(!ctx.params.filename)
-        ctx.res.setHeader('Content-Disposition', `filename="${media.media_filename.replace(/[^\x00-\x7F]/g, '_')}"`)
+        ctx.res.setHeader('Content-Disposition', `filename="${filename.replace(/[^\x00-\x7F]/g, '_')}"`)
 
-    ctx.length = media.media_size
-    ctx.etag = media.media_hash
-    ctx.type = media.media_mime
-            
+    ctx.length = size
+    ctx.type = mime
+    if(!scaled)
+        ctx.etag = media.media_hash
+
     // Work out what range to send
     let start = 0
-    let end = media.media_size
+    let end = size
     let match = null
-    if('range' in ctx.header && (match = ctx.header['range'].match(/bytes=([0-9]+)\-([0-9]+)?/))) {
+    if('range' in ctx.header && (match = ctx.header['range'].match(/bytes=([0-9]+)-([0-9]+)?/))) {
         start = match[1]*1
                 
         if(match[2])
@@ -60,25 +111,24 @@ module.exports.getMedia = async (ctx, next) => {
 
         ctx.status = 206
         ctx.length = end-start
-        ctx.res.setHeader('Content-Range', `bytes ${start}-${end-1}/${media.media_size}`)
+        ctx.res.setHeader('Content-Range', `bytes ${start}-${end-1}/${size}`)
     }
 
     // Send empty response for HEAD requests
-    if(ctx.method == 'HEAD') {
+    if(ctx.method === 'HEAD') {
         ctx.res.end()
         return
     }
-    
 
     // Send file
-    ctx.body = fs.createReadStream('media/'+media.media_key, { start, end })
+    ctx.body = fs.createReadStream(path, { start, end })
 }
 
 /**
  * GET controller for media thumbnails
  * @param {import("koa").Context} ctx The context
  */
-module.exports.getThumbnail = async (ctx, next) => {
+module.exports.getThumbnail = async ctx => {
     let id = ctx.params.id*1
 
     // Make sure ID is numeric
@@ -109,7 +159,7 @@ module.exports.getThumbnail = async (ctx, next) => {
     ctx.res.setHeader('Content-Disposition', 'filename="thumbnail.jpg"')
 
     // Send empty response for HEAD requests
-    if(ctx.method == 'HEAD') {
+    if(ctx.method === 'HEAD') {
         ctx.res.end()
         return
     }
@@ -122,7 +172,7 @@ module.exports.getThumbnail = async (ctx, next) => {
  * GET controller for user avatars
  * @param {import("koa").Context} ctx The context
  */
-module.exports.getAvatar = async (ctx, next) => {
+module.exports.getAvatar = async ctx => {
     let username = ctx.params.username
 
     // Fetch user
@@ -137,7 +187,7 @@ module.exports.getAvatar = async (ctx, next) => {
     let user = userRes[0]
 
     // Send empty response for HEAD requests
-    if(ctx.method == 'HEAD') {
+    if(ctx.method === 'HEAD') {
         ctx.res.end()
         return
     }
@@ -166,7 +216,7 @@ module.exports.getAvatar = async (ctx, next) => {
  * GET controller for mood images
  * @param {import("koa").Context} ctx The context
  */
-module.exports.getMood = async (ctx, next) => {
+module.exports.getMood = async ctx => {
     let id = ctx.params.id*1
 
     // Make sure ID is numeric
@@ -200,7 +250,7 @@ module.exports.getMood = async (ctx, next) => {
     }
 
     // Send empty response for HEAD requests
-    if(ctx.method == 'HEAD') {
+    if(ctx.method === 'HEAD') {
         ctx.res.end()
         return
     }
@@ -217,7 +267,7 @@ module.exports.getMood = async (ctx, next) => {
  * GET controller for logo images
  * @param {import("koa").Context} ctx The context
  */
-module.exports.getLogo = async (ctx, next) => {
+module.exports.getLogo = async ctx => {
     // Disable caching
     ctx.res.setHeader('Cache-control', 'no-store')
     ctx.res.setHeader('Pragma', 'no-cache')
@@ -232,7 +282,7 @@ module.exports.getLogo = async (ctx, next) => {
     }
 
     // Send empty response for HEAD requests
-    if(ctx.method == 'HEAD') {
+    if(ctx.method === 'HEAD') {
         ctx.res.end()
         return
     }

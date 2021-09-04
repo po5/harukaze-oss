@@ -106,6 +106,13 @@ Run without any arguments to start the server.`)
         fs.mkdirSync('media/moods')
     if(!fs.existsSync('media/logos'))
         fs.mkdirSync('media/logos')
+    if(!fs.existsSync('media/scaled'))
+        fs.mkdirSync('media/scaled')
+
+    // Clear cached scaled images
+    const scaledImages = fs.readdirSync('media/scaled')
+    for(let img of scaledImages)
+        fs.rmSync('media/scaled/'+img)
 
     // Check for administrator
     console.log('Connecting to database...')
