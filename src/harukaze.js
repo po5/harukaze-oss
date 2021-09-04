@@ -9,6 +9,9 @@ const tagsUtil = require('./utils/tags.util')
 const utils = require('./utils/misc.util')
 const logging = require('./utils/logging.util')
 const fs = require('fs')
+const { promisify } = require('util')
+const readdir = promisify(fs.readdir)
+const rm = promisify(fs.rm)
 const config = require('../config.json')
 const http = require('http')
 const https = require('https')
@@ -109,10 +112,17 @@ Run without any arguments to start the server.`)
     if(!fs.existsSync('media/scaled'))
         fs.mkdirSync('media/scaled')
 
-    // Clear cached scaled images
-    const scaledImages = fs.readdirSync('media/scaled')
-    for(let img of scaledImages)
-        fs.rmSync('media/scaled/'+img)
+    // Clear cached scaled images every hour
+    setInterval(async function() {
+        try {
+            const scaledImages = await readdir('media/scaled')
+            for(let img of scaledImages)
+                await rm('media/scaled/' + img)
+        } catch(e) {
+            console.error('Failed to delete cached scaled images:')
+            console.error(e)
+        }
+    }, 1000*60*60)
 
     // Check for administrator
     console.log('Connecting to database...')
