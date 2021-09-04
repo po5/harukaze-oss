@@ -1,7 +1,6 @@
-const config = require('../../config.json')
 const xbbcode = require('xbbcode-parser')
 
-const urlPattern = /^((?:https?|file|c):(?:\/{1,3}|\\{1})\/)?[-a-zA-Z0-9:;,@#%&()~_?\+=\/\\\.]*$/
+const urlPattern = /^((?:https?|file|c):(?:\/{1,3}|\\)\/)?[-a-zA-Z0-9:;,@#%&()~_?+=\/\\.]*$/
 
 // Add BBCode tags
 xbbcode.addTags({
@@ -91,7 +90,7 @@ xbbcode.addTags({
                 content = 'https://www.youtube.com/watch?v='+content
 
             if(/^https?:\/\/(www\.)?youtu((\.be\/)|(be\.com\/watch\?v=))([a-zA-Z0-9_-]{11})$/g.test(content)) {
-                var id = content.substring(content.length-11, content.length).replace(/'/g, '').replace(/"/g, '')
+                const id = content.substring(content.length-11, content.length).replace(/'/g, '').replace(/"/g, '')
 
                 return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${id}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
             } else {
@@ -105,9 +104,9 @@ xbbcode.addTags({
     },
     url: {
         openTag: function(params, content) {
-            var url
+            let url
 
-            if (!params) {
+            if(!params) {
                 url = content.replace(/<.*?>/g, "")
             } else {
                 url = params.substr(1)
@@ -128,7 +127,7 @@ xbbcode.addTags({
     },
     video: {
         openTag: function(params, content) {
-            var url
+            let url
 
             if (!params) {
                 url = content.replace(/<.*?>/g, "")
@@ -151,7 +150,7 @@ xbbcode.addTags({
     },
     audio: {
         openTag: function(params, content) {
-            var url
+            let url
 
             if (!params) {
                 url = content.replace(/<.*?>/g, "")
@@ -175,12 +174,16 @@ xbbcode.addTags({
     img: {
         openTag: function(params, content) {
             if(urlPattern.test(content)) {
-                var out = '<img class="xbbcode-img" '
+                let src = content
+                let out = '<img class="xbbcode-img" '
                 if(params && /^=[0-9]+x[0-9]+$/g.test(params)) {
-                    var dimensions = params.substring(1).split('x')
+                    const dimensions = params.substring(1).split('x')
                     out += `width="${dimensions[0]}" height="${dimensions[1]}" `
+                    src += `?width=${dimensions[0]}&height=${dimensions[1]}`
+                } else {
+                    src += '?width=900&format=jpg'
                 }
-                out += `src="${content}" />`
+                out += `src="${src}" />`
                 return out
             } else {
                 return ''
@@ -190,26 +193,6 @@ xbbcode.addTags({
             return ''
         },
         displayContent: false
-    },
-    quote: {
-        openTag: function(params, content) {
-            var out = ''
-            if(params && /^=[A-Za-z0-9\-\_]+(@[0-9]+(:[0-9]+)?)?$/g.test(params)) {
-                var parts = params.substring(1).split('@')
-                var author = parts[0]
-                var post = parts[1]
-                if(post) {
-                    out += `<span class="xbbcode-blockquote-author"><a href="${config.siteRoot}/forums/thread/${ post }">${ author } said</a></span>`
-                } else {
-                    out += `<span class="xbbcode-blockquote-author">${ author } said</span>`
-                }
-            }
-            out += '<blockquote class="xbbcode-blockquote">'
-            return out
-        },
-        closeTag: function(params, content) {
-            return '</blockquote>'
-        }
     },
     code: {
         openTag: function(params, content) {
@@ -234,13 +217,13 @@ xbbcode.addTags({
 
                 let htmlPerson = (
 `<div class="interview-person">
-    <img class="interview-image" src="${img}">
+    <img class="interview-image" src="${img}${resize === 'resize' ? '?width=128' : ''}">
 </div>`)
                 let htmlContent = `<div class="interview-content speech-bubble speech-bubble-${dir}" style="border-color:${color};background-color:${color}"><div class="speech-bubble-content">${content}</div></div>`
                 
                 return (
 `<blockquote class="interview interview-${dir} interview-${resize}" data-image="${img}" data-dir="${dir}" data-resize="${resize}">
-    ${dir == 'right' ? htmlContent+htmlPerson : htmlPerson+htmlContent}
+    ${dir === 'right' ? htmlContent+htmlPerson : htmlPerson+htmlContent}
 </blockquote>`)
             } else {
                 return `<blockquote class="xbbcode-blockquote">${content}</blockquote>`
@@ -260,7 +243,7 @@ xbbcode.addTags({
  */
 function renderBBCode(bbcode) {
     return xbbcode.process({
-        text: bbcode.replace(/\[hr\]/g, '[hr][/hr]'),
+        text: bbcode.replace(/\[hr]/g, '[hr][/hr]'),
         removeMisalignedTags: false,
         addInLineBreaks: true
     }).html
