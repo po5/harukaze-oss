@@ -12,7 +12,7 @@ module.exports.getBlogsBy = async (ctx, next) => {
     const username = ctx.params.username
 
     // Fetch user
-    const userRes = await usersModel.fetchUserByUsername(username)
+    const userRes = await usersModel.fetchUserInfoByUsername(username)
 
     // Check if it exists
     if(userRes.length < 1) {
