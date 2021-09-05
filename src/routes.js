@@ -54,7 +54,7 @@ module.exports = router => {
 
     /* Redirects */
     router.get('/home', async ctx => await ctx.redirect('/')) // Looks like / was the true winner after all
-    router.get('/home/:page', async ctx => await ctx.redirect('/page/'+ctx.params.page)) // Looks like / was the true winner after all
+    router.get('/home/:page', async ctx => await ctx.redirect('/'+ctx.params.page)) // Looks like / was the true winner after all
 
     /* Middleware */
     router.use(renderdataMiddleware)
@@ -99,9 +99,15 @@ module.exports = router => {
         await render('home', ctx)
     })
     
-    router.get('/page/:page', async (ctx, next) => {
-        await homeController.getHome(ctx, next)
-        await render('home', ctx)
+    router.get('/:page', async (ctx, next) => {
+        // Make sure this doesn't block other pages
+        if(ctx.params.page !== undefined && isNaN(ctx.params.page)) {
+
+            await next()
+        } else {
+            await homeController.getHome(ctx, next)
+            await render('home', ctx)
+        }
     })
 
     router.get('/signup', async (ctx, next) => {
