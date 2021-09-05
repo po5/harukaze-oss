@@ -1,6 +1,7 @@
 const postsModel = require('../models/posts.model')
 const usersModel = require('../models/users.model')
 const paginationUtil = require('../utils/pagination.util')
+const config = require('../../config.json')
 
 /**
  * GET controller for blog listing by username
@@ -9,7 +10,6 @@ const paginationUtil = require('../utils/pagination.util')
  */
 module.exports.getBlogsBy = async (ctx, next) => {
     const username = ctx.params.username
-    ctx.state.username = username
 
     // Fetch user
     const userRes = await usersModel.fetchUserByUsername(username)
@@ -23,9 +23,17 @@ module.exports.getBlogsBy = async (ctx, next) => {
 
     const user = userRes[0]
 
+    // Set username in page context
+    ctx.state.username = user.username
+
     // Get results count
     let totalPosts = await postsModel.fetchPublishedPostCountByAuthor(user.id)
     ctx.state.totalPosts = totalPosts
+
+    // Meta image
+    ctx.state.metaImage = '/assets/avatar/'+user.username
+    // Meta description
+    ctx.state.metaDescription = `View all posts by ${user.username}`
 
     // Only fetch posts if count is more than 0
     if(totalPosts > 0) {
