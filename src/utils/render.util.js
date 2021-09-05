@@ -36,6 +36,8 @@ async function putEssentialState(ctx, fetchContributors = true) {
      * @param {Date} date 
      */
     ctx.state.date = function(date) {
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
         let now = new Date()
         let tomorrow = new Date()
         tomorrow.setDate(now.getDate()+1)
@@ -49,9 +51,10 @@ async function putEssentialState(ctx, fetchContributors = true) {
                 day = 'Tomorrow'
             else if(day === yesterday.getDate())
                 day = 'Yesterday'
+            else
+                day = (months[date.getMonth()]) + ' ' + date.getDate()
         } else {
-            day =
-                (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][date.getMonth()]) + ' ' + date.getDate()
+            day = (months[date.getMonth()]) + ' ' + date.getDate()
         }
         
         if(now.getFullYear() !== date.getFullYear())
