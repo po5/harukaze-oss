@@ -340,6 +340,17 @@ async function fetchPublishedPostCountWherePostLike(pattern) {
 }
 
 /**
+ * Fetches the amount of posts with specified author
+ * @param {number} author The post author's ID
+ * @returns {Promise<number>} The amount of posts with the specified author
+ */
+async function fetchPublishedPostCountByAuthor(author) {
+    return (await knex('posts')
+        .count('*', { as: 'count' })
+        .where('post_author', author))[0].count
+}
+
+/**
  * Updates the post with the specified ID
  * @param {number} id The ID of the post to update
  * @param {string} title The post's new title
@@ -403,6 +414,7 @@ module.exports.fetchPostsCount = fetchPostsCount
 module.exports.fetchPostCountBySlugRegex = fetchPostCountBySlugRegex
 module.exports.fetchPublishedPostCountByTag = fetchPublishedPostCountByTag
 module.exports.fetchPublishedPostCountWherePostLike = fetchPublishedPostCountWherePostLike
+module.exports.fetchPublishedPostCountByAuthor = fetchPublishedPostCountByAuthor
 module.exports.updatePostById = updatePostById
 module.exports.deletePostById = deletePostById
 module.exports.deletePostsByIds = deletePostsByIds

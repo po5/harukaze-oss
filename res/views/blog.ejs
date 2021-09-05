@@ -20,7 +20,7 @@
     <span class="blogdate"><%= date(post.created_on) %></span>
     <div class="blogdesc"><%- renderBBCode(post.content) %></div>
     <div class="blog-details">
-        <span>Posted by: <a href="/contributor/<%= post.author_username %>"><%= post.author_username %></a></span> |
+        <span>Posted by: <a href="/blogs/by/<%= post.author_username %>"><%= post.author_username %></a></span> |
         <span><a href="/blog/<%= post.slug %>"><%= date(post.created_on) %></a><span> |
         <span><a href="/blog/<%= post.slug %>#comments-area">comments (<%= post.comments %>)</a></span>
     </div>

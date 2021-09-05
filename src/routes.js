@@ -30,6 +30,7 @@ module.exports = router => {
     const loginController = require('./controllers/login.controller')
     const logoutController = require('./controllers/logout.controller')
     const newblogController = require('./controllers/newblog.controller')
+    const blogsbyController = require('./controllers/blogsby.controller')
     const editblogController = require('./controllers/editblog.controller')
     const mediamanagerController = require('./controllers/mediamanager.controller')
     const mediaController = require('./controllers/media.controller')
@@ -139,6 +140,15 @@ module.exports = router => {
     router.post('/blogs/new', async (ctx, next) => {
         await newblogController.postNewblog(ctx, next)
         await render('newblog', ctx)
+    })
+
+    router.get('/blogs/by/:username', async (ctx, next) => {
+        await blogsbyController.getBlogsBy(ctx, next)
+        await render('blogsby', ctx)
+    })
+    router.get('/blogs/by/:username/:page', async (ctx, next) => {
+        await blogsbyController.getBlogsBy(ctx, next)
+        await render('blogsby', ctx)
     })
 
     router.get('/blog/:slug/edit', async (ctx, next) => {

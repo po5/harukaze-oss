@@ -1,0 +1,36 @@
+<h1>Posts by <%= username %></h1>
+<% if(posts.length > 0) { %>
+    <% for(post of posts) { with(post) { %>
+        <div class="blogpost">
+            <div class="aligned">
+                <div class="blog-icon">
+                    <img src="/assets/avatar/<%= author_username %>" alt="Author icon">
+                </div>
+                <div class="name2">
+                    <a href="/contributor/<%= author_username %>">
+                        <span><%= author_username %></span>
+                    </a>
+                </div>
+            </div>
+            <% if(show_title) { %>
+                <div class="blog-title">
+                    <a href="/blog/<%= slug %>"><%= title %></a>
+                </div>
+            <% } %>
+            <div class="blogdesc"><%- renderBBCode(content) %></div>
+            <div class="blogdate">
+                <span><a href="/blog/<%= slug %>"><%= date(post.created_on) %></a><span>
+                <span class="right"><a href="/blog/<%= slug %>#comments-area">comments (<%= comments %>)</a></span>
+            </div>
+        </div>
+    <% } } %>
+<% } else { %>
+    <div id="no-blogs">
+        <i>No posts match your search.</i>
+        <% if(authed && user.role > 0) { %>
+            <br><br>
+            <a href="/blogs/new">Create a new post!</a>
+        <% } %>
+    </div>
+    <br>
+<% } %>
