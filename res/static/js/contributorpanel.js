@@ -1,7 +1,7 @@
 function main() {
     const pageSize = 20
 
-    var app = new Vue({
+    const app = new Vue({
         el: '#app',
         data: {
             error: null,
@@ -19,6 +19,8 @@ function main() {
             ],
             selected: [],
             commentsLoading: true,
+            commentsPages: 1,
+            currentCommentsPage: 1,
             totalComments: 0,
             comments: []
         },
@@ -30,14 +32,14 @@ function main() {
                 this.error = 'Error occurred!'
 
                 if(!(err instanceof Error))
-                    this.error += ' API returned error: '+err.error
+                    this.error += ' API returned error: ' + err.error
             },
             async nextPage() {
-                this.currentPage = Math.min(this.currentPage+1, this.pages)
+                this.currentPage = Math.min(this.currentPage + 1, this.pages)
                 await this.loadPosts()
             },
             async lastPage() {
-                this.currentPage = Math.max(this.currentPage-1, 0)
+                this.currentPage = Math.max(this.currentPage - 1, 0)
                 await this.loadPosts()
             },
             async loadPosts() {
@@ -46,14 +48,14 @@ function main() {
                     this.selected = []
 
                     let res = await api.get('/api/posts/list', {
-                        offset: (this.currentPage-1)*pageSize,
+                        offset: (this.currentPage - 1) * pageSize,
                         limit: pageSize,
                         order: this.order
                     })
 
-                    if(res.status == 'success') {
+                    if(res.status === 'success') {
                         this.totalPosts = res.total
-                        this.pages = Math.max(1, Math.ceil(res.total/pageSize))
+                        this.pages = Math.max(1, Math.ceil(res.total / pageSize))
                         this.posts = res.posts
                         this.loading = false
                     } else {
@@ -67,7 +69,7 @@ function main() {
                 this.error = null
                 this.pages = 1
                 this.currentPage = 1
-                    
+
                 await this.loadPosts()
             },
             toggleSelect(id) {
@@ -79,7 +81,7 @@ function main() {
             },
             selectAll() {
                 this.selected = []
-                for(post of this.posts)
+                for(let post of this.posts)
                     this.selected.push(post.id)
             },
             selectNone() {
@@ -98,7 +100,7 @@ function main() {
                         let ids = []
                         for(id of this.selected)
                             ids.push(id)
-                        
+
                         // Clear selected to avoid double delete calls
                         this.selected = []
 
@@ -108,10 +110,10 @@ function main() {
                                 ids: ids.join(',')
                             })
 
-                            if(res.status == 'success')
-                                this.loadPosts()
+                            if(res.status === 'success')
+                                await this.loadPosts()
                             else
-                                console.error('Failed to delete posts: '+res.error)
+                                console.error('Failed to delete posts: ' + res.error)
                         } catch(err) {
                             console.error('Failed to delete posts:')
                             console.error(err)
@@ -127,11 +129,13 @@ function main() {
                 if(typeof d == 'string')
                     date = new Date(d)
 
+                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
                 let now = new Date()
                 let tomorrow = new Date()
-                tomorrow.setDate(now.getDate()+1)
+                tomorrow.setDate(now.getDate() + 1)
                 let yesterday = new Date()
-                yesterday.setDate(now.getDate()-1)
+                yesterday.setDate(now.getDate() - 1)
                 let day = date.getDate()
                 if(now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth()) {
                     if(day === now.getDate())
@@ -140,36 +144,38 @@ function main() {
                         day = 'Tomorrow'
                     else if(day === yesterday.getDate())
                         day = 'Yesterday'
+                    else
+                        day = (months[date.getMonth()]) + ' ' + date.getDate()
                 } else {
-                    day =
-                        (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][date.getMonth()]) + ' ' + date.getDate()
+                    day = (months[date.getMonth()]) + ' ' + date.getDate()
                 }
-                
+
                 if(now.getFullYear() !== date.getFullYear())
-                    day += ', '+date.getFullYear()
-                
+                    day += ', ' + date.getFullYear()
+
                 let hour = date.getHours()
                 let pm = hour > 12
                 if(pm)
                     hour -= 12
                 let minute = date.getMinutes().toString()
                 if(minute.length < 2)
-                    minute = '0'+minute
-        
+                    minute = '0' + minute
+
                 return `${day} at ${hour}:${minute} ${pm ? 'PM' : 'AM'}`
             },
             async loadComments() {
                 try {
-                    this.loading = true
+                    this.commentsLoading = true
 
                     let res = await api.get('/api/comments/list', {
-                        offset: 0,
-                        limit: 10,
+                        offset: (this.currentCommentsPage - 1) * pageSize,
+                        limit: pageSize,
                         order: 1
                     })
 
-                    if(res.status == 'success') {
+                    if(res.status === 'success') {
                         this.totalComments = res.total
+                        this.commentsPages = Math.max(1, Math.ceil(res.total / pageSize))
                         this.comments = res.comments
                         this.commentsLoading = false
                     } else {
@@ -178,7 +184,15 @@ function main() {
                 } catch(err) {
                     this.handleError(err)
                 }
-            }
+            },
+            async nextCommentsPage() {
+                this.currentCommentsPage = Math.min(this.currentCommentsPage + 1, this.commentsPages)
+                await this.loadComments()
+            },
+            async lastCommentsPage() {
+                this.currentCommentsPage = Math.max(this.currentCommentsPage - 1, 0)
+                await this.loadComments()
+            },
         }
     })
 
