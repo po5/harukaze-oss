@@ -26,10 +26,11 @@ label {
 .contributor-name {
 	font-weight: bold;
 	font-size: 22px;
+	color: black;
 }
 .contributor-bio {
-	font-size: 18px;
-	color: #aaa;
+	font-size: 14px;
+	color: black;
 }
 a {
 	text-decoration: none;
