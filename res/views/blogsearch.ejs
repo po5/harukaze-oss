@@ -5,6 +5,9 @@
         <input type="text" name="query" id="query" placeholder="Search for something...">
         <input type="submit" value="Search">
     </form>
+    <div style="width: 500px; height: 500px;">
+        <%- include('partials/_tagcloud.ejs', { tags }) %>
+    </div>
 <% } else { %>
     <h1>Showing <%= totalPosts %> result<%= s(totalPosts) %> for "<%= query %>"</h1>
     <form action="" method="GET">

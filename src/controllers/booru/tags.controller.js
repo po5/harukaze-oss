@@ -17,7 +17,7 @@ module.exports.getTags = async ctx => {
         limit = null
 
     // Fetch tags
-    let allTags = query ? tagsUtil.getTagsContaining(query) : tagsUtil.getTags()
+    let allTags = query ? tagsUtil.getMediaTagsContaining(query) : tagsUtil.getMediaTags()
 
     // Apply offset and limit
     let tags

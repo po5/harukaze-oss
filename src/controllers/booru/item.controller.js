@@ -43,7 +43,7 @@ module.exports.getItem = async (ctx, next) => {
     resultTagNames.sort()
     let resultTags = {}
     for(let tag of resultTagNames)
-        resultTags[tag] = Math.max(tagsUtil.getTagUseCount(tag), 1)
+        resultTags[tag] = Math.max(tagsUtil.getMediaTagUseCount(tag), 1)
 
     // Sort tags alphabetically
     item.tags.sort()

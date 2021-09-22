@@ -495,6 +495,18 @@ input {
 	right: -20px;
 }
 
+.tagcloud-container {
+	padding: 5px;
+}
+.tagcloud-item {
+	margin-left: 2px;
+	margin-right: 2px;
+	display: inline-block;
+}
+.tagcloud-item a {
+	color: black;
+}
+
 @media screen and (max-width: 1280px) {
 	#contributors {
 		display: none;

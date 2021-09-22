@@ -1,66 +1,123 @@
 const mediaModel = require('../models/media.model')
+const postsModel = require('../models/posts.model')
 const utils = require('./misc.util')
 
-let _tags = {}
+let _mediaTags = {}
+let _postTags = {}
 
 /**
- * Refreshes all media tags in memory
+ * Refreshes all tags in memory
  */
 async function refreshTags() {
-    // Fetch all tags
-    let rows = await mediaModel.fetchMediaTags()
+    // Fetch all media tags
+    let mediaRows = await mediaModel.fetchMediaTags()
 
     // Enumerate and remove duplicates
-    let tags = {}
-    for(let row of rows) {
+    let mediaTags = {}
+    for(let row of mediaRows) {
         let arr = utils.setToArray(row.tags)
 
         for(let tag of arr) {
-            if(tag in tags)
-                tags[tag]++
+            if(tag in mediaTags)
+                mediaTags[tag]++
             else
-                tags[tag] = 1
+                mediaTags[tag] = 1
         }
     }
 
     // Sort by name length
-    tags = Object.keys(tags).sort((a, b) => a.length - b.length).reduce((res, key) => (res[key] = tags[key], res), {})
+    mediaTags = Object.keys(mediaTags).sort((a, b) => a.length - b.length).reduce((res, key) => (res[key] = mediaTags[key], res), {})
 
-    // Store tags
-    _tags = tags
+    // Store media tags
+    _mediaTags = mediaTags
+
+    // Fetch all post tags
+    let postRows = await postsModel.fetchPostTags()
+
+    // Enumerate and remove duplicates
+    let postTags = {}
+    for(let row of postRows) {
+        let arr = utils.setToArray(row.tags)
+
+        for(let tag of arr) {
+            if(tag in postTags)
+                postTags[tag]++
+            else
+                postTags[tag] = 1
+        }
+    }
+
+    // Sort by name length
+    postTags = Object.keys(postTags).sort((a, b) => a.length - b.length).reduce((res, key) => (res[key] = postTags[key], res), {})
+
+    // Store post tags
+    _postTags = postTags
 }
 
 /**
  * Returns all media tags
  * @returns {Object} All media tags
  */
-function getTags() {
-    return _tags
+function getMediaTags() {
+    return _mediaTags
 }
 
 /**
- * Returns all tags containing the provided substring
+ * Returns all media tags containing the provided substring
  * @param {string} substr The substring to check for
  * @returns {Object} All tags containing the provided substring
  */
-function getTagsContaining(substr) {
+function getMediaTagsContaining(substr) {
     let str = substr.trim().toLowerCase()
     let tags = {}
-    let tagNames = Object.keys(_tags)
+    let tagNames = Object.keys(_mediaTags)
     for(let tag of tagNames)
         if(tag.includes(str))
-            tags[tag] = _tags[tag]
+            tags[tag] = _mediaTags[tag]
     
     return tags
 }
 
 /**
- * Returns the amount of uses a tag has
+ * Returns the amount of uses a media tag has
  * @param {string} tag The tag to check
  * @return {number} The amount of uses the specified tag has
  */
-function getTagUseCount(tag) {
-    return tag in _tags ? _tags[tag] : 0
+function getMediaTagUseCount(tag) {
+    return tag in _mediaTags ? _mediaTags[tag] : 0
+}
+
+/**
+ * Returns all post tags
+ * @returns {Object} All post tags
+ */
+function getPostTags() {
+    return _postTags
+}
+
+/**
+ * Returns all post tags containing the provided substring
+ * @param {string} substr The substring to check for
+ * @returns {Object} All tags containing the provided substring
+ */
+function getPostTagsContaining(substr) {
+    let str = substr.trim().toLowerCase()
+    let tags = {}
+    let tagNames = Object.keys(_postTags)
+    for(let tag of tagNames)
+        if(tag.includes(str))
+            tags[tag] = _postTags[tag]
+
+    return tags
+}
+
+/**
+ * Returns the amount of uses a post tag has
+ * @param {string} tag The tag to check
+ * @return {number} The amount of uses the specified tag has
+ */
+function getPostTagUseCount(tag) {
+    return tag in _postTags ? _postTags[tag] : 0
 }
 
 // Refresh tags every minute
@@ -75,6 +132,9 @@ setInterval(async () => {
 
 /* Export functions */
 module.exports.refreshTags = refreshTags
-module.exports.getTags = getTags
-module.exports.getTagsContaining = getTagsContaining
-module.exports.getTagUseCount = getTagUseCount
+module.exports.getMediaTags = getMediaTags
+module.exports.getMediaTagsContaining = getMediaTagsContaining
+module.exports.getMediaTagUseCount = getMediaTagUseCount
+module.exports.getPostTags = getPostTags
+module.exports.getPostTagsContaining = getPostTagsContaining
+module.exports.getPostTagUseCount = getPostTagUseCount

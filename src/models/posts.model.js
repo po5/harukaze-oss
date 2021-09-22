@@ -351,6 +351,15 @@ async function fetchPublishedPostCountByAuthor(author) {
 }
 
 /**
+ * Returns rows containing only post tags in a column called "tags"
+ * @returns {Promise<Object>} Rows containing only post tags in a column called "tags"
+ */
+async function fetchPostTags() {
+    return knex('posts')
+        .select(knex.ref('post_tags').as('tags'))
+}
+
+/**
  * Updates the post with the specified ID
  * @param {number} id The ID of the post to update
  * @param {string} title The post's new title
@@ -415,6 +424,7 @@ module.exports.fetchPostCountBySlugRegex = fetchPostCountBySlugRegex
 module.exports.fetchPublishedPostCountByTag = fetchPublishedPostCountByTag
 module.exports.fetchPublishedPostCountWherePostLike = fetchPublishedPostCountWherePostLike
 module.exports.fetchPublishedPostCountByAuthor = fetchPublishedPostCountByAuthor
+module.exports.fetchPostTags = fetchPostTags
 module.exports.updatePostById = updatePostById
 module.exports.deletePostById = deletePostById
 module.exports.deletePostsByIds = deletePostsByIds

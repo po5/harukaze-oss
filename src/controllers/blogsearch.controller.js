@@ -1,12 +1,17 @@
 const postsModel = require('../models/posts.model')
 const paginationUtil = require('../utils/pagination.util')
+const tagsUtil = require('../utils/tags.util')
 
 /**
  * GET controller for blog search page
  * @param {import("koa").Context} ctx The context
  */
 module.exports.getBlogSearch = async ctx => {
-    let query = ctx.query.query
+    const query = ctx.query.query
+
+    // Fetch blog tags
+    const tags = tagsUtil.getPostTags()
+    ctx.state.tags = tags
 
     // Search if query is preset
     if(query) {

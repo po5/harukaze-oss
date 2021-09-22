@@ -37,7 +37,7 @@ module.exports.getSearch = async ctx => {
                 resultTagNames.push(tag)
     resultTagNames.sort()
     for(let tag of resultTagNames)
-        resultTags[tag] = Math.max(tagsUtil.getTagUseCount(tag), 1)
+        resultTags[tag] = Math.max(tagsUtil.getMediaTagUseCount(tag), 1)
     
     // Put pagination information
     ctx.state.pagination = pagination
