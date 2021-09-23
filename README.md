@@ -1,6 +1,6 @@
 # Harukaze
 
-Harukaze is a CMS (and optionally, booru) written in JavaScript, utilizing Koa, Knex, and other libraries for maximum awesome!!! Comissioned by Gutsybird!!
+Harukaze is a CMS (and optionally, booru) written in JavaScript, utilizing Koa, Knex, and other libraries for maximum awesome!!!
 
 ## Requirements
  - Node.js
@@ -17,7 +17,7 @@ Make sure to edit the field called `knex` in order to connect to the database.
 Next, run `npx knex migrate:latest` to setup database stuff.
 
 ## Running
-Once everything is setup and configured, simply run `node .` in the same directory as the project, and it should be running!
+Once everything is setup and configured, simply run `node app.js` in the same directory as the project, and it should be running!
 
 For production deployments, you'll probably want to run Harukaze through something like pm2.
 
