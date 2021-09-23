@@ -2,10 +2,10 @@ function main() {
     const id = location.pathname.substring(location.pathname.lastIndexOf('/')+1)*1
 
     function arrayToTags(stringArray) {
-        var res = []
+        let res = []
 
-        for(string of stringArray) {
-            var str = (string+'')
+        for(const string of stringArray) {
+            const str = (string+'')
                 .trim()
                 .toLowerCase()
                 .replace(/,/g, '')
@@ -24,7 +24,7 @@ function main() {
             // Sanitize and remove duplicates
             let res = []
             let split = str.includes(',') ? str.split(',') : str.split(' ')
-            for(element of split) {
+            for(const element of split) {
                 let elem = element
                     .trim()
                     .toLowerCase()
@@ -39,7 +39,7 @@ function main() {
         }
     }
 
-    var app = new Vue({
+    const app = new Vue({
         el: '#app',
         data: {
             error: null,
@@ -60,7 +60,7 @@ function main() {
             tags() {
                 let tags = new Array(this.media.tags.length)
 
-                for(i in this.media.tags)
+                for(let i = 0; i < this.media.tags.length; i++)
                     tags[i] = this.media.tags[i]
                         .toLowerCase()
                         .replace(/_/g, ' ')
@@ -85,8 +85,9 @@ function main() {
 
                     let res = await api.get('/api/media/get', { id })
 
-                    if(res.status == 'success') {
+                    if(res.status === 'success') {
                         let media = res.media
+                        media.booru_visible = media.booru_visible === 1
 
                         // Put media object
                         this.media = media
@@ -98,7 +99,7 @@ function main() {
                         this.ogComment = media.comment
 
                         this.loading = false
-                    } else if(res.error == 'not_found') {
+                    } else if(res.error === 'not_found') {
                         location.assign('/media')
                     } else {
                         this.handleError(res)
@@ -136,7 +137,7 @@ function main() {
                         booru_visible: this.media.booru_visible,
                         comment: this.media.comment || ''
                     })
-                    if(res.status == 'success') {
+                    if(res.status === 'success') {
                         this.editing = false
                     } else {
                         this.handleError(res)
