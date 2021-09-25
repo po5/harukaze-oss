@@ -2,10 +2,12 @@ const usersModel = require('./models/users.model')
 const ipbansModel = require('./models/ipbans.model')
 const moodsModel = require('./models/moods.model')
 const moodcharsModel = require('./models/moodchars.model')
+const mediaModel = require('./models/media.model')
 const usersUtil = require('./utils/users.util')
 const moodsUtil = require('./utils/moods.util')
 const logosUtil = require('./utils/logos.util')
 const tagsUtil = require('./utils/tags.util')
+const mediaUtil = require('./utils/media.util')
 const utils = require('./utils/misc.util')
 const logging = require('./utils/logging.util')
 const fs = require('fs')
@@ -45,6 +47,7 @@ console.log(`Command line arguments:
 --help, -h\t\tShows this message
 --create-admin\t\tCreates a new administrator account
 --reset-ip-bans\t\tDeletes all IP bans
+--probe-media\t\tProbes all media files that do not have metadata already associated with them
 
 Run without any arguments to start the server.`)
         process.exit(0)
@@ -90,6 +93,41 @@ Run without any arguments to start the server.`)
         console.log('Deleting IP bans...')
         await ipbansModel.deleteAllBans()
         console.log('All IP bans have been deleted.')
+
+        process.exit(0)
+    } else if(args.includes('--probe-media')) {
+        console.log('Probing all media for metadata...')
+        const total = await mediaModel.fetchMediaCount()
+
+        // Fetch all media and probe
+        let probedCount = 0
+        const pageSize = 100
+        let offset = 0
+        let lastSize = pageSize
+        while(lastSize >= pageSize) {
+            const files = await mediaModel.fetchMediaInfoByMimeRegex('(image|video)/.*', offset, pageSize, 0)
+            lastSize = files.length
+
+            // Probe each file that's missing metadata
+            for(const file of files) {
+                // Check if height or width are null
+                if(file.height === null || file.width === null) {
+                    console.log(`Updating metadata for ${file.filename}...`)
+                    try {
+                        const dimensions = await mediaUtil.probeFileForDimensions('media/'+file.key)
+                        await mediaModel.updateMediaDimensionsById(file.id, dimensions.width, dimensions.height)
+                        probedCount++
+                    } catch(err) {
+                        console.warn("Failed to probe or update file's metadata:")
+                        console.warn(err)
+                    }
+                }
+            }
+
+            offset += pageSize
+        }
+
+        console.log(`Set metadata for ${probedCount} file(s)`)
 
         process.exit(0)
     }

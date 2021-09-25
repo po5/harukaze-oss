@@ -1,0 +1,42 @@
+<script>
+(function() {
+	const urlPattern = <% if(typeof urlPattern == 'undefined') { %> '/tags/%' <% } else { %> urlPattern <% } %>;
+	const tagCloudTags = <%- JSON.stringify(tags) %>;
+	const tagNames = Object.keys(tagCloudTags)
+	const tagUses = Object.values(tagCloudTags)
+    const minSize = 5
+	const maxSize = 50
+    const elemId = 'tagcloud-'+(Math.random()+'').replace('.', '')
+	document.write(`<div id="${elemId}" class="tagcloud-container"></div>`)
+	const elem = document.getElementById(elemId)
+
+    // Calculate highest usage
+    let highestUsage = 0
+    for(let count of tagUses)
+    	if(count > highestUsage)
+    		highestUsage = count
+
+    // Create elements
+    let elems = []
+    for(let i = 0; i < tagNames.length; i++) {
+    	const name = tagNames[i]
+        const uses = tagUses[i]
+
+        // Calculate size
+        const size = minSize+((uses/highestUsage)*(maxSize-minSize))
+
+        // Create element
+        const tagElem = document.createElement('div')
+        tagElem.classList.add('tagcloud-item')
+        tagElem.style.fontSize = size+'px'
+        const linkElem = document.createElement('a')
+		linkElem.innerText = `${name} (${uses})`
+		linkElem.href = urlPattern.replace(/%/g, encodeURIComponent(name))
+		linkElem.title = `Click to view ${uses} post${uses === 1 ? '' : 's'} with the tag "${name}"`
+        tagElem.appendChild(linkElem)
+
+        // Append element
+        elem.appendChild(tagElem)
+    }
+})()
+</script>

@@ -42,6 +42,7 @@
                 <p v-if="!editing">File size: <code>{{ mbSize }}MB</code></p>
                 <p v-if="!editing">File hash: <code>{{ media.hash }}</code></p>
                 <p v-if="!editing">MIME type: <code>{{ media.mime }}</code></p>
+                <p v-if="!editing && media.width !== null && media.height !== null">Dimensions: <code>{{ media.width+'x'+media.height }}</code></p>
                 <p>
                     Visible on booru:
                     <input v-if="editing" type="checkbox" v-model="media.booru_visible">

@@ -118,6 +118,23 @@ module.exports.postUploadMedia = async ctx => {
                     }
                 }
 
+                // Probe file if an image or video for dimensions
+                let mediaWidth = null
+                let mediaHeight = null
+                if(mime.startsWith('image/') || mime.startsWith('video/')) {
+                    try {
+                        const dimensions = await mediaUtils.probeFileForDimensions(file.path)
+
+                        if(dimensions !== null) {
+                            mediaWidth = dimensions.width
+                            mediaHeight = dimensions.height
+                        }
+                    } catch(err) {
+                        console.warn(`Failed to probe media file ${file.name} (${mime}, ${file.path} on disk):`)
+                        console.warn(err)
+                    }
+                }
+
                 // Generate metadata
                 let title = utils.filenameToTitle(file.name)
 
@@ -126,7 +143,7 @@ module.exports.postUploadMedia = async ctx => {
                 await unlink(file.path)
 
                 // Create media entry
-                await mediaModel.createMedia(ctx.state.user.id, title, file.name, mime, key, [], false, thumbKey, file.size, file.hash, null)
+                await mediaModel.createMedia(ctx.state.user.id, title, file.name, mime, key, [], false, thumbKey, file.size, file.hash, null, mediaWidth, mediaHeight)
 
                 // Fetch newly created media and return its ID
                 let mediaRes = await mediaModel.fetchMediaByHash(file.hash)

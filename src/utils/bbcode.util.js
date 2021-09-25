@@ -174,8 +174,8 @@ xbbcode.addTags({
     img: {
         openTag: function(params, content) {
             if(urlPattern.test(content)) {
-                let src = content
-                let out = '<img class="xbbcode-img" '
+                let src = encodeURI(content)
+                let out = `<a href="${src}" target="_blank"><img class="xbbcode-img" `
                 if(params && /^=[0-9]+x[0-9]+$/g.test(params)) {
                     const dimensions = params.substring(1).split('x')
                     out += `width="${dimensions[0]}" height="${dimensions[1]}" `
@@ -183,7 +183,7 @@ xbbcode.addTags({
                 } else {
                     src += '?width=900&format=jpg'
                 }
-                out += `src="${src}" />`
+                out += `src="${src}" /></a>`
                 return out
             } else {
                 return ''
