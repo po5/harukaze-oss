@@ -34,7 +34,14 @@
 
     <div class="sidebar-section">
         <label for="" class="container-header sidebar-section">Options</label><br>
-        <span><a href="/assets/media/<%= id %>/<%= encodeURIComponent(filename) %>">File link</a></span><br>
+        <span><a href="/assets/media/<%= id %>/<%= encodeURIComponent(filename) %>">
+            <% if(mime.startsWith('image/')) { %>
+                Original image
+            <% } else { %>
+                File link
+            <% } %>
+        </a></span>
+        <br>
 
         <% if(authed && user.role > 0) { %>
             <span><a href="/booru/action?action=add-to-collection&item=<%= id %>">Add to collection...</a></span><br>
