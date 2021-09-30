@@ -1,4 +1,4 @@
-<% with(item) { %><div class="item-container item-container-<%= mime.split('/')[0] %>">
+<% with(item) { %><center class="item-container item-container-<%= mime.split('/')[0] %>">
     <% if(typeof collection != 'undefined') { %>
         <div id="item-collection" class="container">
             This item is a member of the collection <a href="/booru/collection/<%= collection.id %>"><%= collection.title %></a>, which has <%= collection.items %> item<%= s(collection.items) %>.
@@ -42,6 +42,11 @@
             </p>
         <% } %>
     </div>
+    <center>
+        <div id="item-scale-notice" style="display:none">
+            Viewing image resized to <span id="item-scale-percent"></span>% of its original size. <a href="javascript:showOriginalSize()">Show original image</a>
+        </div>
+    </center>
     <% if(comment) { %>
         <div id="item-comment" class="container">
             <div class="container-header">Creator comment</div>
@@ -162,6 +167,11 @@
 <script>
     const pageSize = <%= pageSize %>
     const itemId = <%= item.id %>
+	const itemMime = "<%= item.mime %>"
+	const itemDimensions = {
+		width: <%= item.width %>,
+		height: <%= item.height %>
+	}
     <% if(authed) { %>
     const defaultMood = <%= user.characterDefault %>
     const moods = [
@@ -172,6 +182,32 @@
         <% } %>
     ]
     <% } %>
+
+    // Code relating to image scaling
+    // This needs to be done here so it can cancel the loading of the original image
+    // The image loading could be postponed until item.js loads, but that would make things slower and also make the page broken without Javascript
+    const contentWidth = document.getElementById('content').offsetWidth-40
+    const contentScaled = itemDimensions.width > contentWidth
+    const contentUrl = '/assets/media/<%= item.id %>/<%= encodeURIComponent(item.filename) %>'
+    const contentElem = document.getElementById('item-content').children[0]
+
+    const scaleNoticeElem = document.getElementById('item-scale-notice')
+    const scalePercentElem = document.getElementById('item-scale-percent')
+
+    function showScaleBox() {
+		scalePercentElem.innerText = Math.round((contentWidth/itemDimensions.width)*100).toString()
+        scaleNoticeElem.style.display = 'block'
+    }
+	function showOriginalSize() {
+		scaleNoticeElem.style.display = 'none'
+        contentElem.classList.add('item-content-no-scale')
+        contentElem.src = contentUrl
+    }
+
+    if(contentScaled && itemMime.startsWith('image/') && itemMime !== 'image/gif') {
+		contentElem.src = contentUrl + (contentUrl.includes('?') ? '&' : '?') + 'width=' + contentWidth
+        showScaleBox()
+	}
 </script>
 
 <script src="/static/js/booru/item.js" async defer></script>

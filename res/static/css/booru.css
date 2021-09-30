@@ -224,6 +224,18 @@ body {
 #item-content img, #item-content video {
     max-width: calc(100% - 40px);
 }
+.item-content-no-scale {
+    max-width: none !important;
+}
+#item-scale-notice {
+    text-align: center;
+    background: #a8c6e8;
+    border: 2px solid #398ae0;
+    width: 500px;
+    max-width: calc(100vw - 70px);
+    margin: 28px;
+    padding: 3px;
+}
 #item-comment {
     display: inline-block;
     margin-top: 20px;
