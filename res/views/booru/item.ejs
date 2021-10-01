@@ -25,7 +25,10 @@
     </div>
     <div id="item-content">
         <% if(mime.startsWith('image/')) { %>
-            <img src="/assets/media/<%= id %>/<%= encodeURIComponent(filename) %>" alt="<%= title %>">
+            <noscript>
+                <img src="/assets/media/<%= id %>/<%= encodeURIComponent(filename) %>" alt="<%= title %>" id="item-image-noscript">
+            </noscript>
+            <img alt="<%= title %>" style="visibility:hidden" id="item-image">
         <% } else if(mime.startsWith('video/')) { %>
             <video src="/assets/media/<%= id %>/<%= encodeURIComponent(filename) %>" controls></video>
         <% } else if(mime.startsWith('audio/')) { %>
@@ -189,7 +192,7 @@
     const contentWidth = document.getElementById('content').offsetWidth-40
     const contentScaled = itemDimensions.width > contentWidth
     const contentUrl = '/assets/media/<%= item.id %>/<%= encodeURIComponent(item.filename) %>'
-    const contentElem = document.getElementById('item-content').children[0]
+    const contentElem = document.getElementById('item-image')
 
     const scaleNoticeElem = document.getElementById('item-scale-notice')
     const scalePercentElem = document.getElementById('item-scale-percent')
@@ -204,10 +207,13 @@
         contentElem.src = contentUrl
     }
 
+	contentElem.style.visibility = 'visible'
     if(contentScaled && itemMime.startsWith('image/') && itemMime !== 'image/gif') {
 		contentElem.src = contentUrl + (contentUrl.includes('?') ? '&' : '?') + 'width=' + contentWidth
         showScaleBox()
-	}
+	} else {
+		contentElem.src = contentUrl
+    }
 </script>
 
 <script src="/static/js/booru/item.js" async defer></script>
