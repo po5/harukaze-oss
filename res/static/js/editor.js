@@ -29,6 +29,11 @@ const mediaPickerVue = `
     <br><br>
     <button @click.prevent="loadMedia()">Reload Media</button>
     <br><br>
+    <template v-if="typeof(linkToOriginal) !== 'undefined'">
+        <label for="link-media-checkbox" style="display:inline-block;">Link to original image?</label>
+        <input v-model="linkToOriginal" type="checkbox" id="link-media-checkbox">
+        <br><br>
+    </template>
     <p v-if="error" class="form-error">{{ error }}</p>
     <template v-if="loading">
         Loading...
@@ -42,7 +47,7 @@ const mediaPickerVue = `
         <div id="media-stats">Total media: {{ totalMedia }}</div>
         <div id="media-container">
             <template v-if="totalMedia > 0">
-                <div v-for="file in media" :id="'media-'+file.id" class="media-listing" @click="insertFile(file)">
+                <div v-for="file in media" :id="'media-'+file.id" class="media-listing" @click="insertFile(file, linkToOriginal)">
                     <div :class="file.mime.startsWith('video/') ? ['media-thumbnail', 'media-thumbnail-video'] : ['media-thumbnail']">
                         <img v-if="file.thumbnail_key" :src="'/assets/thumbnail/'+file.id" :alt="file.title">
                         <img v-else src="/static/img/media-placeholder.png" :alt="file.title">
@@ -241,6 +246,7 @@ sceditor.command.set('media', {
                 currentPage: 1,
                 media: [],
                 totalMedia: 0,
+                linkToOriginal: false
             },
             methods: {
                 handleError(err) {
@@ -283,11 +289,11 @@ sceditor.command.set('media', {
                         this.handleError(err)
                     }
                 },
-                async insertFile(file) {
+                async insertFile(file, linkToOriginal) {
                     let close = true
 
                     if(file.mime.startsWith('image/')) {
-                        editor.insert(`[img]/assets/media/${file.id}[/img]`)
+                        editor.insert(`[img]/assets/media/${file.id}${linkToOriginal ? '#link' : ''}[/img]`)
                     } else if(file.mime.startsWith('video/')) {
                         editor.insert(`[video]/assets/media/${file.id}[/video]`)
                     } else if(file.mime.startsWith('audio/')) {
