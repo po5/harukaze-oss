@@ -87,7 +87,6 @@ function main() {
 
                     if(res.status === 'success') {
                         let media = res.media
-                        media.booru_visible = media.booru_visible === 1
 
                         // Put media object
                         this.media = media
