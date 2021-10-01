@@ -1,6 +1,9 @@
 async function main() {
 	const app = new Vue({
 		el: '#item-comments-container',
+		updated() {
+			this.$nextTick(adjustSidebarHeight)
+		},
 		data: {
 			authed,
 			user: authed ? user : {},

@@ -249,8 +249,9 @@ body {
 }
 
 #item-comments-container {
-    margin-left: 10px;
+    margin-left: 30px;
     padding: 25px;
+    display: inline-block;
 }
 
 #pagination {
