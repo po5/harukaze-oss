@@ -10,6 +10,7 @@ function setupCtx(ctx) {
     ctx.state.title = ''
     ctx.state.comments = true
     ctx.state.publish = false
+    ctx.state.publishDate = null
     ctx.state.tags = ''
     ctx.state.showTitle = true
 }
@@ -17,6 +18,7 @@ function setupCtx(ctx) {
 /**
  * GET controller for new blog page
  * @param {import("koa").Context} ctx The context
+ * @param {Function} next
  */
 module.exports.getNewblog = async (ctx, next) => {
     setupCtx(ctx)
@@ -32,7 +34,6 @@ module.exports.getNewblog = async (ctx, next) => {
     if(ctx.state.user.role < usersUtil.Roles.CONTRIBUTOR) {
         ctx.state.noRender = true
         await next()
-        return
     }
 }
 
@@ -59,9 +60,10 @@ module.exports.postNewblog = async ctx => {
 
     // Collect data
     let body = ctx.request.body
-    let enableComments = body.comments == 'on'
-    let publish = body.publish == 'on'
-    let showTitle = body.showtitle == 'on'
+    let enableComments = body.comments === 'on'
+    let publish = body.publish === 'on'
+    let publishDate = body.publishdate ? new Date(body.publishdate) : null
+    let showTitle = body.showtitle === 'on'
     let title = (body.title || '').trim()
     let content = (body.content || '').trim()
     let tags = utils.setToArray(body.tags || '')
@@ -69,6 +71,7 @@ module.exports.postNewblog = async ctx => {
     // Set state
     ctx.state.comments = enableComments
     ctx.state.publish = publish
+    ctx.state.publishDate = publishDate
     ctx.state.showTitle = showTitle
     ctx.state.title = title || ''
     ctx.state.content = content || ''
@@ -86,12 +89,8 @@ module.exports.postNewblog = async ctx => {
         if(dupCount > 0)
             slug += '-'+(dupCount+1)
 
-        //
-        // TODO Check for referenced media in post
-        //
-
         // Create post
-        await postsModel.createPost(ctx.state.user.id, title, slug, content, tags, enableComments, publish, showTitle, [])
+        await postsModel.createPost(ctx.state.user.id, title, slug, content, tags, enableComments, publish, publishDate, showTitle, [])
 
         // Redirect to post (even if it wasn't published)
         ctx.state.noRender = true

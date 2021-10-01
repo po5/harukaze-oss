@@ -23,13 +23,17 @@
         <label for="slug">Slug (used in URLs): </label>
         <input type="text" name="slug" id="slug" value="<%= slug %>" placeholder="my-blog-post">
         <br>
-        <input type="checkbox" <%= published ? 'checked' : ''%> name="published" id="opt-published">
+        <input type="checkbox" <%= published ? 'checked' : '' %> name="published" id="opt-published">
         <label for="opt-published">Published?</label>
         <br>
-        <input type="checkbox" <%= comments ? 'checked' : ''%> name="comments" id="opt-comments">
+        <input type="checkbox" <%= publishDate == null ? '' : 'checked' %> id="opt-publish-date-toggle">
+        <label for="opt-publish-date-toggle">Publish at specific time? ("Published?" must be checked for this to have any effect)</label>
+        <br>
+        <input type="datetime-local" value="<%= publishDate == null ? '' : datetimeLocal(publishDate) %>" style="display:none" id="publish-date-input" name="publishdate-disabled">
+        <input type="checkbox" <%= comments ? 'checked' : '' %> name="comments" id="opt-comments">
         <label for="opt-comments">Enable comments?</label>
         <br>
-        <input type="checkbox" <%= showTitle ? 'checked' : ''%> name="showtitle" id="opt-showtitle">
+        <input type="checkbox" <%= showTitle ? 'checked' : '' %> name="showtitle" id="opt-showtitle">
         <label for="opt-showtitle">Show title?</label>
         <br>
     </div>
@@ -41,5 +45,8 @@
     <% } %>
 </form>
 
+<script>
+	const publishDate = <% if(publishDate === null) { %> null <% } else { %> new Date('<%= publishDate.toISOString() %>') <% } %>
+</script>
 <script src="/static/js/editor.js"></script>
 <script src="/static/js/newblog.js"></script>

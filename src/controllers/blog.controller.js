@@ -9,7 +9,7 @@ const { Roles } = require('../utils/users.util')
 // Returns the post or 404s
 async function fetchPostOr404(ctx, next) {
     // Fetch post
-    let postRes = await postsModel.fetchPostInfoBySlug(true, ctx.params.slug)
+    let postRes = await postsModel.fetchPublishedPostInfoBySlug(true, ctx.params.slug)
     
     if(postRes.length > 0) {
         return postRes[0]

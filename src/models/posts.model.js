@@ -39,6 +39,7 @@ function postInfo(withContent) {
         .select(knex.ref('post_tags').as('tags'))
         .select(knex.ref('post_enable_comments').as('enable_comments'))
         .select(knex.ref('post_published').as('published'))
+        .select(knex.ref('post_publish_date').as('publish_date'))
         .select(knex.ref('post_show_title').as('show_title'))
         .select(knex.ref('post_referenced_media').as('referenced_media'))
         .select(knex.ref('post_created_on').as('created_on'))
@@ -55,12 +56,33 @@ function postInfo(withContent) {
     
     return query
 }
+
 /**
- * @param {Array<Object>} rows 
+ * @typedef {Object} PostInfo
+ * @property {number} id
+ * @property {number} author
+ * @property {?string} author_username
+ * @property {string} title
+ * @property {string} slug
+ * @property {Array<string>} tags
+ * @property {boolean} enable_comments
+ * @property {boolean} published
+ * @property {?Date} publish_date
+ * @property {boolean} show_title
+ * @property {number} size
+ * @property {Array<number>} referenced_media
+ * @property {Date} created_on
+ * @property {number} comments
+ * @property {?string} content
+ */
+
+/**
+ * @param {Array<PostInfo>} rows
  */
 function processPostInfoRows(rows) {
     for(let row of rows) {
         row.tags = utils.setToArray(row.tags)
+        row.publish_date = new Date(row.publish_date)
         row.referenced_media = utils.setToArray(row.referenced_media)
         row.created_on = new Date(row.created_on)
     }
@@ -92,10 +114,11 @@ function orderBy(order) {
  * @param {Array<string>} tags The post's tags
  * @param {boolean} enableComments Whether this post has comments enabled
  * @param {boolean} published Whether the post is published
+ * @param {?Date} publishDate The time when the post will be published, or null to be instantly published (still depends on "published" being true, regardless of this value)
  * @param {boolean} showTitle Whether the post title will be visible
  * @param {Array<number>} referencedMedia The media IDs that were referenced/linked/embedded in the post
  */
-async function createPost(author, title, slug, content, tags, enableComments, published, showTitle, referencedMedia) {
+async function createPost(author, title, slug, content, tags, enableComments, published, publishDate, showTitle, referencedMedia) {
     return knex('posts')
         .insert({
             post_author: author,
@@ -105,6 +128,7 @@ async function createPost(author, title, slug, content, tags, enableComments, pu
             post_tags: utils.arrayToSet(tags),
             post_enable_comments: enableComments,
             post_published: published,
+            post_publish_date: publishDate,
             post_show_title: showTitle,
             post_referenced_media: utils.arrayToSet(referencedMedia)
         })
@@ -136,6 +160,11 @@ async function fetchPublishedPosts(offset, limit, order) {
     return knex('posts')
         .select('*')
         .where('post_published', true)
+        .andWhere(function(query) {
+            query
+                .where('post_publish_date', '<', knex.raw('NOW()'))
+                .orWhere('post_publish_date', null)
+        })
         .offset(offset)
         .limit(limit)
         .orderByRaw(orderBy(order))
@@ -147,7 +176,7 @@ async function fetchPublishedPosts(offset, limit, order) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Promise<Array<Object>>} All posts' info
+ * @returns {Promise<Array<PostInfo>>} All posts' info
  */
 async function fetchPostInfos(withContent, offset, limit, order) {
     return processPostInfoRows(
@@ -164,12 +193,17 @@ async function fetchPostInfos(withContent, offset, limit, order) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Promise<Array<Object>>} All published posts' info
+ * @returns {Promise<Array<PostInfo>>} All published posts' info
  */
 async function fetchPublishedPostInfos(withContent, offset, limit, order) {
     return processPostInfoRows(
         await postInfo(withContent)
             .where('post_published', true)
+            .andWhere(function(query) {
+                query
+                    .where('post_publish_date', '<', knex.raw('NOW()'))
+                    .orWhere('post_publish_date', null)
+            })
             .offset(offset)
             .limit(limit)
             .orderByRaw(orderBy(order))
@@ -183,12 +217,17 @@ async function fetchPublishedPostInfos(withContent, offset, limit, order) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Promise<Array<Object>>} All published posts' info
+ * @returns {Promise<Array<PostInfo>>} All published posts' info
  */
  async function fetchPublishedPostInfosByAuthor(author, withContent, offset, limit, order) {
     return processPostInfoRows(
         await postInfo(withContent)
             .where('post_published', true)
+            .andWhere(function(query) {
+                query
+                    .where('post_publish_date', '<', knex.raw('NOW()'))
+                    .orWhere('post_publish_date', null)
+            })
             .andWhere('post_author', author)
             .offset(offset)
             .limit(limit)
@@ -211,7 +250,7 @@ async function fetchPostBySlug(slug) {
  * Fetches a post's info by its ID
  * @param {boolean} withContent Whether to include post content
  * @param {number} id The post's ID
- * @returns {Promise<Array<Object>>} An array with the row containing the post's info or an empty array if none exists
+ * @returns {Promise<Array<PostInfo>>} An array with the row containing the post's info or an empty array if none exists
  */
  async function fetchPostInfoById(withContent, id) {
     return processPostInfoRows(
@@ -224,12 +263,18 @@ async function fetchPostBySlug(slug) {
  * Fetches a post's info by its slug
  * @param {boolean} withContent Whether to include post content
  * @param {string} slug The post slug
- * @returns {Promise<Array<Object>>} An array with the row containing the post's info or an empty array if none exists
+ * @returns {Promise<Array<PostInfo>>} An array with the row containing the post's info or an empty array if none exists
  */
-async function fetchPostInfoBySlug(withContent, slug) {
+async function fetchPublishedPostInfoBySlug(withContent, slug) {
     return processPostInfoRows(
         await postInfo(withContent)
             .where('post_slug', slug)
+            .andWhere('post_published', true)
+            .andWhere(function(query) {
+                query
+                    .where('post_publish_date', '<', knex.raw('NOW()'))
+                    .orWhere('post_publish_date', null)
+            })
     )
 }
 
@@ -237,7 +282,7 @@ async function fetchPostInfoBySlug(withContent, slug) {
  * Fetches post infos by their IDs
  * @param {boolean} withContent Whether to include post content
  * @param {Array<number>} ids The IDs
- * @returns {Promise<Array<Object>>} All post infos with the specified IDs
+ * @returns {Promise<Array<PostInfo>>} All post infos with the specified IDs
  */
 async function fetchPostInfosByIds(withContent, ids) {
     return processPostInfoRows(
@@ -253,12 +298,17 @@ async function fetchPostInfosByIds(withContent, ids) {
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Promise<Array<Object>>} All published posts' info
+ * @returns {Promise<Array<PostInfo>>} All published posts' info
  */
 async function fetchPublishedPostInfosByTag(tag, withContent, offset, limit, order) {
     return processPostInfoRows(
         await postInfo(withContent)
             .where('post_published', true)
+            .andWhere(function(query) {
+                query
+                    .where('post_publish_date', '<', knex.raw('NOW()'))
+                    .orWhere('post_publish_date', null)
+            })
             .andWhereRaw('FIND_IN_SET(?, `post_tags`) > 0', [tag])
             .offset(offset)
             .limit(limit)
@@ -273,12 +323,17 @@ async function fetchPublishedPostInfosByTag(tag, withContent, offset, limit, ord
  * @param {number} offset The offset to return results
  * @param {number} limit The amount of results to return
  * @param {number} order The order of results to return
- * @returns {Promise<Array<Object>>} All published posts' info with title/contents/tags like the specified pattern
+ * @returns {Promise<Array<PostInfo>>} All published posts' info with title/contents/tags like the specified pattern
  */
 async function fetchPublishedPostInfosWherePostLike(pattern, withContent, offset, limit, order) {
     return processPostInfoRows(
         await postInfo(withContent)
             .where('post_published', true)
+            .andWhere(function(query) {
+                query
+                    .where('post_publish_date', '<', knex.raw('NOW()'))
+                    .orWhere('post_publish_date', null)
+            })
             .andWhere(function() {
                 this
                     .whereRaw('LOWER(`post_title`) LIKE ? ESCAPE \'|\'', [pattern.toLowerCase()])
@@ -319,6 +374,11 @@ async function fetchPublishedPostCountByTag(tag) {
     return (await knex('posts')
         .count('*', { as: 'count' })
         .where('post_published', true)
+        .andWhere(function(query) {
+            query
+                .where('post_publish_date', '<', knex.raw('NOW()'))
+                .orWhere('post_publish_date', null)
+        })
         .andWhereRaw('FIND_IN_SET(?, `post_tags`) > 0', [tag]))[0].count
 }
 
@@ -331,6 +391,11 @@ async function fetchPublishedPostCountWherePostLike(pattern) {
     return (await knex('posts')
         .count('*', { as: 'count' })
         .where('post_published', true)
+        .andWhere(function(query) {
+            query
+                .where('post_publish_date', '<', knex.raw('NOW()'))
+                .orWhere('post_publish_date', null)
+        })
         .andWhere(function() {
             this
                 .whereRaw('LOWER(`post_title`) LIKE ? ESCAPE \'|\'', [pattern.toLowerCase()])
@@ -346,8 +411,15 @@ async function fetchPublishedPostCountWherePostLike(pattern) {
  */
 async function fetchPublishedPostCountByAuthor(author) {
     return (await knex('posts')
-        .count('*', { as: 'count' })
-        .where('post_author', author))[0].count
+            .count('*', { as: 'count' })
+            .where('post_author', author)
+            .andWhere('post_published', true)
+            .andWhere(function(query) {
+                query
+                    .where('post_publish_date', '<', knex.raw('NOW()'))
+                    .orWhere('post_publish_date', null)
+            })
+    )[0].count
 }
 
 /**
@@ -368,10 +440,11 @@ async function fetchPostTags() {
  * @param {Array<string>} tags The post's new tags
  * @param {boolean} enableComments Whether the post will now have comments enabled
  * @param {boolean} published Whether the post will now be published
+ * @param {?Date} publishDate The time when the post will be published, or null to be instantly published (still depends on "published" being true, regardless of this value)
  * @param {boolean} showTitle Whether the post will now show its title
  * @param {Array<string>} referencedMedia All media that the post now references
  */
-async function updatePostById(id, title, slug, content, tags, enableComments, published, showTitle, referencedMedia) {
+async function updatePostById(id, title, slug, content, tags, enableComments, published, publishDate, showTitle, referencedMedia) {
     return knex('posts')
         .update({
             post_title: title,
@@ -380,6 +453,7 @@ async function updatePostById(id, title, slug, content, tags, enableComments, pu
             post_tags: utils.arrayToSet(tags),
             post_enable_comments: enableComments,
             post_published: published,
+            post_publish_date: publishDate,
             post_show_title: showTitle,
             post_referenced_media: utils.arrayToSet(referencedMedia)
         })
@@ -415,7 +489,7 @@ module.exports.fetchPublishedPostInfos = fetchPublishedPostInfos
 module.exports.fetchPublishedPostInfosByAuthor = fetchPublishedPostInfosByAuthor
 module.exports.fetchPostBySlug = fetchPostBySlug
 module.exports.fetchPostInfoById = fetchPostInfoById
-module.exports.fetchPostInfoBySlug = fetchPostInfoBySlug
+module.exports.fetchPublishedPostInfoBySlug = fetchPublishedPostInfoBySlug
 module.exports.fetchPostInfosByIds = fetchPostInfosByIds
 module.exports.fetchPublishedPostInfosByTag = fetchPublishedPostInfosByTag
 module.exports.fetchPublishedPostInfosWherePostLike = fetchPublishedPostInfosWherePostLike

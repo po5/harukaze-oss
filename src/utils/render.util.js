@@ -85,6 +85,9 @@ async function putEssentialState(ctx, fetchContributors = true) {
     // English pluralization util
     ctx.state.s = sum => sum === 1 ? '' : 's'
 
+    // Datetime-local util
+    ctx.state.datetimeLocal = date => date.toISOString().substring(0, 19)
+
     if(fetchContributors && config.site.showContributors) {
         // Fetch contributors
         ctx.state.contributors = await usersModel.fetchContributorInfos(0, 99)
