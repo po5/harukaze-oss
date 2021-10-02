@@ -69,7 +69,6 @@ function postInfo(withContent) {
  * @property {boolean} published
  * @property {?Date} publish_date
  * @property {boolean} show_title
- * @property {number} size
  * @property {Array<number>} referenced_media
  * @property {Date} created_on
  * @property {number} comments
