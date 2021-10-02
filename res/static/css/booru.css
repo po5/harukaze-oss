@@ -268,7 +268,7 @@ body {
 }
 #item-left, #item-right {
     font-weight: bold;
-    width: 50px;
+    width: 65px;
 }
 #item-left, #item-right, #item-title {
     display: inline-block;
@@ -283,7 +283,7 @@ body {
     text-align: right;
 }
 #item-title {
-    width: calc(100% - 130px);
+    width: calc(100% - 150px);
     word-wrap: break-word;
 }
 
