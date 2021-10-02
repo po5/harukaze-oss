@@ -265,16 +265,10 @@ async function fetchPostBySlug(slug) {
  * @param {string} slug The post slug
  * @returns {Promise<Array<PostInfo>>} An array with the row containing the post's info or an empty array if none exists
  */
-async function fetchPublishedPostInfoBySlug(withContent, slug) {
+async function fetchPostInfoBySlug(withContent, slug) {
     return processPostInfoRows(
         await postInfo(withContent)
             .where('post_slug', slug)
-            .andWhere('post_published', true)
-            .andWhere(function(query) {
-                query
-                    .where('post_publish_date', '<', knex.raw('NOW()'))
-                    .orWhere('post_publish_date', null)
-            })
     )
 }
 
@@ -489,7 +483,7 @@ module.exports.fetchPublishedPostInfos = fetchPublishedPostInfos
 module.exports.fetchPublishedPostInfosByAuthor = fetchPublishedPostInfosByAuthor
 module.exports.fetchPostBySlug = fetchPostBySlug
 module.exports.fetchPostInfoById = fetchPostInfoById
-module.exports.fetchPublishedPostInfoBySlug = fetchPublishedPostInfoBySlug
+module.exports.fetchPostInfoBySlug = fetchPostInfoBySlug
 module.exports.fetchPostInfosByIds = fetchPostInfosByIds
 module.exports.fetchPublishedPostInfosByTag = fetchPublishedPostInfosByTag
 module.exports.fetchPublishedPostInfosWherePostLike = fetchPublishedPostInfosWherePostLike
