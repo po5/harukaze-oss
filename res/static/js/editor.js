@@ -246,7 +246,7 @@ sceditor.command.set('media', {
                 currentPage: 1,
                 media: [],
                 totalMedia: 0,
-                linkToOriginal: false
+                linkToOriginal: true
             },
             methods: {
                 handleError(err) {
