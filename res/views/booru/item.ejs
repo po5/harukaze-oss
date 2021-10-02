@@ -207,7 +207,10 @@
 	function showOriginalSize() {
 		scaleNoticeElem.style.display = 'none'
         contentElem.classList.add('item-content-no-scale')
-        contentElem.src = contentUrl
+		contentElem.src = 'about:blank'
+        setTimeout(function() {
+			contentElem.src = contentUrl
+        }, 100)
     }
 
 	contentElem.style.visibility = 'visible'
