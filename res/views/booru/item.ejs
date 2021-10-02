@@ -1,6 +1,8 @@
 <% with(item) { %><center class="item-container item-container-<%= mime.split('/')[0] %>">
-    <div id="item-title">
-        <h1><%= title %></h1>
+    <div id="item-navigation">
+        <div id="item-left"><a href="<%= prevUrl %>">&lt; prev</a></div>
+        <div id="item-title"><%= title %></div>
+        <div id="item-right"><a href="<%= nextUrl %>">next &gt;</a></div>
     </div>
     <div id="item-content">
         <% if(mime.startsWith('image/')) { %>
@@ -62,7 +64,7 @@
         <a href="/media/<%= id %>">Media page</a>
     <% } %>
     <br><br>
-</div><% } %>
+</center><% } %>
 <div id="item-comments-container">
     <div v-if="loading" id="item-comments-loading">
         Loading comments...

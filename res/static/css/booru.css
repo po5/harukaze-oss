@@ -258,6 +258,35 @@ body {
     text-align: center;
 }
 
+#item-navigation {
+    text-align: center;
+    background: #a8c6e8;
+    border: 2px solid #398ae0;
+    width: calc(100vw - 290px);
+    margin: 28px;
+    padding: 3px;
+}
+#item-left, #item-right {
+    font-weight: bold;
+    width: 45px;
+}
+#item-left, #item-right, #item-title {
+    display: inline-block;
+}
+#item-left a, #item-right a {
+    color: black;
+}
+#item-left {
+    text-align: left;
+}
+#item-right {
+    text-align: right;
+}
+#item-title {
+    width: calc(100vw - 400px);
+    word-wrap: break-word;
+}
+
 /* Mobile view */
 @media screen and (max-width: 975px) {
 	#sidebar {
