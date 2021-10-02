@@ -81,7 +81,9 @@ function postInfo(withContent) {
 function processPostInfoRows(rows) {
     for(let row of rows) {
         row.tags = utils.setToArray(row.tags)
+        row.enable_comments = !!row.enable_comments
         row.publish_date = new Date(row.publish_date)
+        row.show_title = !!row.show_title
         row.referenced_media = utils.setToArray(row.referenced_media)
         row.created_on = new Date(row.created_on)
     }
