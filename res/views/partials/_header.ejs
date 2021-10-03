@@ -22,4 +22,7 @@
     <% } %> |
     <a href="/search">Search posts</a> |
     <a href="/booru">Booru</a>
+    <% for(let page of navigationPages) { %>
+        | <a href="/page/<%= page.slug %>"><%= page.title %></a>
+    <% } %>
 </div>

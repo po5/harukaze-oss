@@ -1,0 +1,71 @@
+<link rel="stylesheet" href="/static/css/adminpanel.css">
+
+<h1>Pages</h1>
+<div id="app">
+    <div id="error" v-if="error != null">
+        {{ error }}
+    </div>
+
+    <div class="container" id="container">
+        <button id="reload-button" @click="reloadPages()">[~] Reload pages</button>
+        <button id="delete-button" @click="deleteSelected()">[x] Delete selected</button>
+        <button id="select-all-button" @click="selectAll()">[+] Select all</button>
+        <button id="select-none-button" @click="selectNone()">[-] Select none</button>
+        <br><br>
+        <label for="order-by">Order by</label>
+        <select id="order-by" v-model="order" @change="loadPages()">
+            <template v-for="type in orders">
+                <option v-if="type[1] == order" selected :value="type[1]">{{ type[0] }}</option>
+                <option v-else :value="type[1]">{{ type[0] }}</option>
+            </template>
+        </select>
+        <br><br>
+
+        <div class="container-header">Pages</div>
+
+        <template v-if="loading">
+            <h1 id="title">Loading...</h1>
+        </template>
+        <template v-else>
+            <div class="pages-nav">
+                <span class="page-arrow" @click="lastPage()" v-if="currentPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentPage }} of {{ pages }}</span>
+                <span class="page-arrow" @click="nextPage()" v-if="currentPage < pages">&gt;</span>
+            </div>
+            <div id="pages-stats">Total pages: {{ totalPages }}</div>
+            <br>
+            <div id="pages-container">
+                <template v-if="totalPages > 0">
+                    <table>
+                        <tr>
+                            <th>*</th>
+                            <th>Title</th>
+                            <th>Date</th>
+                            <th>Creator</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr v-for="page in pageInfos" :id="'page-'+page.id" :class="selected.includes(page.id) ? ['page-row', 'page-selected'] : ['page-row']">
+                            <td @click="toggleSelect(page.id)"><input type="checkbox" name="" id="" :checked="selected.includes(page.id)"></td>
+                            <td><a :href="'/page/'+page.slug">{{ page.title }}</a></td>
+                            <td>{{ date(page.created_on) }}</td>
+                            <td>{{ page.creator_username }}</td>
+                            <td><a :href="'/page/'+page.slug+'/edit'">Edit</a></td>
+                        </tr>
+                    </table>
+                </template>
+                <template v-else>
+                    No pages yet. How about you <a href="/pages/new">create one</a>!
+                </template>
+            </div>
+            <br>
+            <div class="pages-nav">
+                <span class="page-arrow" @click="lastPage()" v-if="currentPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentPage }} of {{ pages }}</span>
+                <span class="page-arrow" @click="nextPage()" v-if="currentPage < pages">&gt;</span>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/pagespanel.js"></script>

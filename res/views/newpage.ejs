@@ -1,0 +1,30 @@
+<link rel="stylesheet" href="/static/css/newpage.css">
+<link rel="stylesheet" href="/static/css/editor.css">
+<link rel="stylesheet" href="/static/sceditor/minified/themes/default.min.css" id="theme-style">
+		  
+<script src="/static/sceditor/minified/sceditor.min.js"></script>
+<script src="/static/sceditor/minified/icons/monocons.js"></script>
+<script src="/static/sceditor/minified/formats/bbcode.js"></script>
+
+<h1>Create a new page</h1>
+<% if(error != null) { %>
+    <p class="form-error"><%= error %></p>
+    <br>
+<% } %>
+<form action="" method="post">
+    <input type="text" name="title" maxlength="256" placeholder="Page title..." id="title" value="<%= title %>">
+    <textarea name="content" id="content"><%= content %></textarea>
+    <br>
+
+    <div id="options">
+        <input type="checkbox" <%= showLink ? 'checked' : ''%> name="showlink" id="opt-showlink">
+        <label for="opt-showlink">Show link on site navigation?</label>
+        <br>
+    </div>
+    <br>
+
+    <input type="submit" onclick="disableLeaveCheck()" value="Create Page">
+</form>
+
+<script src="/static/js/editor.js"></script>
+<script src="/static/js/newpage.js"></script>

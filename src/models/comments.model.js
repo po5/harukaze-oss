@@ -68,7 +68,11 @@ const Type = {
     /**
      * Booru item comment
      */
-    BOORU: 1
+    BOORU: 1,
+    /**
+     * Page comment
+     */
+    PAGE: 2
 }
 
 /* Utility functions */

@@ -44,6 +44,10 @@ module.exports = router => {
     const logospanelController = require('./controllers/logospanel.controller')
     const blogsearchController = require('./controllers/blogsearch.controller')
     const rssController = require('./controllers/rss.controller')
+    const pageController = require('./controllers/page.controller')
+    const newpageController = require('./controllers/newpage.controller')
+    const editpageController = require('./controllers/editpage.controller')
+    const pagespanelController = require('./controllers/pagespanel.controller')
 
     // API controller imports
     const apiMediaController = require('./controllers/api/media.controller')
@@ -52,6 +56,7 @@ module.exports = router => {
     const apiBansController = require('./controllers/api/bans.controller')
     const apiUsersController = require('./controllers/api/users.controller')
     const apiMoodsController = require('./controllers/api/moods.controller')
+    const apiPagesController = require('./controllers/api/pages.controller')
 
     /* Redirects */
     router.get('/home', async ctx => await ctx.redirect('/')) // Looks like / was the true winner after all
@@ -234,6 +239,11 @@ module.exports = router => {
         await render('logospanel', ctx)
     })
 
+    router.get('/panel/admin/pages', async (ctx, next) => {
+        await pagespanelController.getPagesPanel(ctx, next)
+        await render('pagespanel', ctx)
+    })
+
     router.get('/tags/:tag', async (ctx, next) => {
         await blogtagController.getBlogTag(ctx, next)
         await render('blogtag', ctx)
@@ -254,6 +264,29 @@ module.exports = router => {
 
     router.get('/rss', async (ctx, next) => {
         await rssController.getRss(ctx, next)
+    })
+
+    router.get('/page/:slug', async (ctx, next) => {
+        await pageController.getPage(ctx, next)
+        await render('page', ctx)
+    })
+
+    router.get('/pages/new', async (ctx, next) => {
+        await newpageController.getNewpage(ctx, next)
+        await render('newpage', ctx)
+    })
+    router.post('/pages/new', async (ctx, next) => {
+        await newpageController.postNewpage(ctx, next)
+        await render('newpage', ctx)
+    })
+
+    router.get('/page/:slug/edit', async (ctx, next) => {
+        await editpageController.getEditpage(ctx, next)
+        await render('editpage', ctx)
+    })
+    router.post('/page/:slug/edit', async (ctx, next) => {
+        await editpageController.postEditpage(ctx, next)
+        await render('editpage', ctx)
     })
 
     /* API */
@@ -458,6 +491,31 @@ module.exports = router => {
     router.post('/api/admin/moods/delete', async (ctx, next) => {
         try {
             await apiMoodsController.postDeleteMood(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+
+    router.get('/api/pages/get', async (ctx, next) => {
+        try {
+            await apiPagesController.getPage(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.get('/api/pages/list', async (ctx, next) => {
+        try {
+            await apiPagesController.getPagesList(ctx, next)
+        } catch(err) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
+    })
+    router.post('/api/pages/delete', async (ctx, next) => {
+        try {
+            await apiPagesController.postDeletePages(ctx, next)
         } catch(err) {
             apiError(ctx, err)
         }

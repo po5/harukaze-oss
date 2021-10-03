@@ -2,8 +2,9 @@ const config = require('../../config.json')
 const ejs = require('ejs')
 const path = require('path')
 const usersModel = require('../models/users.model')
-const { renderBBCode } = require('../utils/bbcode.util')
+const { renderBBCode } = require('./bbcode.util')
 const { Moods, characterMoodToUrl } = require('./moods.util')
+const { getLinkShownPages } = require('./pages.util')
 
 async function putEssentialState(ctx, fetchContributors = true) {
     if(!ctx.state)
@@ -30,6 +31,9 @@ async function putEssentialState(ctx, fetchContributors = true) {
     // Character moods and util
     ctx.state.characterMoods = Moods
     ctx.state.characterMoodToUrl = characterMoodToUrl
+
+    // Pages to be shown in navigation
+    ctx.state.navigationPages = getLinkShownPages()
 
     // Date util
     /**

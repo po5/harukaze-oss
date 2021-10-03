@@ -1,0 +1,10 @@
+<div class="blogpost">
+    <% if(authed && user.role > 1) { %>
+        <div class="blog-edit-button">
+            <a href="/page/<%= page.slug %>/edit">Edit page</a>
+        </div>
+    <% } %>
+    <div class="blogdesc">
+        <%- renderBBCode(page.content) %>
+    </div>
+</div>

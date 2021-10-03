@@ -8,6 +8,7 @@ const moodsUtil = require('./utils/moods.util')
 const logosUtil = require('./utils/logos.util')
 const tagsUtil = require('./utils/tags.util')
 const mediaUtil = require('./utils/media.util')
+const pagesUtil = require('./utils/pages.util')
 const utils = require('./utils/misc.util')
 const logging = require('./utils/logging.util')
 const fs = require('fs')
@@ -204,6 +205,10 @@ Run without any arguments to start the server.`)
     // Do initial tag loading
     console.log('Loading tags...')
     await tagsUtil.refreshTags()
+
+    // Do initial navigation page loading
+    console.log('Loading navigation pages...')
+    await pagesUtil.refreshLinkShownPages()
 
     // Put site logo if none are present
     if((await logosUtil.getLogoNames()).length < 1)
