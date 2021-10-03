@@ -40,8 +40,9 @@ module.exports.getNewblog = async (ctx, next) => {
 /**
  * POST controller for new blog page
  * @param {import('koa').Context} ctx The context
+ * @param {Function} next
  */
-module.exports.postNewblog = async ctx => {
+module.exports.postNewblog = async (ctx, next) => {
     setupCtx(ctx)
 
     // Deal with unauthenticated and unauthorized users
