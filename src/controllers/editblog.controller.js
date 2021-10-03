@@ -65,8 +65,9 @@ module.exports.getEditblog = async (ctx, next) => {
 /**
  * POST controller for edit blog page
  * @param {import('koa').Context} ctx The context
+ * @param {Function} next
  */
-module.exports.postEditblog = async ctx => {
+module.exports.postEditblog = async (ctx, next) => {
     setupCtx(ctx)
 
     // Deal with unauthenticated and unauthorized users
