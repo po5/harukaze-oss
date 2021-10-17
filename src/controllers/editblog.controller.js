@@ -104,7 +104,7 @@ module.exports.postEditblog = async (ctx, next) => {
     let slug = utils.titleToSlug((body.slug || '').trim())
     let enableComments = body.comments === 'on'
     let published = body.published === 'on'
-    let publishDate = body.publishdate ? new Date(body.publishdate) : null
+    let publishDate = body.publishdate ? new Date(`${body.publishdate}.${body.publishtz}Z`) : null
     let showTitle = body.showtitle === 'on'
     let title = body.title
     if(title)

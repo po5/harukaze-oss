@@ -26,6 +26,7 @@
         <input type="checkbox" <%= publishDate == null ? '' : 'checked' %> id="opt-publish-date-toggle">
         <label for="opt-publish-date-toggle">Publish at specific time? ("Publish?" must be checked for this to have any effect)</label>
         <br>
+        <script>document.write(`<input type="hidden" name="publishtz" value="${new Date().getTimezoneOffset()}">`)</script>
         <input type="datetime-local" value="<%= publishDate == null ? '' : datetimeLocal(publishDate) %>" style="display:none" id="publish-date-input" name="publishdate-disabled">
         <input type="checkbox" <%= comments ? 'checked' : '' %> name="comments" id="opt-comments">
         <label for="opt-comments">Enable comments?</label>

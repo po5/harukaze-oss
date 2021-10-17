@@ -63,7 +63,7 @@ module.exports.postNewblog = async (ctx, next) => {
     let body = ctx.request.body
     let enableComments = body.comments === 'on'
     let publish = body.publish === 'on'
-    let publishDate = body.publishdate ? new Date(body.publishdate) : null
+    let publishDate = body.publishdate ? new Date(`${body.publishdate}.${body.publishtz}Z`) : null
     let showTitle = body.showtitle === 'on'
     let title = (body.title || '').trim()
     let content = (body.content || '').trim()
