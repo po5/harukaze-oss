@@ -13,7 +13,7 @@ module.exports.getRss = async ctx => {
     ctx.type = 'application/rss+xml'
 
     // Figure out site root
-    let root = `${ctx.protocol}${ctx.secure ? 's' : ''}://${ctx.host}`
+    let root = `${ctx.protocol}://${ctx.host}`
 
     // Date format util
     function fmtDate(date) {
