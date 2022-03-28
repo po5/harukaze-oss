@@ -105,7 +105,7 @@ function titleToSlug(title) {
 }
 
 /**
- * Returns a psuedo-random between a minimum and maximum
+ * Returns a pseudo-random between a minimum and maximum
  * @param {number} min The minimum number to return
  * @param {number} max The maximum number to return
  * @returns {number} A random number between a minimum and maximum
