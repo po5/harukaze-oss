@@ -31,18 +31,21 @@ module.exports.getUser = async (ctx, next) => {
     let media = await mediaModel.fetchBooruVisibleMediaInfosByUploaderUsername(username, pagination.queryOffset, pagination.queryLimit, mediaModel.Order.CREATED_DESC)
 
     // Enumerate tags from items
-    let resultTags = []
-    for(let file of media)
-        for(let tag of file.tags)
-            if(!resultTags.includes(tag))
-                resultTags.push(tag)
-    
+    let resultTagNames = []
+    let resultTags = {}
+    for(const file of media)
+        for(const tag of file.tags)
+            if(!resultTagNames.includes(tag))
+                resultTagNames.push(tag)
+
     // Sort tags alphabetically
-    resultTags.sort()
+    resultTagNames.sort()
+    for(const tag of resultTagNames)
+        resultTags[tag] = Math.max(tagsUtil.getMediaTagUseCount(tag), 1)
 
     // Put pagination information
     ctx.state.pagination = pagination
-    
+
     // Set page title
     ctx.state.pageTitle = 'Items by '+user.username
 
