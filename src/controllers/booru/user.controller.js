@@ -1,6 +1,7 @@
 const usersModel = require('../../models/users.model')
 const mediaModel = require('../../models/media.model')
 const paginationUtil = require('../../utils/pagination.util')
+const tagsUtil = require('../../utils/tags.util')
 
 /**
  * GET controller for booru user page
