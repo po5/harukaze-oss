@@ -15,8 +15,8 @@
         }
     },
     "site": {
-        "title": "VISUABUSTERS",
-        "description": "Visuabusters is bustin' out the visua!",
+        "title": "Harukaze-OSS Site",
+        "description": "This is the default description of a Harukaze-OSS site",
         "maxUploadSize": 500000000,
         "captchaExpireSeconds": 120,
         "showContributors": true,
