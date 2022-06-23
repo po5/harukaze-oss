@@ -366,7 +366,8 @@ sceditor.command.set('interview', {
                 selected: null,
                 dir: 'left',
                 color: '#e6e6e6',
-                resize: true
+                resize: true,
+                linkToOriginal: false
             },
             computed: {
                 resizeSelect: {
