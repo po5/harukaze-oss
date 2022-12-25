@@ -1,64 +1,74 @@
-<link rel="stylesheet" href="/static/css/myaccount.css">
+<% if (typeof reload !== 'undefined' && reload) { %>
+    <meta http-equiv="refresh" content="0; url=">
+<% } else { %>
+    <link rel="stylesheet" href="/static/css/myaccount.css">
 
-<% if(error != null) { %>
-    <p class="form-error"><%= error %></p>
-    <br>
-<% } %>
-
-<h1>My Account</h1>
-<form action="" method="POST" enctype="multipart/form-data">
-    <img id="avatar" src="<%= avatarUrl %>" alt="Your avatar">
-    <div id="bio-container">
-        <textarea name="bio" id="bio" cols="30" rows="10" maxlength="2048" placeholder="No bio added..."><%= bio %></textarea>
-    </div>
-    <hr>
-    <label for="character">Comment character:</label><br>
-    <% for(char of characters) { %>
-        <div class="mood-choice">
-            <label>
-                <input type="radio" name="character" value="<%= char.id %>" <%= char.id == character ? 'checked' : '' %>>
-                <img src="/assets/mood/<%= char.default %>" alt="<%= char.name %>" title="<%= char.name %>">
-            </label>
-        </div>
+    <% if(error != null) { %>
+        <p class="form-error"><%= error %></p>
+        <br>
     <% } %>
-    <% if(user.role > 0) { %>
-        <link rel="stylesheet" href="/static/css/editor.css">
-        <link rel="stylesheet" href="/static/sceditor/minified/themes/default.min.css" id="theme-style">
 
+    <h1>My Account</h1>
+    <form action="" method="POST" enctype="multipart/form-data">
+        <img id="avatar" src="<%= avatarUrl %>" alt="Your avatar">
+        <div id="bio-container">
+            <textarea name="bio" id="bio" cols="30" rows="10" maxlength="2048" placeholder="No bio added..."><%= bio %></textarea>
+        </div>
         <hr>
-        <h2>Upload a new avatar</h2>
-        <p>Ideally, avatars should be 1:1 aspect ratio, and no smaller than 128x128. They cannot be more than 5MB in size. Leave blank to stay unchanged</p>
-        <input type="file" name="avatar" id="avatar-upload">
+        <label for="character">Comment character:</label><br>
+        <% for(const char of characters) { %>
+            <div class="mood-choice">
+                <label>
+                    <input type="radio" name="character" value="<%= char.id %>" <%= char.id === character ? 'checked' : '' %>>
+                    <img src="/assets/mood/<%= char.default %>" alt="<%= char.name %>" title="<%= char.name %>">
+                </label>
+            </div>
+        <% } %>
+        <% if(user.role > 0) { %>
+            <link rel="stylesheet" href="/static/css/editor.css">
+            <link rel="stylesheet" href="/static/sceditor/minified/themes/default.min.css" id="theme-style">
+
+            <hr>
+            <h2>Upload a new avatar</h2>
+            <p>Ideally, avatars should be 1:1 aspect ratio, and no smaller than 128x128. They cannot be more than 5MB in size. Leave blank to stay unchanged</p>
+            <input type="file" name="avatar" id="avatar-upload">
+            <br><br>
+            <h2>Your info</h2>
+            <div id="info-container">
+                <textarea name="info" id="info"><%= info %></textarea>
+            </div>
+
+            <script src="/static/sceditor/minified/sceditor.min.js"></script>
+            <script src="/static/sceditor/minified/icons/monocons.js"></script>
+            <script src="/static/sceditor/minified/formats/bbcode.js"></script>
+            <script src="/static/js/editor.js"></script>
+
+            <script>
+				// Constants
+				const infoElem = document.getElementById('info')
+
+				// Init SCEditor
+				sceditor.create(infoElem, {
+					format: 'bbcode',
+					style: '/static/sceditor/minified/themes/content/default.min.css',
+					toolbar: defaultToolbar
+				})
+            </script>
+        <% } %>
         <br><br>
-        <h2>Your info</h2>
-        <div id="info-container">
-            <textarea name="info" id="info"><%= info %></textarea>
-        </div>
-        
-        <script src="/static/sceditor/minified/sceditor.min.js"></script>
-        <script src="/static/sceditor/minified/icons/monocons.js"></script>
-        <script src="/static/sceditor/minified/formats/bbcode.js"></script>
-        <script src="/static/js/editor.js"></script>
+        <label for="current-password">Current password (required to change username or password):</label><br>
+        <input type="password" name="current-password" id="current-password"><br>
+        <br>
 
-        <script>
-            // Constants
-            const infoElem = document.getElementById('info')
+        <label for="new-username">New username (leave blank to not change username):</label><br>
+        <input type="text" name="new-username" id="new-username"><br>
+        <br>
 
-            // Init SCEditor
-            sceditor.create(infoElem, {
-                format: 'bbcode',
-                style: '/static/sceditor/minified/themes/content/default.min.css',
-                toolbar: defaultToolbar
-            })
-        </script>
-    <% } %>
-    <br><br>
-    <label for="current-password">Current password (leave blank to not change password):</label><br>
-    <input type="password" name="current-password" id="current-password"><br>
-    <label for="new-password">New password:</label><br>
-    <input type="password" name="new-password" id="new-password"><br>
-    <label for="repeat-password">Repeat password:</label><br>
-    <input type="password" name="repeat-password" id="repeat-password"><br>
-    <br>
-    <input type="submit" value="Save">
-</form>
+        <label for="new-password">New password (leave blank to not change password):</label><br>
+        <input type="password" name="new-password" id="new-password"><br>
+        <label for="repeat-password">Repeat password:</label><br>
+        <input type="password" name="repeat-password" id="repeat-password"><br>
+        <br>
+        <input type="submit" value="Save">
+    </form>
+<% }%>

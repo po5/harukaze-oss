@@ -318,6 +318,20 @@ async function updateUserCharacterByCharacter(oldChar, newChar) {
         .where('user_character', oldChar)
 }
 
+/**
+ * Updates a user's username
+ * @param {number} id The user's ID
+ * @param {string} newUsername The user's new username
+ * @return {Promise<void>}
+ */
+async function updateUserUsernameById(id, newUsername) {
+    return knex('users')
+        .update({
+            user_username: newUsername
+        })
+        .where('id', id)
+}
+
 /* Export functions */
 module.exports.createUser = createUser
 module.exports.fetchUserById = fetchUserById
@@ -339,3 +353,4 @@ module.exports.updateUserAvatarKeyById = updateUserAvatarKeyById
 module.exports.updateUserBannedById = updateUserBannedById
 module.exports.updateUserRoleById = updateUserRoleById
 module.exports.updateUserCharacterByCharacter = updateUserCharacterByCharacter
+module.exports.updateUserUsernameById = updateUserUsernameById

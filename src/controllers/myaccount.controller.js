@@ -1,4 +1,3 @@
-const config = require('../../config.json')
 const moodUtils = require('../utils/moods.util')
 const usersUtil = require('../utils/users.util')
 const usersModel = require('../models/users.model')
@@ -11,7 +10,7 @@ const argon2 = require('argon2')
 
 // Puts boilerplate context data
 async function setupCtx(ctx) {
-    let user = ctx.state.user
+    const user = ctx.state.user
     ctx.state.pageTitle = 'My Account'
     ctx.state.error = null
     ctx.state.bio = user.bio
@@ -81,7 +80,7 @@ module.exports.postMyAccount = async (ctx, next) => {
     // Update user
     await usersModel.updateUserInfoById(user.id, bio, char.id, info)
 
-    // Check if avatar was sent, and the user is a contributor or higher
+    // Check if avatar was set, and the user is a contributor or higher
     if(user.role >= usersUtil.Roles.CONTRIBUTOR) {
         let files = ctx.request.files
 
@@ -143,24 +142,62 @@ module.exports.postMyAccount = async (ctx, next) => {
         '/assets/mood/'+ctx.state.character
 
     // Update password if specified
-    if(body['current-password'] && body['new-password'] && body['repeat-password']) {
-        let currentPass = body['current-password']
-        let newPass = body['new-password']
-        let repeatPass = body['repeat-password']
+    if (body['current-password']) {
+        /** @type {string} */
+        const currentPass = body['current-password']
 
         // Fetch user
-        let user = (await usersModel.fetchUserById(ctx.state.user.id))[0]
+        const user = (await usersModel.fetchUserById(ctx.state.user.id))[0]
 
         // Check hash
-        if(await argon2.verify(user.user_hash, currentPass)) {
-            if(newPass == repeatPass) {
-                // Update password
-                usersUtil.changeUserPassword(user.id, newPass)
-            } else {
-                ctx.state.error = 'New passwords do not match'
-            }
-        } else {
+        if(!(await argon2.verify(user.user_hash, currentPass))) {
             ctx.state.error = 'Current password is incorrect'
+            return
+        }
+
+        // Change username
+        if (body['new-username']) {
+            /** @type {string} */
+            const newUsername = body['new-username']
+
+            // Validate username
+            if (!usersUtil.isUsernameValid(newUsername)) {
+                ctx.state.error = 'The new username you chose is invalid'
+                return
+            }
+
+            // Check if the username is taken
+            if (newUsername.toLowerCase() === ctx.state.user.username.toLowerCase()) {
+                ctx.state.error = `Your username is already "${newUsername}"`
+                return
+            } else if ((await usersModel.fetchUserByUsername(newUsername)).length > 0) {
+                ctx.state.error = 'A user with that username already exists'
+                return
+            }
+
+            // All is well; apply the new username
+            await usersModel.updateUserUsernameById(ctx.state.user.id, newUsername)
+            ctx.state.user.username = newUsername
+
+            // Re-setup context with new username and tell the page to reload
+            await setupCtx(ctx)
+            ctx.state.reload = true
+        }
+
+        // Change password
+        if (body['new-password'] && body['repeat-password']) {
+            /** @type {string} */
+            const newPass = body['new-password']
+            /** @type {string} */
+            const repeatPass = body['repeat-password']
+
+            if(newPass !== repeatPass) {
+                ctx.state.error = 'New passwords do not match'
+                return
+            }
+
+            // Update password
+            await usersUtil.changeUserPassword(user.id, newPass)
         }
     }
 }
