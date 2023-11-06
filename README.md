@@ -1,25 +1,15 @@
-# Harukaze-OSS
+# cms
 
-Harukaze-OSS is a CMS (and optionally, booru) written in JavaScript, utilizing Koa, Knex, and other libraries for maximum awesome!!!
+The CMS repository. The main part of the service. Requires a core server to operate.
 
-## Requirements
- - Node.js
- - npm (if you already have Node.js, you probably have this)
- - MySQL (or MariaDB)
- - FFmpeg
+# Dependencies
+ - Node.js 16+
+ - Yarn
+ - PostgreSQL
+ - Harukaze Core server
 
-## Setup
-Install dependencies by running `npm install`.
+# Setup
+To install Node dependencies, run `yarn install`.
+Copy `config.example.json` to `config.json` and modify it to reflect the installation.
 
-Copy `config.example.json` to `config.json` and configure the server to your liking.
-Make sure to edit the field called `knex` in order to connect to the database.
-
-Next, run `npx knex migrate:latest` to setup database stuff.
-
-## Running
-Once everything is setup and configured, simply run `node app.js` in the same directory as the project, and it should be running!
-
-For production deployments, you'll probably want to run Harukaze-OSS through something like pm2.
-
-## Code Style
-See `CODESTYLE.md`.
+To start the development server, run `yarn start`. To build a JavaScript distribution, run `yarn build`.

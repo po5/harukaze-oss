@@ -62,7 +62,7 @@
 		setTimeout(adjustSidebarHeight, 100)
 		window.onload = adjustSidebarHeight
 		const imgElems = document.getElementsByTagName('img')
-		for(let imgElem of imgElems)
+		for(const imgElem of imgElems)
 			imgElem.addEventListener('load', adjustSidebarHeight)
     </script>
 </body>

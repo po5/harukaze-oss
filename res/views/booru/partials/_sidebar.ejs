@@ -8,20 +8,21 @@
     </form>
 </div>
 
-<% if(typeof resultTags != 'undefined') { %>
+<% if(typeof resultTags !== 'undefined') { %>
     <div class="sidebar-section">
         <label for="" class="container-header sidebar-section">Tags</label>
         <div id="tags-container">
-            <% for(let tag of Object.keys(resultTags)) { %>
+            <% for(const tag of Object.keys(resultTags)) { %>
                 <div class="tag-listing">
-                    <a href="/booru/tags?query=<%= tag %>"><%= tag %></a> <span class="tag-listing-count">(<%= resultTags[tag] %>)</span>
+                    <a href="/booru/tags?query=<%= tag %>"><%= formatTag(tag) %></a>
+                    <span class="tag-listing-count">(<%= resultTags[tag] %>)</span>
                 </div>
             <% } %>
         </div>
     </div>
 <% } %>
 
-<% if(typeof item != 'undefined') { with(item) { %>
+<% if(typeof item !== 'undefined') { with(item) { %>
     <div class="sidebar-section">
         <label for="" class="container-header sidebar-section">Statistics</label><br>
         <span>ID: <%= id %></span><br>
@@ -47,11 +48,11 @@
             <span><a href="/booru/action?action=add-to-collection&item=<%= id %>">Add to collection...</a></span><br>
         <% } %>
 
-        <% if(typeof nextUrl != 'undefined') { %>
+        <% if(typeof nextUrl !== 'undefined') { %>
             <br>
             <span><a href="<%= nextUrl %>">Next item</a></span>
         <% } %>
-        <% if(typeof prevUrl != 'undefined') { %>
+        <% if(typeof prevUrl !== 'undefined') { %>
             <br>
             <span><a href="<%= prevUrl %>">Previous item</a></span>
         <% } %>

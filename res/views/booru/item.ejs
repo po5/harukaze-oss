@@ -48,7 +48,7 @@
         <div id="item-collections" class="container">
             <div class="container-header">This item is a member of the following collections</div>
             <br>
-            <% for(col of collections) { %>
+            <% for(const col of collections) { %>
                 <div class="listing collection-listing" title="<%= col.title %>">
                     <a href="/booru/collection/<%= col.id %>">
                         <img src="<%= col.first_item == null ? '/static/img/media-placeholder.png' : '/assets/thumbnail/'+col.first_item %>" alt="<%= col.title %>">
@@ -175,13 +175,13 @@
     const itemId = <%= item.id %>
 	const itemMime = "<%= item.mime %>"
 	const itemDimensions = {
-		width: <%= item.width %>,
-		height: <%= item.height %>
+		width: <%= item.width || 'null' %>,
+		height: <%= item.height || 'null' %>
 	}
     <% if(authed) { %>
     const defaultMood = <%= user.characterDefault %>
     const moods = [
-    	<% for(let mood of user.characterMoods) { %>{
+    	<% for(const mood of user.characterMoods) { %>{
     		id: <%= mood.id %>,
             name: '<%= mood.name %>'
         },
@@ -213,13 +213,15 @@
         }, 100)
     }
 
-	contentElem.style.visibility = 'visible'
-    if(contentScaled && itemMime.startsWith('image/') && itemMime !== 'image/gif') {
-		contentElem.src = contentUrl + (contentUrl.includes('?') ? '&' : '?') + 'width=' + contentWidth
-        showScaleBox()
-	} else {
-		contentElem.src = contentUrl
-    }
+	if(contentElem) {
+		contentElem.style.visibility = 'visible'
+		if(contentScaled && itemMime.startsWith('image/') && itemMime !== 'image/gif') {
+			contentElem.src = contentUrl + (contentUrl.includes('?') ? '&' : '?') + 'width=' + contentWidth
+			showScaleBox()
+		} else {
+			contentElem.src = contentUrl
+		}
+	}
 </script>
 
 <script src="/static/js/booru/item.js" async defer></script>

@@ -175,7 +175,7 @@
                             <td>
                                 <i v-if="user.username == self.username">None</i>
                                 <template v-else>
-                                    <button v-if="user.role < roles.length" @click="changeUserRole(user.username, 1)">Promote</button>
+                                    <button v-if="user.role < roles.length-1" @click="changeUserRole(user.username, 1)">Promote</button>
                                     <button v-if="user.role > 0" @click="changeUserRole(user.username, -1)">Demote</button>
                                 </template>
                             </td>

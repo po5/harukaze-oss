@@ -20,9 +20,11 @@
         <a href="/login">Log In!</a> |
         <a href="/signup">Sign Up!</a>
     <% } %> |
-    <a href="/search">Search posts</a> |
-    <a href="/booru">Booru</a>
-    <% for(let page of navigationPages) { %>
+    <a href="/search">Search posts</a>
+    <% if(enableBooru) { %>
+        | <a href="/booru">Booru</a>
+    <% } %>
+    <% for(const page of navigationPages) { %>
         | <a href="/page/<%= page.slug %>"><%= page.title %></a>
     <% } %>
 </div>

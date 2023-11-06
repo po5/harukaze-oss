@@ -1,6 +1,6 @@
 <% if(collections.length > 0) { %>
     <div id="collections">
-        <% for(coll of collections) { with(coll) { %>
+        <% for(const coll of collections) { with(coll) { %>
             <div class="listing collection-listing" title="<%= title %>">
                 <a href="/booru/collection/<%= id %>">
                     <img src="<%= first_item == null ? '/static/img/media-placeholder.png' : '/assets/thumbnail/'+first_item %>" alt="<%= title %>">

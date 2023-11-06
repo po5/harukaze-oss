@@ -84,6 +84,15 @@ a:hover {
 	margin-left: 8px;
 	color: #555;
 }
+.delete-button {
+	color: white;
+	background: red;
+	border: 2px solid #d50000;
+	font-weight: bold;
+}
+.delete-button:active {
+	background: #980000;
+}
 .blog-icon {
 	border: 4px #aaa;
 	border-style: double;
@@ -181,11 +190,6 @@ hr {
 }
 .comment-delete {
 	text-align: right;
-}
-.comment-delete input[type="submit"] {
-	color: white;
-	background: red;
-	border: none;
 }
 .comment-reply-content {
 	margin-left: 10px;
@@ -406,6 +410,9 @@ input {
 	margin-bottom:4px;
 	font-weight: bold;
 	text-align: right;
+}
+.blog-author-options {
+	margin-left: 5px;
 }
 .file-upload {
 	border-top: 1px solid gray;

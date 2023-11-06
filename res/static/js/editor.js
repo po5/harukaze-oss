@@ -29,7 +29,7 @@ const mediaPickerVue = `
     <br><br>
     <button @click.prevent="loadMedia()">Reload Media</button>
     <br><br>
-    <template v-if="typeof(linkToOriginal) !== 'undefined'">
+    <template v-if="typeof linkToOriginal !== 'undefined'">
         <label for="link-media-checkbox" style="display:inline-block;">Link to original image?</label>
         <input v-model="linkToOriginal" type="checkbox" id="link-media-checkbox">
         <br><br>
@@ -277,7 +277,7 @@ sceditor.command.set('media', {
                             order: 1
                         })
     
-                        if(res.status == 'success') {
+                        if(res.status === 'success') {
                             this.totalMedia = res.total
                             this.pages = Math.max(1, Math.ceil(res.total/pageSize))
                             this.media = res.media
@@ -376,7 +376,7 @@ sceditor.command.set('interview', {
                     },
                     set(val) {
                         let v = val.toLowerCase()
-                        this.resize = v == 'yes' || v == 'true'
+                        this.resize = v === 'yes' || v === 'true'
                     }
                 }
             },

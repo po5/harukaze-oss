@@ -1,0 +1,42 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "target": "ES2020",
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "allowJs": true,
+        "checkJs": false,
+        "outDir": "dist",
+        "rootDir": ".",
+        "strict": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "forceConsistentCasingInFileNames": true,
+        "declaration": true,
+        "strictNullChecks": true,
+        "resolveJsonModule": true,
+        "sourceMap": true,
+        "baseUrl": ".",
+        "paths": {
+            "root/*":[ "./src/*" ],
+            "controllers/*": [ "./src/controllers/*" ],
+            "middleware/*": [ "./src/middleware/*" ],
+            "models/*": [ "./src/models/*" ],
+            "utils/*": [ "./src/utils/*" ],
+            "types/*": [ "./src/types/*" ]
+        },
+    },
+    "exclude": ["node_modules", "dist"],
+    "include": [
+        "./src",
+        "./test",
+        "./*"
+    ],
+    "plugin": [
+        {
+            "transform": "typescript-transform-paths",
+            "afterDeclarations": true
+        }
+    ]
+}

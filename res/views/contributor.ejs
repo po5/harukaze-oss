@@ -19,7 +19,7 @@
     <div class="container-header">Posts</div>
     <% if(posts.length > 0) { %>
         <div id="posts-container">
-            <% for(post of posts) { with(post) { %>
+            <% for(const post of posts) { with(post) { %>
                 <div class="post-listing">
                     <span class="name2"><a href="/blog/<%= slug %>"><%= title %></a>, posted <%= date(created_on) %></span>
                 </div>

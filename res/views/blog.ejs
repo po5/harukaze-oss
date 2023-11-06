@@ -1,6 +1,6 @@
 <div class="blogpost">
     <% if(post.show_title) { %>
-        <div class="aligned"> 
+        <div class="aligned">
             <div class="blog-icon">
                 <img src="/assets/avatar/<%= post.author_username %>" alt="Author icon">
             </div>
@@ -12,8 +12,16 @@
         </div>
     <% } %>
     <% if(authed && user.role > 0) { %>
-        <div class="blog-edit-button">
-            <a href="/blog/<%= post.slug %>/edit">Edit post</a>
+        <div class="blog-author-options">
+            <a href="/blog/<%= post.slug %>/edit"><button>Edit post</button></a>
+            <form action="" method="POST">
+                <% if(deleteError != null) { %>
+                    <p class="form-error"><%= deleteError %></p>
+                <% } %>
+                <input type="hidden" name="action" value="delete-post">
+                <input type="text" name="title" placeholder="Enter the blog title to delete it">
+                <input type="submit" value="Delete post" class="delete-button">
+            </form>
         </div>
     <% } %>
     <hr>
@@ -27,7 +35,7 @@
     <% if(post.tags.length > 0) { %>
         <div class="blog-tags">
             Blog tags:
-            <% for(tag of post.tags) { %>
+            <% for(const tag of post.tags) { %>
                 <a href="/tags/<%= tag %>" class="tag"><%= formatTag(tag) %></a>
             <% } %>
         </div>
@@ -36,7 +44,7 @@
         <div class="blog-media">
             Booru items in this post:
             <br><br>
-            <% for(file of media) { %>
+            <% for(const file of media) { %>
                 <p class="booru-reference">
                     <a href="/booru/item/<%= file.id %>"><%= file.title %></a>
                     <i>(Uploaded by <a href="/booru/user/<%= file.uploader_username %>"><%= file.uploader_username %></a>)</i>
@@ -53,7 +61,7 @@
         <div class="comment-box">
             <% if(authed) { %>
                 <form action="" method="POST">
-                    <input type="hidden" name="action" value="comment">
+                    <input type="hidden" name="action" value="create-comment">
                     <% if(error != null) { %>
                         <p class="form-error"><%= error %></p>
                         <br>
@@ -63,7 +71,7 @@
                     <div class="mood-chooser">
                         <div class="mood-chooser-open">Moods ⯈</div>
                         <div class="mood-chooser-moods" style="display:block">
-                            <% for(mood of user.characterMoods) { %>
+                            <% for(const mood of user.characterMoods) { %>
                                 <div class="mood-choice">
                                     <label>
                                         <input type="radio" name="mood" value="<%= mood.id %>" <%= mood.id == user.characterDefault ? 'checked' : '' %>>
@@ -83,7 +91,7 @@
         <hr>
         <div class="comments">
             <% if(comments.length > 0) { %>
-                <% for(comment of comments) {%>
+                <% for(const comment of comments) {%>
                     <div class="comment" id="comment-<%= comment.id %>">
                         <div class="aligned">
                             <div class="comment-mood">
@@ -93,19 +101,19 @@
                         </div>
                         <div class="comment-content"><%= comment.content %></div>
                         <div class="commentdate"><%= date(comment.created_on) %></div>
-                        <% if(authed && (user.id == comment.author || user.id == post.author || user.role > 1)) { %>
+                        <% if(authed && (user.id === comment.author || user.id === post.author || user.role > 1)) { %>
                             <form action="" method="POST" class="comment-delete">
-                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="action" value="delete-comment">
                                 <input type="hidden" name="comment" value="<%= comment.id %>">
-                                <input type="submit" value="Delete">
+                                <input type="submit" value="Delete" class="delete-button">
                             </form>
                         <% } %>
                     </div>
                     <div class="comment-replies" id="comment-<%= comment.id %>-replies">
-                        <% for(reply of replies) { %>
-                            <% if(reply.parent == comment.id) { %>
+                        <% for(const reply of replies) { %>
+                            <% if(reply.parent === comment.id) { %>
                                 <div class="comment-reply">
-                                    <div class="alignedcom"> 
+                                    <div class="alignedcom">
                                         <div class="comment-mood">
                                             <img src="/assets/mood/<%= reply.mood %>" alt="<%= reply.mood_name %>" title="<%= reply.mood_name %>">
                                         </div>
@@ -113,9 +121,9 @@
                                     </div>
                                     <div class="comment-reply-content"><%= reply.content %></div>
                                     <div class="commentdate"><span><%= date(reply.created_on) %></span></div>
-                                    <% if(authed && (user.id == reply.author || user.id == post.author || user.role > 1)) { %>
+                                    <% if(authed && (user.id === reply.author || user.id === post.author || user.role > 1)) { %>
                                         <form action="" method="POST" class="comment-delete">
-                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="action" value="delete-comment">
                                             <input type="hidden" name="comment" value="<%= reply.id %>">
                                             <input type="submit" value="Delete">
                                         </form>
@@ -131,14 +139,14 @@
                                         <p class="form-error"><%= replyErrors[comment.id] %></p>
                                         <br>
                                     <% } %>
-                                    <input type="hidden" name="action" value="comment">
+                                    <input type="hidden" name="action" value="create-comment">
                                     <input type="hidden" name="reply" value="<%= comment.id %>">
                                     <textarea placeholder="Reply something..." id="comment-box" name="content" rows="10" col="50"></textarea>
                                     <br>
                                     <div class="mood-chooser">
                                         <div class="mood-chooser-open">Moods ⯈</div>
                                         <div class="mood-chooser-moods" style="display:block">
-                                            <% for(mood of user.characterMoods) { %>
+                                            <% for(const mood of user.characterMoods) { %>
                                                 <div class="mood-choice">
                                                     <label>
                                                         <input type="radio" name="mood" value="<%= mood.id %>" <%= mood.id == user.characterDefault ? 'checked' : '' %>>

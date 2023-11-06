@@ -15,13 +15,14 @@
         }
     },
     "site": {
-        "title": "Harukaze-OSS Site",
-        "description": "This is the default description of a Harukaze-OSS site",
+        "title": "Harukaze Site",
+        "description": "This is the default description of a Harukaze site",
         "maxUploadSize": 500000000,
         "captchaExpireSeconds": 120,
         "showContributors": true,
         "notFoundPage": "[size=7]Not Found[/size]\nNo page could be found...",
-        "errorPage": "[size=7]Error Occurred[/size]\nAn internal error occurred while serving this request..."
+        "errorPage": "[size=7]Error Occurred[/size]\nAn internal error occurred while serving this request...",
+        "enableBooru": true
     },
     "pagination": {
         "pageSize": 5,

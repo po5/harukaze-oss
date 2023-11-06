@@ -3,7 +3,7 @@
 <br>
 <% if(media.length > 0) { %>
     <div id="user-items">
-        <% for(file of media) { with(file) { %>
+        <% for(const file of media) { with(file) { %>
             <div class="listing media-listing <%= mime.startsWith('video/') ? 'video-listing' : '' %>" title="<%= title %> (<%= tags.join(' ') %>)">
                 <a href="/booru/item/<%= id %>?user=<%= user.username %>">
                     <img src="/assets/thumbnail/<%= id %>" alt="<%= title %> (<%= tags.join(' ') %>)">
