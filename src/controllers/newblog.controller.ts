@@ -60,9 +60,6 @@ export async function postNewblog(ctx: Context, next: Next) {
         return
     }
 
-    // TODO Remove this
-    console.log(ctx.request.body)
-
     // Collect data
     const body = ctx.request.body
     const enableComments = body.comments === 'on'
@@ -81,9 +78,6 @@ export async function postNewblog(ctx: Context, next: Next) {
     ctx.state.title = title || ''
     ctx.state.content = content || ''
     ctx.state.tags = arrayToSet(tags)
-
-    // TODO Remove this
-    console.log(ctx.state)
 
     // Check for data
     if(title && content) {
