@@ -85,15 +85,15 @@ export async function createUser(username: string, bio: string | null, password:
     let hash = await argon2.hash(password)
 
     // Create user DB entry
-    await createUserRow(username, bio, hash, role, avatarKey, null, character)
+    const id = await createUserRow(username, bio, hash, role, avatarKey, null, character)
 
-    if (appSzurubooruClient !== null) {
-        await appSzurubooruClient.createUser({
-            password,
-            name: username,
-            rank: roleToSzurubooruUserRank(role),
-        })
-    }
+    await syncSzurubooruUser({
+        id,
+        username,
+        role,
+        isBanned: false,
+        createdOn: new Date(),
+    }, password)
 }
 
 const validUsernameRegex = /^[a-zA-Z0-9_-]{1,16}$/

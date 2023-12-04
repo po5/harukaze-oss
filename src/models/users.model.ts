@@ -220,9 +220,10 @@ function processUserBasicInfoRows(rows: any[]): UserBasicInfo[] {
  * @param avatarKey The user's avatar key (can be null)
  * @param info The user's info (can be null)
  * @param character The user's character ID
+ * @returns {} The newly created user's ID
  */
-export async function createUser(username: string, bio: string | null, hash: string, role: UserRoles, avatarKey: string | null, info: string | null, character: number) {
-    return knex('users')
+export async function createUser(username: string, bio: string | null, hash: string, role: UserRoles, avatarKey: string | null, info: string | null, character: number): Promise<string> {
+    return (await knex('users')
         .insert({
             user_username: username,
             user_bio: bio,
@@ -232,6 +233,7 @@ export async function createUser(username: string, bio: string | null, hash: str
             user_info: info,
             user_character: character
         })
+        .returning('id'))[0].id
 }
 
 /**
