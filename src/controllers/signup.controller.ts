@@ -138,15 +138,15 @@ export async function postSignup(ctx: Context, _next: Next) {
 
     // Fetch the new user's ID and authenticate
     const [ newUser ] = await fetchUserByUsername(username)
-    if(newUser) {
+    if (newUser === undefined) {
+        // The account can't be found, so as a last resort, redirect to login page
+        next = '/login'
+    } else {
         // Create initial login record
         await createLogin(newUser.id, ctx.ip);
 
         // Set user ID in session
         (ctx.session as Session).id = newUser.id
-    } else {
-        // The account can't be found, so as a last resort, redirect to login page
-        next = '/login'
     }
 
     // Redirect to next

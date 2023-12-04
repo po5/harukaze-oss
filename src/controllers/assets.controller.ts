@@ -189,7 +189,7 @@ export async function getAvatar(ctx: Context, _next: Next) {
         return
     }
 
-    const user = userRes[0]
+    const user = userRes[0]!
 
     // Send empty response for HEAD requests
     if(ctx.method === 'HEAD') {

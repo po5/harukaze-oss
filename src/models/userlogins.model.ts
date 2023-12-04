@@ -48,7 +48,7 @@ function processLoginInfoRows(rows: any[]): UserLoginInfo[] {
  * @param user The user's ID
  * @param ip The IP used to login
  */
-export async function createLogin(user: number, ip: string) {
+export async function createLogin(user: string, ip: string) {
     return knex('userlogins')
         .insert({
             login_user: user,

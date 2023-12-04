@@ -22,6 +22,8 @@
 
 <div class="container">
     <form action="" method="POST">
+        <input type="hidden" name="action" value="update-site-metadata">
+
         <div class="container-header">Site Metadata</div>
         <label for="site-title">Site title</label><br>
         <input type="text" name="site-title" id="site-title" value="<%= siteTitle %>">
@@ -43,10 +45,12 @@
         <p>Applies to homepage, blog tag search, and most other pages that have pagination.</p>
         <input type="number" name="page-size" id="page-size" value="<%= pageSize %>">
         <br><br>
-        <label for="page-size">Booru page size</label><br>
-        <p>Applies to booru pages.</p>
-        <input type="number" name="booru-page-size" id="booru-page-size" value="<%= booruPageSize %>">
-        <br><br>
+        <% if (!isSzurubooruEnabled) { %>
+            <label for="page-size">Booru page size</label><br>
+            <p>Applies to booru pages.</p>
+            <input type="number" name="booru-page-size" id="booru-page-size" value="<%= booruPageSize %>">
+            <br><br>
+        <% } %>
         <label for="max-upload-size">Max upload size</label><br>
         <p>This applies to media. Size is in bytes, so 500000000 = 500MB, or half a gigabyte.</p>
         <p>Restart required to take effect.</p>
@@ -59,6 +63,17 @@
         <input type="submit" value="Save">
     </form>
 </div>
+
+<% if (isSzurubooruEnabled) { %>
+    <div class="container">
+        <div class="container-header">Szurubooru</div>
+        <form method="POST" action="" id="sz-sync-users-form">
+            <label for="sz-sync-users">Sync Users</label><br>
+            <input type="submit" name="sz-sync-users" id="sz-sync-users" value="Sync Now">
+            <br><br>
+        </form>
+    </div>
+<% } %>
 
 <script src="/static/js/editor.js"></script>
 <script src="/static/js/sitesettings.js"></script>

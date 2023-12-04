@@ -2,12 +2,12 @@ import { Context, Next } from 'koa'
 import { MAX_API_PAGINATION_LIMIT } from 'root/constants'
 import { extractOffsetAndLimit } from 'utils/pagination.util'
 import { setToArray } from 'utils/misc.util'
-import { UserRoleIds, UserRolesCount } from 'utils/users.util'
+import { updateUserRole, UserRoleIds, UserRolesCount } from 'utils/users.util'
 import {
+    fetchUserBasicInfoById, fetchUserBasicInfoByUsername,
     fetchUserByUsername,
     fetchUserInfosByRoles,
-    fetchUsersCountByRoles,
-    updateUserRoleById
+    fetchUsersCountByRoles
 } from 'models/users.model'
 
 /**
@@ -71,26 +71,26 @@ export async function postSetRole(ctx: Context, _next: Next) {
     }
 
     // Fetch user
-    const [ user ] = await fetchUserByUsername(username)
+    const user = await fetchUserBasicInfoByUsername(username)
 
     // Check if user exists
-    if(!user) {
+    if(user === null) {
         ctx.apiError('invalid_user')
         return
     }
 
     // Use delta if specified
-    if(!isNaN(delta))
-        role = user.user_role+delta
+    if (!isNaN(delta))
+        role = user.role + delta
 
     // Validate role
-    if(role < 0 || role >= UserRolesCount) {
+    if (role < 0 || role >= UserRolesCount) {
         ctx.apiError('invalid_role')
         return
     }
 
     // Update user role
-    await updateUserRoleById(user.id, role)
+    await updateUserRole(user, role)
 
     // Success
     ctx.apiSuccess()

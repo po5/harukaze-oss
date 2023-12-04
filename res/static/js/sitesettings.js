@@ -1,6 +1,7 @@
 // Constants
 const notFoundElem = document.getElementById('not-found-page')
 const errorElem = document.getElementById('error-page')
+const szSyncUsersForm = document.getElementById('sz-sync-users-form')
 
 // Init SCEditor instances
 let settings = {
@@ -10,3 +11,16 @@ let settings = {
 }
 sceditor.create(notFoundElem, settings)
 sceditor.create(errorElem, settings)
+
+if (szSyncUsersForm) {
+	const submitBtn = szSyncUsersForm.getElementsByTagName('input')[0]
+
+	// Reset in case the browser cached the button state
+	submitBtn.disabled = false
+	submitBtn.value = 'Sync Now'
+
+	szSyncUsersForm.addEventListener('submit', _ => {
+		submitBtn.disabled = true
+		submitBtn.value = 'Syncing...'
+	})
+}

@@ -284,3 +284,15 @@ export function isTrue(value: boolean | string | number | null | undefined): boo
         return value > 0
     }
 }
+
+/**
+ * Returns the first element of the provided array, or null if the array is empty
+ * @param arr The array
+ * @returns {} The first element of the array, or null
+ */
+export function firstOrNull<T>(arr: T[]): T | null {
+    if (arr.length > 0)
+        return arr[0]
+    else
+        return null
+}

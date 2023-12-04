@@ -8,72 +8,72 @@ const knex = Knex(config)
 /**
  * Info about a post
  */
-export type PostInfo = {
+export interface PostInfo {
     /**
      * The post ID
      */
-    id: number,
+    id: number
 
     /**
      * The post author's ID
      */
-    author: number,
+    author: number
 
     /**
      * The post author's username
      */
-    author_username: string | null,
+    author_username: string | null
 
     /**
      * The post's title
      */
-    title: string,
+    title: string
 
     /**
      * The post slug
      */
-    slug: string,
+    slug: string
 
     /**
      * The post's tags
      */
-    tags: string[],
+    tags: string[]
 
     /**
      * Whether comments are enabled on the post
      */
-    enable_comments: boolean,
+    enable_comments: boolean
 
     /**
      * Whether the post is published
      */
-    published: boolean,
+    published: boolean
 
     /**
      * The time when the post will be published, or null to be instantly published (still depends on "published" being true, regardless of this value)
      */
-    publish_date: Date | null,
+    publish_date: Date | null
 
     /**
      * Whether the post title is visible
      */
-    show_title: boolean,
+    show_title: boolean
 
     /**
      * IDs of referenced media in the post.
      * @deprecated This may be used in some places, but for the most part it is obsolete
      */
-    referenced_media: number[],
+    referenced_media: number[]
 
     /**
      * The total number of comments on the post (including replies)
      */
-    comments: number,
+    comments: number
 
     /**
      * The post content, or null if not included
      */
-    content: string | null,
+    content: string | null
 
     /**
      * The date the post was created on
@@ -292,7 +292,7 @@ export async function fetchPublishedPostInfos(withContent: boolean, offset: numb
  * @param order The order of results to return
  * @returns All published posts' info
  */
-export async function fetchPublishedPostInfosByAuthor(author: number, withContent: boolean, offset: number, limit: number, order: PostOrder): Promise<PostInfo[]> {
+export async function fetchPublishedPostInfosByAuthor(author: string, withContent: boolean, offset: number, limit: number, order: PostOrder): Promise<PostInfo[]> {
     return processPostInfoRows(
         await postInfo(withContent)
             .where('post_published', true)
@@ -485,7 +485,7 @@ export async function fetchPublishedPostCountWherePostLike(pattern: string): Pro
  * @param author The post author's ID
  * @returns The amount of posts with the specified author
  */
-export async function fetchPublishedPostCountByAuthor(author: number): Promise<number> {
+export async function fetchPublishedPostCountByAuthor(author: string): Promise<number> {
     return (await knex('posts')
             .count('*', { as: 'count' })
             .where('post_author', author)

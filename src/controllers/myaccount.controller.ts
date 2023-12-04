@@ -1,13 +1,13 @@
 import { Context, Next } from 'koa'
 import argon2 from 'argon2'
-import { changeUserPassword, isUsernameValid, UserRoles } from 'utils/users.util'
+import { changeUserPassword, isUsernameValid, updateUserUsername, UserRoles } from 'utils/users.util'
 import { getCharacterById, getUsableCharacters } from 'utils/moods.util'
 import {
     fetchUserById,
     fetchUserByUsername,
     updateUserAvatarKeyById,
     updateUserInfoById,
-    updateUserUsernameById
+    updateUserUsernameById, userRowToBasicInfo
 } from 'models/users.model'
 import formidable from 'formidable'
 import { generateAlphanumericString } from 'utils/misc.util'
@@ -158,7 +158,7 @@ export async function postMyAccount(ctx: Context, next: Next) {
         const currentPass = body['current-password'] as string
 
         // Fetch user
-        const [ user ] = await fetchUserById(ctx.state.user.id)
+        const user = (await fetchUserById(ctx.state.user.id))[0]!
 
         // Check hash
         if(!(await argon2.verify(user.user_hash, currentPass))) {
@@ -187,7 +187,7 @@ export async function postMyAccount(ctx: Context, next: Next) {
             }
 
             // All is well; apply the new username
-            await updateUserUsernameById(ctx.state.user.id, newUsername)
+            await updateUserUsername(userRowToBasicInfo(ctx.state.user), newUsername)
             ctx.state.user.username = newUsername
 
             // Re-setup context with new username and tell the page to reload
@@ -206,7 +206,7 @@ export async function postMyAccount(ctx: Context, next: Next) {
             }
 
             // Update password
-            await changeUserPassword(user.id, newPass)
+            await changeUserPassword(userRowToBasicInfo(user), newPass)
         }
     }
 }

@@ -1,8 +1,13 @@
 import argon2 from 'argon2'
-import { createUser as createUserRow, updateUserHashById } from '../models/users.model'
+import {
+    createUser as createUserRow,
+    updateUserBannedById,
+    updateUserHashById,
+    updateUserRoleById, updateUserUsernameById, UserBasicInfo
+} from '../models/users.model'
 import { Context } from 'koa'
 import { getCharacterById, getMoodsByCharacter } from './moods.util'
-
+import { appSzurubooruClient, SzurubooruUserRank } from 'utils/szurubooru.util'
 
 /**
  * User roles
@@ -37,6 +42,24 @@ export const UserRolesCount = Object.keys(UserRoles).length/2
 export const UserRoleIds = Object.values(UserRoles).filter(val => typeof val === 'number') as number[]
 
 /**
+ * Mappings of user roles to szurubooru ranks
+ */
+const roleToSzurubooruUserRankMappings = {
+    [UserRoles.USER]: SzurubooruUserRank.Regular,
+    [UserRoles.CONTRIBUTOR]: SzurubooruUserRank.Moderator,
+    [UserRoles.ADMIN]: SzurubooruUserRank.Administrator,
+}
+
+/**
+ * Returns the szurubooru rank equivalent of the provided user role
+ * @param role The user role
+ * @returns {} The equivalent szurubooru rank
+ */
+function roleToSzurubooruUserRank(role: UserRoles): SzurubooruUserRank {
+    return roleToSzurubooruUserRankMappings[role] ?? SzurubooruUserRank.Regular
+}
+
+/**
  * Creates a new user
  * @param username The user's username
  * @param bio The user's bio (can be null)
@@ -51,7 +74,17 @@ export async function createUser(username: string, bio: string | null, password:
 
     // Create user DB entry
     await createUserRow(username, bio, hash, role, avatarKey, null, character)
+
+    if (appSzurubooruClient !== null) {
+        await appSzurubooruClient.createUser({
+            password,
+            name: username,
+            rank: roleToSzurubooruUserRank(role),
+        })
+    }
 }
+
+const validUsernameRegex = /^[a-zA-Z0-9_-]{1,16}$/
 
 /**
  * Tests whether the provided username is valid
@@ -59,7 +92,7 @@ export async function createUser(username: string, bio: string | null, password:
  * @returns Whether the username is valid
  */
 export function isUsernameValid(username: string): boolean {
-    return /^[a-zA-Z0-9_-]{1,16}$/g.test(username)
+    return validUsernameRegex.test(username)
 }
 
 /**
@@ -85,19 +118,80 @@ export async function identifyContextWithUserRow(ctx: Context, userRow: any) {
         characterMoods: await getMoodsByCharacter(userRow.user_character),
         info: userRow.user_info,
         banned: userRow.user_banned === 1,
-        createdOn: new Date(userRow.user_created_on)
+        createdOn: new Date(userRow.user_created_on),
     }
 }
 
 /**
  * Changes a user's password
- * @param id The user's ID
+ * @param user The user's info
  * @param password The new password
  */
-export async function changeUserPassword(id: number, password: string) {
+export async function changeUserPassword(user: UserBasicInfo, password: string) {
     // Hash password
     let hash = await argon2.hash(password)
 
     // Update hash
-    await updateUserHashById(id, hash)
+    await updateUserHashById(user.id, hash)
+
+    if (appSzurubooruClient !== null) {
+        await appSzurubooruClient.updateUser(user.username, {
+            password,
+        })
+    }
+}
+
+/**
+ * Updates whether a user is banned
+ * @param user The user's info
+ * @param isBanned Whether the user is banned
+ */
+export async function updateUserBanned(user: UserBasicInfo, isBanned: boolean) {
+    await updateUserBannedById(user.id, isBanned)
+
+    // TODO Sync user
+
+    if (appSzurubooruClient !== null) {
+        await appSzurubooruClient.updateUser(user.username, {
+            rank: isBanned ? SzurubooruUserRank.Restricted : SzurubooruUserRank.Regular,
+        })
+    }
+}
+
+/**
+ * Updates a user's role
+ * @param user The user's info
+ * @param role The user's new role
+ */
+export async function updateUserRole(user: UserBasicInfo, role: UserRoles) {
+    await updateUserRoleById(user.id, role)
+
+    // TODO Sync user
+
+    if (appSzurubooruClient !== null) {
+        await appSzurubooruClient.updateUser(user.username, {
+            rank: roleToSzurubooruUserRank(role),
+        })
+    }
+}
+
+/**
+ * Updates a user's username
+ * @param user The user's info
+ * @param newUsername The user's new username
+ */
+export async function updateUserUsername(user: UserBasicInfo, newUsername: string) {
+    await updateUserUsernameById(user.id, newUsername)
+
+    // TODO Sync user
+
+    if (appSzurubooruClient !== null) {
+        await appSzurubooruClient.updateUser(user.username, {
+            name: newUsername,
+        })
+    }
+}
+
+export async function syncSzurubooruUser(user: UserBasicInfo) {
+    // TODO
 }

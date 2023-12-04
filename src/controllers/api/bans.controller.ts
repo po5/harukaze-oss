@@ -1,7 +1,7 @@
 import { Context, Next } from 'koa';
 import {
     fetchBannedUserInfos,
-    fetchBannedUsersCount,
+    fetchBannedUsersCount, fetchUserBasicInfoByUsername,
     fetchUserByUsername,
     updateUserBannedById
 } from 'models/users.model'
@@ -10,6 +10,7 @@ import { extractOffsetAndLimit } from 'utils/pagination.util'
 import { MAX_API_PAGINATION_LIMIT } from 'root/constants'
 import { createBans, deleteBansByIps, fetchBanInfos, fetchBansCount } from 'models/ipbans.model'
 import { fetchUniqueIpLoginInfosByUser } from 'models/userlogins.model'
+import { updateUserBanned } from 'utils/users.util'
 
 /**
  * Extracts IPs from the body
@@ -78,16 +79,16 @@ export async function postSetUserBan(ctx: Context, _next: Next) {
     }
 
     // Fetch user
-    const [ user ] = await fetchUserByUsername(username)
+    const user = await fetchUserBasicInfoByUsername(username)
 
     // Check if user exists
-    if(!user) {
+    if(user === null) {
         ctx.apiError('invalid_user')
         return
     }
 
     // Update user ban
-    await updateUserBannedById(user.id, banned)
+    await updateUserBanned(user, banned)
 
     // Success
     ctx.apiSuccess()

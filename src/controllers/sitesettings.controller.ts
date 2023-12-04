@@ -2,6 +2,8 @@ import config from '../../config.json'
 import { Context, Next } from 'koa'
 import { UserRoles } from 'utils/users.util'
 import { saveConfig } from 'utils/config.util'
+import { appSzurubooruClient } from 'utils/szurubooru.util'
+import { fetchUserBasicInfosWhereIdMoreThan, UserBasicInfo } from 'models/users.model'
 
 async function handleUnauthorized(ctx: Context, next: Next): Promise<boolean> {
     // Deal with unauthenticated and unauthorized users
@@ -39,6 +41,7 @@ function setupCtx(ctx: Context) {
     ctx.state.errorPage = config.site.errorPage
     ctx.state.pageSize = config.pagination.pageSize
     ctx.state.booruPageSize = config.pagination.booruPageSize
+    ctx.state.isSzurubooruEnabled = appSzurubooruClient !== null
 }
 
 /**
@@ -54,20 +57,8 @@ export async function getSiteSettings(ctx: Context, next: Next) {
     setupCtx(ctx)
 }
 
-/**
- * POST controller for site settings page
- * @param ctx The context
- * @param next The next function
- */
-export async function postSiteSettings(ctx: Context, next: Next) {
-    if(!(await handleUnauthorized(ctx, next)))
-        return
-
-    // Setup context
-    setupCtx(ctx)
-
+async function actionUpdateSiteMetadata(body: any, ctx: Context, next: Next) {
     // Collect data
-    const body = ctx.request.body
     const siteTitle = body['site-title']
     const siteDescription = body['site-description']
     const showContributors = body['show-contributors']?.toLowerCase() === 'on'
@@ -77,7 +68,7 @@ export async function postSiteSettings(ctx: Context, next: Next) {
     const errorPage = body['error-page']
     const pageSize = parseInt(body['page-size'], 10)
     const booruPageSize = parseInt(body['booru-page-size'], 10)
-    
+
     // Check data
     if(
         siteTitle
@@ -112,7 +103,7 @@ export async function postSiteSettings(ctx: Context, next: Next) {
         // Set not found page
         ctx.state.notFoundPage = notFoundPage
         config.site.notFoundPage = notFoundPage
-        
+
         // Set error page
         ctx.state.errorPage = errorPage
         config.site.errorPage = errorPage
@@ -129,5 +120,65 @@ export async function postSiteSettings(ctx: Context, next: Next) {
         await saveConfig()
     } else {
         ctx.state.error = 'Missing or malformed value(s)'
+    }
+}
+
+async function actionSzSyncUsers(body: any, ctx: Context, next: Next) {
+    let lastId = 0
+    let lastUserBatch: UserBasicInfo[]
+
+    let failedUsers: UserBasicInfo[] = []
+    let syncedCount = 0
+
+    while (true) {
+        lastUserBatch = await fetchUserBasicInfosWhereIdMoreThan(lastId)
+
+        if (lastUserBatch.length < 1)
+            break
+
+        lastId = lastUserBatch[lastUserBatch.length - 1].id
+
+        for (const user of lastUserBatch) {
+            try {
+                // Try to fetch sz user
+                const szUser = appSzurubooruClient!.getUserOrNull(user.username)
+
+                if (szUser !== null) {
+                    // Update user
+
+
+                    syncedCount++
+                }
+            } catch (err) {
+                console.error(`Failed to sync user with username "${user.username}":`, err)
+                failedUsers.push(user)
+            }
+        }
+    }
+}
+
+/**
+ * POST controller for site settings page
+ * @param ctx The context
+ * @param next The next function
+ */
+export async function postSiteSettings(ctx: Context, next: Next) {
+    if(!(await handleUnauthorized(ctx, next)))
+        return
+
+    // Setup context
+    setupCtx(ctx)
+
+    const body = ctx.request.body
+    switch (body.action) {
+        case 'update-site-metadata':
+            await actionUpdateSiteMetadata(body, ctx, next)
+            break
+        case 'sz-sync-users':
+            await actionSzSyncUsers(body, ctx, next)
+            break
+        default:
+            ctx.state.error = 'Invalid action'
+            break
     }
 }

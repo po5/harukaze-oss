@@ -1,7 +1,7 @@
 import argon2 from 'argon2'
 import { createBan } from 'models/ipbans.model'
 import { Context, Next } from 'koa'
-import { fetchUserAndIpBanByUsername } from 'models/users.model'
+import { fetchUserAndIpBanByUsername, userRowToBasicInfo } from 'models/users.model'
 import { changeUserPassword } from 'utils/users.util'
 import { createLogin } from 'models/userlogins.model'
 
@@ -137,7 +137,7 @@ export async function postLogin(ctx: Context, _next: Next) {
     const [ user ] = await fetchUserAndIpBanByUsername(username, ctx.ip)
 
     // Check if the user exists
-    if(!user) {
+    if(user === undefined) {
         ctx.state.error = 'Wrong username or password'
         return
     }
@@ -165,7 +165,7 @@ export async function postLogin(ctx: Context, _next: Next) {
 
     // Rehash password necessary
     if(argon2.needsRehash(user.user_hash)) {
-        await changeUserPassword(user.id, password)
+        await changeUserPassword(userRowToBasicInfo(user), password)
     }
 
     // Set user ID in session

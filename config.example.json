@@ -32,6 +32,16 @@
         "ffmpegPath": "/usr/bin/ffmpeg",
         "ffprobePath": "/usr/bin/ffprobe"
     },
+    "szurubooru": {
+        "enable": true,
+        "baseUrl": "https://booru.example.com",
+        "apiBaseUrl": "https://booru.example.com/api",
+        "credentials": {
+            "username": "admin",
+            "password": null,
+            "token": "abcdefghijklmnopqrstuvwxyz"
+        }
+    },
     "knex": {
         "client": "mysql",
         "connection": {

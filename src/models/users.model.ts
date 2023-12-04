@@ -1,72 +1,128 @@
 import config from '../../knexfile'
 import Knex, { Knex as KnexType } from 'knex'
 import { UserRoles } from 'utils/users.util'
+import { firstOrNull } from 'utils/misc.util'
 
 const knex = Knex(config)
 
 /**
- * Info about a user
+ * A raw user row
  */
-export type UserInfo = {
+export interface UserRow {
     /**
-     * The user's ID
+     * The user's ID (formatted as a string because it's a BigInt)
      */
-    id: number,
+    id: string
 
     /**
-     * The user's ID
+     * The user's username
      */
-    username: string,
+    user_username: string
 
     /**
      * The user's bio, or null if none
      */
-    bio: string | null,
+    user_bio: string | null
+
+    /**
+     * The user's password hash
+     */
+    user_hash: string
+
+    /**
+     * The user's role
+     */
+    user_role: number
+
+    /**
+     * The key for the user's avatar on disk, or null if the user has no avatar
+     */
+    user_avatar_key: string | null
+
+    /**
+     * Whether the user is banned (formatted as a string because it's a TinyInt)
+     */
+    user_banned: number
+
+    /**
+     * The user's creation date formatted an ISO 8601 date string
+     */
+    user_created_on: string
+
+    /**
+     * The user's info field, or null if none
+     */
+    user_info: string | null
+
+    /**
+     * The user's avatar comment character ID, or -1 if none
+     */
+    user_character: number | null
+}
+
+/**
+ * Info about a user
+ */
+export interface UserInfo {
+    /**
+     * The user's ID
+     */
+    id: string
+
+    /**
+     * The user's ID
+     */
+    username: string
+
+    /**
+     * The user's bio, or null if none
+     */
+    bio: string | null
 
     /**
      * The user's Role ID
      */
-    role: UserRoles,
+    role: UserRoles
 
     /**
      * The user's avatar key, or null if they have no avatar
      */
-    avatar_key: string | null,
+    avatar_key: string | null
 
     /**
      * The user character's ID
      */
-    character: number,
+    character: number
 
     /**
      * The user character's name
      */
-    character_name: string | null,
+    character_name: string | null
 
     /**
      * The user character's default mood ID
      */
-    character_default: number | null,
+    character_default: number | null
 
     /**
      * The user's info text, or null if none
      */
-    info: string | null,
+    info: string | null
 
     /**
      * Whether the user is banned
      */
-    banned: boolean,
+    banned: boolean
 
     /**
      * The total number of comments the user has made
      */
-    comments: number,
+    comments: number
 
     /**
      * The last IP the user logged in with, or null if they never logged in
      */
-    last_ip: string | null,
+    last_ip: string | null
 
     /**
      * The date the user was created on
@@ -74,10 +130,37 @@ export type UserInfo = {
     created_on: Date
 }
 
-/* Utility functions */
 /**
- * @return
+ * Basic information about a user
  */
+export interface UserBasicInfo {
+    /**
+     * The user's ID
+     */
+    id: string
+
+    /**
+     * The user's username
+     */
+    username: string
+
+    /**
+     * The user's role
+     */
+    role: UserRoles
+
+    /**
+     * Whether the user is banned
+     */
+    isBanned: boolean,
+
+    /**
+     * The user's creation date
+     */
+    createdOn: Date
+}
+
+/* Utility functions */
 function userInfo(): KnexType.QueryInterface {
     return knex('users')
         .select('users.id')
@@ -105,8 +188,25 @@ function userInfo(): KnexType.QueryInterface {
         .leftJoin('moodchars', 'user_character', 'moodchars.id')
 }
 function processUserInfoRows(rows: any[]): UserInfo[] {
-    for(const row of rows)
+    for(const row of rows) {
         row.created_on = new Date(row.created_on)
+    }
+    return rows
+}
+
+function userBasicInfo(): KnexType.QueryInterface {
+    return knex('users')
+        .select('users.id')
+        .select(knex.ref('user_username').as('username'))
+        .select(knex.ref('user_role').as('role'))
+        .select(knex.ref('user_banned').as('isBanned'))
+        .select(knex.ref('user_created_on').as('createdOn'))
+}
+function processUserBasicInfoRows(rows: any[]): UserBasicInfo[] {
+    for (const row of rows) {
+        row.createdOn = new Date(row.createdOn)
+        row.isBanned = !!row.isBanned
+    }
     return rows
 }
 
@@ -139,10 +239,10 @@ export async function createUser(username: string, bio: string | null, hash: str
  * @param id The user's ID
  * @returns An array with the row containing the user or an empty array if none exists
  */
-export async function fetchUserById(id: number): Promise<[ any? ]> {
+export async function fetchUserById(id: number): Promise<[ UserRow? ]> {
     return await knex('users')
         .select('*')
-        .where('id', id) as [ any? ]
+        .where('id', id) as [ UserRow? ]
 }
 
 /**
@@ -162,10 +262,10 @@ export async function fetchUserInfoById(id: number): Promise<[ UserInfo? ]> {
  * @param username The user's username
  * @returns An array with the row containing the user or an empty array if none exists
  */
-export async function fetchUserByUsername(username: string): Promise<[ any? ]> {
+export async function fetchUserByUsername(username: string): Promise<[ UserRow? ]> {
     return await knex('users')
         .select('*')
-        .where(knex.raw('LOWER(user_username)') as any, username.toLowerCase()) as [ any? ]
+        .where(knex.raw('LOWER(user_username)') as any, username.toLowerCase()) as [ UserRow? ]
 }
 
 /**
@@ -217,7 +317,7 @@ export async function fetchAdminInfos(offset: number, limit: number): Promise<Us
  * @param ip The IP to check if banned (or null to check if IP is not banned)
  * @returns An array with the row containing the user or an empty array if none exists
  */
-export async function fetchUserAndIpBanById(id: number, ip: string | null): Promise<[ ({ ban_created_at: string } & any)? ]> {
+export async function fetchUserAndIpBanById(id: number, ip: string | null): Promise<[ ({ ban_created_on: string } & UserRow)? ]> {
     return await knex('users')
         .select('*')
         .select(knex.raw(`(
@@ -234,7 +334,7 @@ export async function fetchUserAndIpBanById(id: number, ip: string | null): Prom
  * @param ip The IP to check if banned (or null to check if IP is not banned)
  * @returns An array with the row containing the user or an empty array if none exists
  */
-export async function fetchUserAndIpBanByUsername(username: string, ip: string | null): Promise<[ ({ ban_created_at: string } & any)? ]> {
+export async function fetchUserAndIpBanByUsername(username: string, ip: string | null): Promise<[ ({ ban_created_on: string } & UserRow)? ]> {
     return await knex('users')
         .select('*')
         .select(knex.raw(`(
@@ -273,6 +373,31 @@ export async function fetchUserInfosByRoles(roles: UserRoles[], offset: number, 
             .whereIn('user_role', roles)
             .offset(offset)
             .limit(limit)
+    )
+}
+
+/**
+ * Fetches basic info about the user with the specified ID, or null if none exists
+ * @param id The user's ID
+ * @returns {} The user's basic info
+ */
+export async function fetchUserBasicInfoById(id: number): Promise<UserBasicInfo | null> {
+    return firstOrNull(processUserBasicInfoRows(
+        await userBasicInfo()
+            .where('id', id)
+    ))
+}
+
+/**
+ * Fetches basic info about all users whose IDs are greater than the specified ID
+ * @param id The ID to start from
+ * @returns {} All users' basic info
+ */
+export async function fetchUserBasicInfosWhereIdMoreThan(id: number): Promise<UserBasicInfo[]> {
+    return processUserBasicInfoRows(
+        await userBasicInfo()
+            .where('id', '>', id)
+            .orderBy('id', 'asc')
     )
 }
 
@@ -316,7 +441,7 @@ export async function fetchUsersCountByRoles(roles: UserRoles[]): Promise<number
  * @param id The user's ID
  * @param hash The new password hash
  */
-export async function updateUserHashById(id: number, hash: string) {
+export async function updateUserHashById(id: string, hash: string) {
     return knex('users')
         .update({
             user_hash: hash
@@ -373,7 +498,7 @@ export async function updateUserBannedById(id: string, banned: boolean) {
  * @param role The user's new role
  * @returns Whether the account exists and was updated
  */
-export async function updateUserRoleById(id: number, role: UserRoles) {
+export async function updateUserRoleById(id: string, role: UserRoles) {
     return (
         await knex('users')
             .update({
@@ -389,7 +514,7 @@ export async function updateUserRoleById(id: number, role: UserRoles) {
  * @param newUsername The user's new username
  * @returns Whether the account exists and was updated
  */
-export async function updateUserUsernameById(id: number, newUsername: string): Promise<boolean> {
+export async function updateUserUsernameById(id: string, newUsername: string): Promise<boolean> {
     return (
         await knex('users')
             .update({
@@ -411,4 +536,19 @@ export async function updateUserCharacterByCharacter(oldChar: number, newChar: n
             user_character: newChar
         })
         .where('user_character', oldChar)
+}
+
+/**
+ * Converts a {@link UserRow} object to a {@link UserBasicInfo} object
+ * @param row The {@link UserRow} object
+ * @returns The resulting {@link UserBasicInfo} object
+ */
+export function userRowToBasicInfo(row: UserRow): UserBasicInfo {
+    return {
+        id: row.id,
+        username: row.user_username,
+        role: row.user_role as UserRoles,
+        isBanned: !!row.user_banned,
+        createdOn: new Date(row.user_created_on),
+    }
 }

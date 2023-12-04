@@ -2,6 +2,7 @@ import { Context } from 'koa'
 import Router from 'koa-router'
 import { renderTemplate } from 'utils/render.util'
 import { apiError, apiRes } from 'utils/api.util'
+import { appSzurubooruClient } from 'utils/szurubooru.util'
 
 // Prefix for all routes
 const prefix = '/booru'
@@ -50,7 +51,13 @@ export function booruRoutes(router: Router) {
     router.use(renderDataMiddleware)
 
     /* Redirects */
-    router.get(prefix, async ctx => await ctx.redirect('/booru/tags'))
+    router.get(prefix, ctx => {
+        if (appSzurubooruClient === null) {
+            ctx.redirect('/booru/tags')
+        } else {
+            ctx.redirect(appSzurubooruClient.baseUrl + '/posts')
+        }
+    })
 
     /* Views */
     router.get(prefix+'/tags', async (ctx, next) => {
@@ -59,8 +66,12 @@ export function booruRoutes(router: Router) {
     })
     
     router.get(prefix+'/item/:id', async (ctx, next) => {
-        await itemController.getItem(ctx, next)
-        await render('item', ctx)
+        if (appSzurubooruClient === null) {
+            await itemController.getItem(ctx, next)
+            await render('item', ctx)
+        } else {
+            ctx.redirect(appSzurubooruClient.baseUrl + '/post/' + ctx.params.id)
+        }
     })
 
     router.get(prefix+'/user/:username', async (ctx, next) => {

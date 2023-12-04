@@ -56,7 +56,6 @@ let started = false
  * @param args Application arguments
  */
 async function main(args: string[]) {
-    // TODO Replace this functionality in the core server
     await handleCliArgs(args)
 
     // Setup logging utility if not disabled
@@ -238,7 +237,7 @@ async function main(args: string[]) {
             } else {
                 host = config.server.host+':'+config.server.port
             }
-            
+
             // Redirect to HTTPS version
             res.setHeader('Location', `https://${host}${req.url || ''}`)
             res.end()
