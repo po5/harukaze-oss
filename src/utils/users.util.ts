@@ -3,11 +3,18 @@ import {
     createUser as createUserRow,
     updateUserBannedById,
     updateUserHashById,
-    updateUserRoleById, updateUserUsernameById, UserBasicInfo
+    updateUserRoleById,
+    updateUserUsernameById,
+    UserBasicInfo
 } from '../models/users.model'
 import { Context } from 'koa'
 import { getCharacterById, getMoodsByCharacter } from './moods.util'
-import { appSzurubooruClient, SzurubooruUserRank } from 'utils/szurubooru.util'
+import {
+    appSzurubooruClient,
+    SzurubooruClientError,
+    SzurubooruErrorName, SzurubooruIntegrityVersion,
+    SzurubooruUserRank
+} from 'utils/szurubooru.util'
 
 /**
  * User roles
@@ -53,10 +60,15 @@ const roleToSzurubooruUserRankMappings = {
 /**
  * Returns the szurubooru rank equivalent of the provided user role
  * @param role The user role
+ * @param isBanned Whether the user is banned (optional, but should be provided if available)
  * @returns {} The equivalent szurubooru rank
  */
-function roleToSzurubooruUserRank(role: UserRoles): SzurubooruUserRank {
-    return roleToSzurubooruUserRankMappings[role] ?? SzurubooruUserRank.Regular
+function roleToSzurubooruUserRank(role: UserRoles, isBanned?: boolean): SzurubooruUserRank {
+    if (isBanned) {
+        return SzurubooruUserRank.Restricted
+    } else {
+        return roleToSzurubooruUserRankMappings[role] ?? SzurubooruUserRank.Regular
+    }
 }
 
 /**
@@ -123,6 +135,37 @@ export async function identifyContextWithUserRow(ctx: Context, userRow: any) {
 }
 
 /**
+ * Syncs szurubooru user info based on the provided user info.
+ * If szurubooru integration is not enabled, this does nothing.
+ * @param user The user's info
+ * @param password The user's password (optional)
+ * @param version The szurubooru user's current integrity version (optional, but should be provided if available)
+ */
+export async function syncSzurubooruUser(user: UserBasicInfo, password?: string, version?: SzurubooruIntegrityVersion) {
+    if (appSzurubooruClient === null)
+        return
+
+    try {
+        await appSzurubooruClient.updateUser(user.username, {
+            password,
+            name: user.username,
+            rank: roleToSzurubooruUserRank(user.role, user.isBanned),
+        }, version)
+    } catch (err) {
+        if (err instanceof SzurubooruClientError && password !== undefined && err.response.name !== SzurubooruErrorName.UserNotFoundError) {
+            // User was not found, but we have enough information to create a new user
+            await appSzurubooruClient.createUser({
+                password,
+                name: user.username,
+                rank: roleToSzurubooruUserRank(user.role, user.isBanned),
+            })
+        } else {
+            throw err
+        }
+    }
+}
+
+/**
  * Changes a user's password
  * @param user The user's info
  * @param password The new password
@@ -131,14 +174,9 @@ export async function changeUserPassword(user: UserBasicInfo, password: string) 
     // Hash password
     let hash = await argon2.hash(password)
 
-    // Update hash
     await updateUserHashById(user.id, hash)
 
-    if (appSzurubooruClient !== null) {
-        await appSzurubooruClient.updateUser(user.username, {
-            password,
-        })
-    }
+    await syncSzurubooruUser(user, password)
 }
 
 /**
@@ -149,13 +187,7 @@ export async function changeUserPassword(user: UserBasicInfo, password: string) 
 export async function updateUserBanned(user: UserBasicInfo, isBanned: boolean) {
     await updateUserBannedById(user.id, isBanned)
 
-    // TODO Sync user
-
-    if (appSzurubooruClient !== null) {
-        await appSzurubooruClient.updateUser(user.username, {
-            rank: isBanned ? SzurubooruUserRank.Restricted : SzurubooruUserRank.Regular,
-        })
-    }
+    await syncSzurubooruUser({ ...user, isBanned })
 }
 
 /**
@@ -166,13 +198,7 @@ export async function updateUserBanned(user: UserBasicInfo, isBanned: boolean) {
 export async function updateUserRole(user: UserBasicInfo, role: UserRoles) {
     await updateUserRoleById(user.id, role)
 
-    // TODO Sync user
-
-    if (appSzurubooruClient !== null) {
-        await appSzurubooruClient.updateUser(user.username, {
-            rank: roleToSzurubooruUserRank(role),
-        })
-    }
+    await syncSzurubooruUser({ ...user, role })
 }
 
 /**
@@ -183,15 +209,5 @@ export async function updateUserRole(user: UserBasicInfo, role: UserRoles) {
 export async function updateUserUsername(user: UserBasicInfo, newUsername: string) {
     await updateUserUsernameById(user.id, newUsername)
 
-    // TODO Sync user
-
-    if (appSzurubooruClient !== null) {
-        await appSzurubooruClient.updateUser(user.username, {
-            name: newUsername,
-        })
-    }
-}
-
-export async function syncSzurubooruUser(user: UserBasicInfo) {
-    // TODO
+    await syncSzurubooruUser({ ...user, username: newUsername })
 }

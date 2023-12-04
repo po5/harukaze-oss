@@ -1,6 +1,6 @@
 import config from '../../config.json'
 import { Context, Next } from 'koa'
-import { UserRoles } from 'utils/users.util'
+import { syncSzurubooruUser, UserRoles } from 'utils/users.util'
 import { saveConfig } from 'utils/config.util'
 import { appSzurubooruClient } from 'utils/szurubooru.util'
 import { fetchUserBasicInfosWhereIdMoreThan, UserBasicInfo } from 'models/users.model'
@@ -124,7 +124,7 @@ async function actionUpdateSiteMetadata(body: any, ctx: Context, next: Next) {
 }
 
 async function actionSzSyncUsers(body: any, ctx: Context, next: Next) {
-    let lastId = 0
+    let lastId = '0'
     let lastUserBatch: UserBasicInfo[]
 
     let failedUsers: UserBasicInfo[] = []
@@ -141,11 +141,11 @@ async function actionSzSyncUsers(body: any, ctx: Context, next: Next) {
         for (const user of lastUserBatch) {
             try {
                 // Try to fetch sz user
-                const szUser = appSzurubooruClient!.getUserOrNull(user.username)
+                const szUser = await appSzurubooruClient!.getUserOrNull(user.username)
 
                 if (szUser !== null) {
-                    // Update user
-
+                    // Sync user
+                    await syncSzurubooruUser(user, undefined, szUser.version)
 
                     syncedCount++
                 }
@@ -154,6 +154,27 @@ async function actionSzSyncUsers(body: any, ctx: Context, next: Next) {
                 failedUsers.push(user)
             }
         }
+    }
+
+    console.log(`Successfully synced user info for ${syncedCount} user(s)`)
+
+    // Report any syncing errors
+    if (failedUsers.length > 0) {
+        let errMsg = 'Failed to sync szurubooru user accounts for '
+
+        const usernames: string[] = []
+        let usersCount = Math.min(failedUsers.length, 5)
+        for (let i = 0; i < usersCount; i++) {
+            usernames.push(failedUsers[i].username)
+        }
+
+        errMsg += usernames.join(', ')
+
+        if (usernames.length < failedUsers.length) {
+            errMsg += ` and ${failedUsers.length - usernames.length} more`
+        }
+
+        ctx.state.error = errMsg
     }
 }
 

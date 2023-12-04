@@ -1171,7 +1171,7 @@ export class SzurubooruClient {
             headers['Authorization'] = this.authzStr
         }
 
-        const ops: RequestInit = { headers }
+        const ops: RequestInit = { method, headers }
         if (method !== 'GET' && body !== undefined) {
             headers['Content-Type'] = 'application/json'
             ops.body = JSON.stringify(body)

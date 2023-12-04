@@ -381,10 +381,22 @@ export async function fetchUserInfosByRoles(roles: UserRoles[], offset: number, 
  * @param id The user's ID
  * @returns {} The user's basic info
  */
-export async function fetchUserBasicInfoById(id: number): Promise<UserBasicInfo | null> {
+export async function fetchUserBasicInfoById(id: string): Promise<UserBasicInfo | null> {
     return firstOrNull(processUserBasicInfoRows(
         await userBasicInfo()
             .where('id', id)
+    ))
+}
+
+/**
+ * Fetches basic info about the user with the specified username, or null if none exists
+ * @param username The user's username
+ * @returns {} The user's basic info
+ */
+export async function fetchUserBasicInfoByUsername(username: string): Promise<UserBasicInfo | null> {
+    return firstOrNull(processUserBasicInfoRows(
+        await userBasicInfo()
+            .where('user_username', username)
     ))
 }
 
@@ -393,7 +405,7 @@ export async function fetchUserBasicInfoById(id: number): Promise<UserBasicInfo 
  * @param id The ID to start from
  * @returns {} All users' basic info
  */
-export async function fetchUserBasicInfosWhereIdMoreThan(id: number): Promise<UserBasicInfo[]> {
+export async function fetchUserBasicInfosWhereIdMoreThan(id: string): Promise<UserBasicInfo[]> {
     return processUserBasicInfoRows(
         await userBasicInfo()
             .where('id', '>', id)

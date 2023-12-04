@@ -4,8 +4,7 @@ import { extractOffsetAndLimit } from 'utils/pagination.util'
 import { setToArray } from 'utils/misc.util'
 import { updateUserRole, UserRoleIds, UserRolesCount } from 'utils/users.util'
 import {
-    fetchUserBasicInfoById, fetchUserBasicInfoByUsername,
-    fetchUserByUsername,
+    fetchUserBasicInfoByUsername,
     fetchUserInfosByRoles,
     fetchUsersCountByRoles
 } from 'models/users.model'
