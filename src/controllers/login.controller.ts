@@ -2,7 +2,7 @@ import argon2 from 'argon2'
 import { createBan } from 'models/ipbans.model'
 import { Context, Next } from 'koa'
 import { fetchUserAndIpBanByUsername, userRowToBasicInfo } from 'models/users.model'
-import { changeUserPassword } from 'utils/users.util'
+import { changeUserPassword, syncSzurubooruUser } from 'utils/users.util'
 import { createLogin } from 'models/userlogins.model'
 
 // IP address rate limiting
@@ -163,9 +163,17 @@ export async function postLogin(ctx: Context, _next: Next) {
     // Clear IP login attempts
     clearLoginAttempts(ctx.ip)
 
+    const userBasicInfo = userRowToBasicInfo(user)
+
     // Rehash password necessary
+    let updatedPass = false
     if(argon2.needsRehash(user.user_hash)) {
-        await changeUserPassword(userRowToBasicInfo(user), password)
+        await changeUserPassword(userBasicInfo, password)
+        updatedPass = true
+    }
+
+    if (!updatedPass) {
+        await syncSzurubooruUser(userBasicInfo, password)
     }
 
     // Set user ID in session
