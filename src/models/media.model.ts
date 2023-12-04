@@ -1,6 +1,6 @@
 import config from '../../knexfile'
 import Knex, { Knex as KnexType } from 'knex'
-import { arrayToSet, setToArray } from 'utils/misc.util'
+import { arrayToSet, firstOrNull, setToArray } from 'utils/misc.util'
 import { CommentType } from 'models/comments.model'
 import { MimeString } from 'types/misc.types'
 
@@ -303,12 +303,12 @@ export async function fetchMediaInfoById(id: number): Promise<[ MediaInfo? ]> {
  * @param id The ID
  * @returns An array with the row containing the media info or an empty array if none exists
  */
-export async function fetchBooruVisibleMediaInfoById(id: number): Promise<[ MediaInfo? ]> {
-    return processMediaInfoRows(
+export async function fetchBooruVisibleMediaInfoById(id: number): Promise<MediaInfo | null> {
+    return firstOrNull(processMediaInfoRows(
         await mediaInfo()
             .where('media_booru_visible', true)
             .andWhere('media.id', id)
-    ) as [ MediaInfo? ]
+    ))
 }
 
 /**

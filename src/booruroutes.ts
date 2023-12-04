@@ -39,6 +39,7 @@ export function booruRoutes(router: Router) {
     // Controller imports
     const searchController = require('./controllers/booru/search.controller')
     const itemController = require('./controllers/booru/item.controller')
+    const itemCommentsController = require('./controllers/booru/itemcomments.controller')
     const collectionsController = require('./controllers/booru/collections.controller')
     const collectionController = require('./controllers/booru/collection.controller')
     const userController = require('./controllers/booru/user.controller')
@@ -72,6 +73,14 @@ export function booruRoutes(router: Router) {
         } else {
             ctx.redirect(appSzurubooruClient.baseUrl + '/post/' + ctx.params.id)
         }
+    })
+
+    router.get(prefix+'/item/:id/comments', async (ctx, next) => {
+        await itemCommentsController.getItemComments(ctx, next)
+
+        // Render the page without layout
+        ctx.type = 'text/html; charset=utf-8'
+        ctx.body = await renderTemplate('/booru/itemcomments', ctx.state)
     })
 
     router.get(prefix+'/user/:username', async (ctx, next) => {

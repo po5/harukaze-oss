@@ -29,10 +29,10 @@ export async function getItem(ctx: Context, next: Next) {
         tags = setToArray(tagsRaw)
 
     // Fetch item
-    const [ item ] = await fetchBooruVisibleMediaInfoById(id)
+    const item = await fetchBooruVisibleMediaInfoById(id)
 
     // Check if item exists
-    if(!item) {
+    if(item === null) {
         ctx.state.noRender = true
         await next()
         return

@@ -1,0 +1,26 @@
+<%
+/**
+ * Whether the current user is authenticated
+ * @type {boolean}
+ */
+var authed = authed
+
+/**
+ * The current user or undefined if {@link authed} is false
+ * @type {?any}
+ */
+var user = user
+%>
+<script>
+    <% if(authed) { %>
+    var authed = true;
+    var user = {
+        id: <%= user.id %>,
+        username: "<%= user.username || user.user_username %>",
+        role: <%= user.role || user.user_role %>,
+    };
+    <% } else { %>
+    var authed = false;
+    var user = null;
+    <% } %>
+</script>

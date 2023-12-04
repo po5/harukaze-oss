@@ -7,6 +7,10 @@ body {
     font-family: Verdana;
 }
 
+body.no-bg {
+    background: none !important;
+}
+
 .container {
     background: #eee;
     border: 1px solid #aaa;
@@ -49,97 +53,6 @@ body {
 }
 .tag-listing-count {
     font-size: 15px;
-}
-
-.mood-choice {
-    display: inline-block;
-}
-.mood-choice img {
-    width: 50px;
-}
-.mood-choice input {
-    display: none;
-}
-.mood-choice input:checked + img {
-    outline: 2px solid rgb(0, 20, 180);
-}
-.mood-chooser-open, .comment-reply-open {
-    cursor: pointer;
-    display: inline-block;
-}
-.mood-chooser-moods {
-    width: 175px;
-}
-.comment-mood {
-    width: 50px;
-    margin-right: 10px
-}
-.comment-mood img {
-    width: 100%;
-    height: 100%;
-}
-
-.comment-box {
-    margin-left: 4px;
-    margin-bottom: 4px;
-}
-.comment-box textarea {
-    width: calc(100% - 12px);
-    height: 100%;
-    resize: vertical;
-}
-.comment-content {
-    margin-left: 4px;
-    font-size: 14px;
-    color: #555;
-    margin-bottom:4px;
-    white-space: pre-wrap;
-}
-.commentdate {
-    margin-right: 4px;
-    font-size: 11px;
-    color: #555;
-    margin-bottom:4px;
-    font-weight: bold;
-    text-align: right;
-}
-.comment-delete {
-    text-align: right;
-}
-.comment-delete button {
-    color: white;
-    background: red;
-    border: none;
-}
-.comment-reply-content {
-    margin-left: 10px;
-    color: #555;
-    margin-bottom:4px;
-    white-space: pre-wrap;
-}
-.comment-reply {
-    margin-left: 32px;
-}
-.comment-reply-box {
-    margin-left: 36px;
-}
-.comment-reply-box textarea {
-    width: calc(100% - 150px);
-    height: 50px;
-    min-height: 50px;
-    resize: vertical;
-}
-.commentreplyicon {
-    border: 4px #aaa;
-    border-style: double;
-    border-radius: 3px;
-}
-.commentreplyicon {
-    margin-left: 32px;
-}
-.commentreplyicon img {
-    width: 24px;
-    height: 24px;
 }
 
 .page-arrow {

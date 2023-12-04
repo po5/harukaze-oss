@@ -28,44 +28,46 @@ export async function getComments(ctx: Context, _next: Next) {
     const order = isNaN(orderInt) ? 0 : Math.min(Math.max(orderInt, 0), Object.keys(CommentOrder).length)
 
     // Check ID validity
-    if(!isNaN(id)) {
-        // Check if booru post exists
-        const mediaRes = await fetchBooruVisibleMediaInfoById(id)
-
-        if(mediaRes.length > 0) {
-            // Fetch total comments
-            const total = await fetchNormalCommentsCountByPost(id, CommentType.BOORU)
-
-            // Fetch comments
-            const comments: (CommentInfo & { replies: CommentInfo[] })[] = await fetchNormalCommentInfosByPost(id, CommentType.BOORU, offset, limit, order) as any[]
-
-            // Fetch replies
-            const commentIds = new Array(comments.length)
-            for(let i = 0; i < comments.length; i++)
-                commentIds[i] = comments[i].id
-            const replies = await fetchReplyCommentsByParentIds(commentIds)
-
-            // Attach replies to comments
-            for(const comment of comments)
-                comment.replies = []
-            for(const reply of replies) {
-                // Find parent and add reply
-                for(const comment of comments) {
-                    if(comment.id === reply.parent) {
-                        comment.replies.push(reply)
-                        break
-                    }
-                }
-            }
-
-            // Send success
-            ctx.apiSuccess({ comments, total })
-        } else {
-            ctx.apiError('invalid_id')
-        }
-    } else {
+    if (isNaN(id)) {
         ctx.apiError('invalid_id')
+        return
     }
+
+    // Check if booru post exists
+    const media = await fetchBooruVisibleMediaInfoById(id)
+
+    if (media === null) {
+        ctx.apiError('invalid_id')
+        return
+    }
+
+    // Fetch total comments
+    const total = await fetchNormalCommentsCountByPost(id, CommentType.BOORU)
+
+    // Fetch comments
+    const comments: (CommentInfo & { replies: CommentInfo[] })[] = await fetchNormalCommentInfosByPost(id, CommentType.BOORU, offset, limit, order) as any[]
+
+    // Fetch replies
+    const commentIds = new Array(comments.length)
+    for(let i = 0; i < comments.length; i++)
+        commentIds[i] = comments[i].id
+    const replies = await fetchReplyCommentsByParentIds(commentIds)
+
+    // Attach replies to comments
+    for(const comment of comments)
+        comment.replies = []
+    for(const reply of replies) {
+        // Find parent and add reply
+        for(const comment of comments) {
+            if(comment.id === reply.parent) {
+                comment.replies.push(reply)
+                break
+            }
+        }
+    }
+
+    // Send success
+    ctx.apiSuccess({ comments, total })
 }
 
 /**
@@ -114,7 +116,7 @@ export async function postCreateComment(ctx: Context, _next: Next) {
     }
 
     // Check if item exists
-    if((await fetchBooruVisibleMediaInfoById(id)).length < 1) {
+    if(await fetchBooruVisibleMediaInfoById(id) === null) {
         ctx.apiError('invalid_item_id')
         return
     }

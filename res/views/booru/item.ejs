@@ -65,132 +65,16 @@
     <% } %>
     <br><br>
 </center><% } %>
-<div id="item-comments-container">
-    <div v-if="loading" id="item-comments-loading">
-        Loading comments...
-    </div>
-    <div v-else v-show="true" style="display: none">
-        <div id="item-comment-form">
-            <form v-if="authed" @submit.prevent="commentForm(null)">
-                <p v-if="error" class="form-error">{{ error }}</p>
-                <br>
-                <textarea placeholder="Type something..." ref="mainFormCommentContent" rows="10" cols="50"></textarea>
-                <br>
-                <div class="mood-chooser">
-                    <div class="mood-chooser-open" @click="mainFormShowMoods = !mainFormShowMoods">Moods {{ mainFormShowMoods ? '⯆' : '⯈' }}</div>
-                    <div v-show="mainFormShowMoods" class="mood-chooser-moods" style="display:block">
-                        <div v-for="mood in moods" class="mood-choice">
-                            <label>
-                                <input type="radio" name="mood" :value="mood.id" v-model="mainFormMood">
-                                <img :src="'/assets/mood/'+mood.id" :alt="mood.name">
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <input type="submit" value="Post that!">
-            </form>
-            <p v-else><a href="/login">Log in</a> to post your own comments!</p>
-        </div>
-        <br><br>
-        <div v-if="comments.length > 0" id="item-comments">
-            <div class="item-comments-nav">
-                <span class="page-arrow" @click="lastPage()" v-if="currentPage > 1">&lt;</span>
-                <span class="page-number">Page {{ currentPage }} of {{ pages }}</span>
-                <span class="page-arrow" @click="nextPage()" v-if="currentPage < pages">&gt;</span>
-            </div>
-            <br><br>
-            <div v-for="comment in comments" class="item-comment">
-                <div class="comment container" :id="'comment-'+comment.id">
-                    <div style="float: right">
-                        <div class="commentdate">{{ date(comment.created_on) }}</div>
-                        <div v-if="authed && (user.id == comment.author || user.role > 1)" class="comment-delete">
-                            <button @click.prevent="deleteComment(comment.id)">Delete</button>
-                        </div>
-                    </div>
-                    <div class="aligned">
-                        <div class="comment-mood">
-                            <img :src="'/assets/mood/'+comment.mood" :alt="comment.mood_name" :title="comment.mood_name">
-                        </div>
-                        <span class="name2">{{ comment.author_username }}</span>
-                    </div>
-                    <div class="comment-content">{{ comment.content }}</div>
-                </div>
-                <div class="comment-replies" :id="'comment-'+comment.id+'-replies'">
-                    <template v-for="reply in comment.replies">
-                        <div v-if="reply.parent == comment.id" :key="reply.id" class="comment-reply container">
-                            <div style="float: right">
-                                <div class="commentdate">{{ date(reply.created_on) }}</div>
-                                <div v-if="authed && (user.id == reply.author || user.role > 1)" class="comment-delete">
-                                    <button @click.prevent="deleteComment(reply.id)">Delete</button>
-                                </div>
-                            </div>
-                            <div class="alignedcom">
-                                <div class="comment-mood">
-                                    <img :src="'/assets/mood/'+reply.mood" :alt="reply.mood_name" :title="reply.mood_name">
-                                </div>
-                                <div class="name2"><span>{{ reply.author_username }}</span></div>
-                            </div>
-                            <div class="comment-reply-content">{{ reply.content }}</div>
-                        </div>
-                    </template>
-                    <div v-if="authed" class="comment-reply-box">
-                        <div class="comment-reply-open" @click="formShowReply[comment.id] = !formShowReply[comment.id];rerender()">Reply {{ formShowReply[comment.id] ? '⯆' : '⯈' }}</div>
-                        <form :key="renderKey" v-show="formShowReply[comment.id]" @submit.prevent="commentForm(comment.id)" method="POST" class="comment-reply-form" style="display:block">
-                            <textarea placeholder="Reply something..." v-model="formContent[comment.id]" name="content" rows="10" cols="50"></textarea>
-                            <br>
-                            <div class="mood-chooser">
-                                <div class="mood-chooser-open" @click="formShowMoods[comment.id] = !formShowMoods[comment.id];rerender()">Moods {{ formShowMoods[comment.id] ? '⯆' : '⯈' }}</div>
-                                <div :key="renderKey" v-show="formShowMoods[comment.id]" class="mood-chooser-moods" style="display:block">
-                                    <div v-for="mood in moods" class="mood-choice">
-                                        <label>
-                                            <input type="radio" :value="mood.id" name="mood" v-model="formMoods[comment.id]">
-                                            <img :src="'/assets/mood/'+mood.id" :alt="mood.name">
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <br>
-                            <input type="submit" value="Post that!">
-                        </form>
-                        <br><br>
-                    </div>
-                </div>
-            </div>
-            <br><br>
-            <div class="item-comments-nav">
-                <span class="page-arrow" @click="lastPage()" v-if="currentPage > 1">&lt;</span>
-                <span class="page-number">Page {{ currentPage }} of {{ pages }}</span>
-                <span class="page-arrow" @click="nextPage()" v-if="currentPage < pages">&gt;</span>
-            </div>
-        </div>
-        <div v-else>
-            <i>There are no comments yet...</i>
-        </div>
-    </div>
-</div>
+<%- include('./partials/_comments.ejs', {
+    authed,
+    user,
+    item,
+    pageSize,
+}) %>
 
 <script>
-    const pageSize = <%= pageSize %>
-    const itemId = <%= item.id %>
-	const itemMime = "<%= item.mime %>"
-	const itemDimensions = {
-		width: <%= item.width || 'null' %>,
-		height: <%= item.height || 'null' %>
-	}
-    <% if(authed) { %>
-    const defaultMood = <%= user.characterDefault %>
-    const moods = [
-    	<% for(const mood of user.characterMoods) { %>{
-    		id: <%= mood.id %>,
-            name: '<%= mood.name %>'
-        },
-        <% } %>
-    ]
-    <% } %>
-
     // Code relating to image scaling
-    // This needs to be done here so it can cancel the loading of the original image
+    // This needs to be done here so that it can cancel the loading of the original image
     // The image loading could be postponed until item.js loads, but that would make things slower and also make the page broken without Javascript
     const contentWidth = document.getElementById('content').offsetWidth-40
     const contentScaled = itemDimensions.width > contentWidth
@@ -201,27 +85,28 @@
     const scalePercentElem = document.getElementById('item-scale-percent')
 
     function showScaleBox() {
-		scalePercentElem.innerText = Math.round((contentWidth/itemDimensions.width)*100).toString()
+        scalePercentElem.innerText = Math.round((contentWidth/itemDimensions.width)*100).toString()
         scaleNoticeElem.style.display = 'block'
     }
-	function showOriginalSize() {
-		scaleNoticeElem.style.display = 'none'
+    function showOriginalSize() {
+        scaleNoticeElem.style.display = 'none'
         contentElem.classList.add('item-content-no-scale')
-		contentElem.src = 'about:blank'
+        contentElem.src = 'about:blank'
         setTimeout(function() {
-			contentElem.src = contentUrl
+            contentElem.src = contentUrl
         }, 100)
     }
 
-	if(contentElem) {
-		contentElem.style.visibility = 'visible'
-		if(contentScaled && itemMime.startsWith('image/') && itemMime !== 'image/gif') {
-			contentElem.src = contentUrl + (contentUrl.includes('?') ? '&' : '?') + 'width=' + contentWidth
-			showScaleBox()
-		} else {
-			contentElem.src = contentUrl
-		}
-	}
+    if(contentElem) {
+        contentElem.style.visibility = 'visible'
+        if(contentScaled && itemMime.startsWith('image/') && itemMime !== 'image/gif') {
+            contentElem.src = contentUrl + (contentUrl.includes('?') ? '&' : '?') + 'width=' + contentWidth
+            showScaleBox()
+        } else {
+            contentElem.src = contentUrl
+        }
+    }
 </script>
 
+<script src="/static/js/booru/comments.js" async defer></script>
 <script src="/static/js/booru/item.js" async defer></script>

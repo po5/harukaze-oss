@@ -11,6 +11,7 @@ import { identifyContextWithUserRow } from 'utils/users.util'
 export async function authMiddleware(ctx: Context, next: Next) {
     // By default, requests are not authenticated
     ctx.state.authed = false
+    ctx.state.user = undefined
 
     try {
         const sess = (ctx.session as Session)
