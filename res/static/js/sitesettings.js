@@ -13,7 +13,7 @@ sceditor.create(notFoundElem, settings)
 sceditor.create(errorElem, settings)
 
 if (szSyncUsersForm) {
-	const submitBtn = szSyncUsersForm.getElementsByTagName('input')[0]
+	const submitBtn = document.getElementById('sz-sync-users')
 
 	// Reset in case the browser cached the button state
 	submitBtn.disabled = false

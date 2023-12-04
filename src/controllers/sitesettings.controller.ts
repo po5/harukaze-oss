@@ -124,6 +124,9 @@ async function actionUpdateSiteMetadata(body: any, ctx: Context, next: Next) {
 }
 
 async function actionSzSyncUsers(body: any, ctx: Context, next: Next) {
+    if (appSzurubooruClient === null)
+        return
+
     let lastId = '0'
     let lastUserBatch: UserBasicInfo[]
 
@@ -141,7 +144,7 @@ async function actionSzSyncUsers(body: any, ctx: Context, next: Next) {
         for (const user of lastUserBatch) {
             try {
                 // Try to fetch sz user
-                const szUser = await appSzurubooruClient!.getUserOrNull(user.username)
+                const szUser = await appSzurubooruClient.getUserOrNull(user.username)
 
                 if (szUser !== null) {
                     // Sync user
