@@ -45,14 +45,14 @@
     <% } %>
     </script>
     
-    <% include partials/_sidenav.ejs %>
+    <%- include('./partials/_sidenav.ejs') %>
 
     <div id="main">
-        <% include partials/_header.ejs %>
+        <%- include('./partials/_header.ejs') %>
 
         <%- body %>
 
-        <% include partials/_footer.ejs %>
+        <%- include('./partials/_footer.ejs') %>
     </div>
 </body>
 </html>

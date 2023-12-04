@@ -52,11 +52,11 @@
             }, 10)
         }
     </script>
-    
-    <div id="header"><% include partials/_header.ejs %></div>
-    <div id="sidebar"><% include partials/_sidebar.ejs %></div>
+
+    <div id="header"><%- include('./partials/_header.ejs') %></div>
+    <div id="sidebar"><%- include('./partials/_sidebar.ejs') %></div>
     <div id="content"><%- body %></div>
-    <div id="footer"><% include partials/_footer.ejs %></div>
+    <div id="footer"><%- include('./partials/_footer.ejs') %></div>
 
     <script>
 		setTimeout(adjustSidebarHeight, 100)
