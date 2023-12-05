@@ -455,9 +455,9 @@ if (szEnabled) {
             let html = `
         <div id="szurubooru-insert">
             <template>
-                <h3>Enter post ID</h3>
+                <h3>Enter post ID or link</h3>
                 <form @submit.prevent="insert">
-                    <input type="text" v-model="itemId">
+                    <input type="text" v-model="itemIdRaw">
                     <br>
                     <input type="submit" value="Insert" :disabled="insertDisabled">
                 </form>
@@ -480,10 +480,24 @@ if (szEnabled) {
             let app = new Vue({
                 el: '#szurubooru-insert',
                 data: {
-                    itemId: '',
+                    itemIdRaw: '',
                     item: null,
                 },
                 computed: {
+                    itemId: {
+                        get() {
+                            if (this.itemIdRaw.startsWith('http:') || this.itemIdRaw.startsWith('https://')) {
+                                let id =  this.itemIdRaw.substring(this.itemIdRaw.lastIndexOf('/') + 1)
+
+                                if (id.includes('?'))
+                                    id = id.substring(0, id.indexOf('?'))
+
+                                return id
+                            } else {
+                                return this.itemId
+                            }
+                        }
+                    },
                     isSupportedType: {
                         get() {
                             return this.item !== null && ['image', 'animation', 'video'].includes(this.item.type)
@@ -546,7 +560,7 @@ if (szEnabled) {
                     }
                 },
                 watch: {
-                    async itemId() {
+                    async itemIdRaw() {
                         try {
                             if (isNaN(this.itemId))
                                 return
