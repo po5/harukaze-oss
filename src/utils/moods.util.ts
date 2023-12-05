@@ -2,20 +2,50 @@ import { fetchCharacterInfosWithDefault, MoodCharInfo, MoodCharOrder as MoodChar
 import { fetchMoodInfos, MoodInfo, MoodOrder as MoodOrder } from '../models/moods.model'
 
 /**
+ * A {@link MoodCharInfo} object with all its moods
+ */
+export interface MoodCharInfoWithMoods extends MoodCharInfo {
+    /**
+     * All the character's moods
+     */
+    moodsList: MoodInfo[]
+
+    /**
+     * The character's default mood
+     */
+    defaultMood: MoodInfo
+}
+
+/**
  * The current characters cache
  */
-let charsCache: MoodCharInfo[] = []
+let charsCache: MoodCharInfoWithMoods[] = []
 
 /**
  * The current moods cache
  */
 let moodsCache: MoodInfo[] = []
 
-export async function _refreshCharsCache() {
-    charsCache = await fetchCharacterInfosWithDefault(0, Number.MAX_SAFE_INTEGER, MoodCharOrder.CREATED_ASC)
-}
 export async function _refreshMoodsCache() {
     moodsCache = await fetchMoodInfos(0, Number.MAX_SAFE_INTEGER, MoodOrder.CREATED_ASC)
+}
+
+export async function _refreshCharsCache() {
+    charsCache = await fetchCharacterInfosWithDefault(0, Number.MAX_SAFE_INTEGER, MoodCharOrder.CREATED_ASC) as MoodCharInfoWithMoods[]
+
+    if (moodsCache.length < 1)
+        await _refreshMoodsCache()
+
+    for (const char of charsCache) {
+        char.moodsList = []
+        for (const mood of moodsCache) {
+            if (mood.character === char.id)
+                char.moodsList.push(mood)
+
+            if (mood.id === char.default)
+                char.defaultMood = mood
+        }
+    }
 }
 
 /**
@@ -70,12 +100,12 @@ export async function getMoods(): Promise<MoodInfo[]> {
  * @returns All moods with the specified character
  */
 export async function getMoodsByCharacter(character: number): Promise<MoodInfo[]> {
-    if(moodsCache.length < 1)
+    if (moodsCache.length < 1)
         await _refreshMoodsCache()
 
     let moods = []
-    for(let mood of moodsCache)
-        if(mood.character === character)
+    for (const mood of moodsCache)
+        if (mood.character === character)
             moods.push(mood)
 
     return moods

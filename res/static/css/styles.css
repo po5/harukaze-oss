@@ -286,6 +286,21 @@ input {
 .xbbcode-video {
 	max-width: calc(100% - 4px);
 }
+.char-chooser {
+	margin-top: 5px;
+}
+.mood-char {
+	display: inline-block;
+}
+.mood-char img {
+	height: 50px;
+}
+.mood-char input {
+	display: none;
+}
+.mood-char input:checked + img {
+	outline: 2px solid red;
+}
 .mood-choice {
 	display: inline-block;
 }

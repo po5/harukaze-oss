@@ -4,7 +4,7 @@ import { fetchPostInfoBySlug, PostInfo } from 'models/posts.model'
 import {
     CommentInfo,
     CommentOrder,
-    CommentType, createComment, deleteCommentById, deleteCommentsByParent, fetchCommentInfoById, fetchNormalCommentById,
+    CommentType, createComment, deleteCommentById, fetchCommentInfoById, fetchNormalCommentById,
     fetchNormalCommentInfosByPost,
     fetchNormalCommentsCountByPost, fetchReplyCommentsByParentIds
 } from 'models/comments.model'
@@ -173,10 +173,6 @@ export async function postBlog(ctx: Context, next: Next) {
                         if(user.id === comment.author || user.id === post.author || user.role >= UserRoles.ADMIN) {
                             // Delete comment
                             await deleteCommentById(id)
-
-                            // Delete its children if a top-level comment
-                            if(comment.parent == null)
-                                await deleteCommentsByParent(id)
                         }
                     }
                 }

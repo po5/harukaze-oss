@@ -470,7 +470,7 @@ export async function updateUserHashById(id: string, hash: string) {
  * @param character The user's new character ID
  * @param info The user's new info (can be null)
  */
-export async function updateUserInfoById(id: number, bio: string | null, character: number, info: string | null) {
+export async function updateUserInfoById(id: string, bio: string | null, character: number, info: string | null) {
     return knex('users')
         .update({
             user_bio: bio,

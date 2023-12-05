@@ -69,15 +69,29 @@
                     <textarea placeholder="Type something..." id="comment-box" name="content" rows="10" col="50"></textarea>
                     <br>
                     <div class="mood-chooser">
-                        <div class="mood-chooser-open">Moods ⯈</div>
-                        <div class="mood-chooser-moods" style="display:block">
-                            <% for(const mood of user.characterMoods) { %>
-                                <div class="mood-choice">
+                        <div class="char-chooser">
+                            <% for (const char of moodChars) { %>
+                                <div class="mood-char">
                                     <label>
-                                        <input type="radio" name="mood" value="<%= mood.id %>" <%= mood.id == user.characterDefault ? 'checked' : '' %>>
-                                        <img src="/assets/mood/<%= mood.id %>" alt="<%= mood.name %>">
+                                        <input type="radio" name="moodchar" value="<%= char.id %>" <%= char.id == user.character ? 'checked' : '' %>>
+                                        <img src="/assets/mood/<%= char.defaultMood.id %>" alt="<%= char.defaultMood.name %>">
                                     </label>
                                 </div>
+                            <% } %>
+                        </div>
+                        <div class="mood-chooser-open">Moods ⯈</div>
+                        <div class="mood-chooser-moods" style="display:block">
+                            <% for (const char of moodChars) { %>
+                                <% for (const mood of char.moodsList) { %>
+                                    <% const isVisible = char.id == user.character %>
+                                    <div class="mood-choice" data-char-id="<%= char.id %>" style="display: <%= isVisible ? 'inline-block' : 'none' %>">
+                                        <label>
+                                            <% const isDefault = mood.id == char.defaultMood.id %>
+                                            <input type="radio" name="mood" data-default="<%= Number(isDefault) %>" value="<%= mood.id %>" <%= isDefault & isVisible ? 'checked' : '' %>>
+                                            <img src="/assets/mood/<%= mood.id %>" alt="<%= mood.name %>">
+                                        </label>
+                                    </div>
+                                <% } %>
                             <% } %>
                         </div>
                     </div>
@@ -144,15 +158,29 @@
                                     <textarea placeholder="Reply something..." id="comment-box" name="content" rows="10" col="50"></textarea>
                                     <br>
                                     <div class="mood-chooser">
-                                        <div class="mood-chooser-open">Moods ⯈</div>
-                                        <div class="mood-chooser-moods" style="display:block">
-                                            <% for(const mood of user.characterMoods) { %>
-                                                <div class="mood-choice">
+                                        <div class="char-chooser">
+                                            <% for (const char of moodChars) { %>
+                                                <div class="mood-char">
                                                     <label>
-                                                        <input type="radio" name="mood" value="<%= mood.id %>" <%= mood.id == user.characterDefault ? 'checked' : '' %>>
-                                                        <img src="/assets/mood/<%= mood.id %>" alt="<%= mood.name %>">
+                                                        <input type="radio" name="moodchar" value="<%= char.id %>" <%= char.id == user.character ? 'checked' : '' %>>
+                                                        <img src="/assets/mood/<%= char.defaultMood.id %>" alt="<%= char.defaultMood.name %>">
                                                     </label>
                                                 </div>
+                                            <% } %>
+                                        </div>
+                                        <div class="mood-chooser-open">Moods ⯈</div>
+                                        <div class="mood-chooser-moods" style="display:block">
+                                            <% for (const char of moodChars) { %>
+                                                <% for (const mood of char.moodsList) { %>
+                                                    <% const isVisible = char.id == user.character %>
+                                                    <div class="mood-choice" data-char-id="<%= char.id %>" style="display: <%= isVisible ? 'inline-block' : 'none' %>">
+                                                        <label>
+                                                            <% const isDefault = mood.id == char.defaultMood.id %>
+                                                            <input type="radio" name="mood" data-default="<%= Number(isDefault) %>" value="<%= mood.id %>" <%= isDefault & isVisible ? 'checked' : '' %>>
+                                                            <img src="/assets/mood/<%= mood.id %>" alt="<%= mood.name %>">
+                                                        </label>
+                                                    </div>
+                                                <% } %>
                                             <% } %>
                                         </div>
                                     </div>

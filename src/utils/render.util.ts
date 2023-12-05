@@ -7,6 +7,7 @@ import { getLinkShownPages } from './pages.util'
 import { AppGlobal } from 'types/misc.types'
 import { fetchContributorInfos } from 'models/users.model'
 import { englishPlural, toIsoStringWithOffset } from 'utils/misc.util'
+import { getUsableCharacters } from 'utils/moods.util'
 
 /**
  * Inserts essential state required for controllers and views into a Context object
@@ -40,6 +41,9 @@ export async function putEssentialState(ctx: Context, fetchContributors = true) 
 
     // Whether the booru is enabled
     ctx.state.enableBooru = config.site.enableBooru
+
+    // All usable mood chars
+    ctx.state.moodChars = await getUsableCharacters()
 
     // Date util
     /**

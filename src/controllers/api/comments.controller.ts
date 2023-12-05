@@ -75,11 +75,8 @@ export async function postDeleteComments(ctx: Context, _next: Next) {
     }
 
     if(!isNaN(body.author)) {
-        // Parse author ID
-        const author = parseInt(body.author, 10)
-
         // Delete comments
-        await deleteCommentsByAuthor(author)
+        await deleteCommentsByAuthor(body.author)
     } else {
         // Parse IDs
         const idsRaw = body.id ? [ body.id ] : setToArray(body.ids)

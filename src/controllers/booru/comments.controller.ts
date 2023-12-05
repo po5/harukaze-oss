@@ -2,7 +2,7 @@ import { Context, Next } from 'koa'
 import {
     CommentInfo,
     CommentOrder,
-    CommentType, createComment, deleteCommentById, deleteCommentsByParent, fetchCommentInfoById,
+    CommentType, createComment, deleteCommentById, fetchCommentInfoById,
     fetchNormalCommentInfosByPost,
     fetchNormalCommentsCountByPost, fetchReplyCommentsByParentIds
 } from 'models/comments.model'
@@ -165,12 +165,7 @@ export async function postDeleteComment(ctx: Context, _next: Next) {
         return
     }
 
-    // Delete comment
     await deleteCommentById(id)
-
-    // Delete its children if a top-level comment
-    if(comment.parent === null)
-        await deleteCommentsByParent(id)
 
     // Success
     ctx.apiSuccess()

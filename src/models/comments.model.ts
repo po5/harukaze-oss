@@ -378,20 +378,10 @@ export async function deleteCommentsByIds(ids: number[]) {
  * Deletes all comments by the specified author ID
  * @param author The author's ID
  */
-export async function deleteCommentsByAuthor(author: number) {
+export async function deleteCommentsByAuthor(author: string) {
     return knex('comments')
         .del()
         .where('comment_author', author)
-}
-
-/**
- * Deletes all comments with the specified parent
- * @param parent The parent comment ID
- */
-export async function deleteCommentsByParent(parent: number) {
-    return knex('comments')
-        .del()
-        .where('comment_parent', parent)
 }
 
 /**
