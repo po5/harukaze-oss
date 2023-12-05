@@ -494,7 +494,7 @@ if (szEnabled) {
 
                                 return id
                             } else {
-                                return this.itemId
+                                return this.itemIdRaw
                             }
                         }
                     },
@@ -562,12 +562,13 @@ if (szEnabled) {
                 watch: {
                     async itemIdRaw() {
                         try {
-                            if (isNaN(this.itemId))
+                            const itemId = this.itemId
+                            if (isNaN(itemId))
                                 return
 
                             this.item = null
 
-                            let res = await api.get('/api/szurubooru/post/' + this.itemId)
+                            let res = await api.get('/api/szurubooru/post/' + itemId)
 
                             if (res.status === 'success') {
                                 this.item = res.post
