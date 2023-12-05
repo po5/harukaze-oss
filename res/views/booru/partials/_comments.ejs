@@ -34,14 +34,24 @@ var pageSize = pageSize
                 <textarea placeholder="Type something..." ref="mainFormCommentContent" rows="10" cols="50"></textarea>
                 <br>
                 <div class="mood-chooser">
-                    <div class="mood-chooser-open" @click="mainFormShowMoods = !mainFormShowMoods">Moods {{ mainFormShowMoods ? '⯆' : '⯈' }}</div>
-                    <div v-show="mainFormShowMoods" class="mood-chooser-moods" style="display:block">
-                        <div v-for="mood in moods" class="mood-choice">
+                    <div class="char-chooser">
+                        <div class="mood-char" v-for="char in moodChars">
                             <label>
-                                <input type="radio" name="mood" :value="mood.id" v-model="mainFormMood">
-                                <img :src="'/assets/mood/'+mood.id" :alt="mood.name">
+                                <input type="radio" name="moodchar" :value="char.id" v-model="mainFormChar">
+                                <img :src="'/assets/mood/' + char.defaultMood.id" :alt="char.defaultMood.name">
                             </label>
                         </div>
+                    </div>
+                    <div class="mood-chooser-open" @click="mainFormShowMoods = !mainFormShowMoods">Moods {{ mainFormShowMoods ? '⯆' : '⯈' }}</div>
+                    <div v-show="mainFormShowMoods" class="mood-chooser-moods" style="display:block">
+                        <template v-for="char in moodChars">
+                            <div v-for="mood in char.moodsList" class="mood-choice" v-if="char.id == mainFormChar">
+                                <label>
+                                    <input type="radio" name="mood" :value="mood.id" v-model="mainFormMood">
+                                    <img :src="'/assets/mood/' + mood.id" :alt="mood.name">
+                                </label>
+                            </div>
+                        </template>
                     </div>
                 </div>
                 <br>
@@ -97,14 +107,24 @@ var pageSize = pageSize
                             <textarea placeholder="Reply something..." v-model="formContent[comment.id]" name="content" rows="10" cols="50"></textarea>
                             <br>
                             <div class="mood-chooser">
-                                <div class="mood-chooser-open" @click="formShowMoods[comment.id] = !formShowMoods[comment.id];rerender()">Moods {{ formShowMoods[comment.id] ? '⯆' : '⯈' }}</div>
-                                <div :key="renderKey" v-show="formShowMoods[comment.id]" class="mood-chooser-moods" style="display:block">
-                                    <div v-for="mood in moods" class="mood-choice">
+                                <div class="char-chooser">
+                                    <div class="mood-char" v-for="char in moodChars">
                                         <label>
-                                            <input type="radio" :value="mood.id" name="mood" v-model="formMoods[comment.id]">
-                                            <img :src="'/assets/mood/'+mood.id" :alt="mood.name">
+                                            <input type="radio" name="moodchar" :value="char.id" v-model="formChars[comment.id]">
+                                            <img :src="'/assets/mood/' + char.defaultMood.id" :alt="char.defaultMood.name" @click="setTimeout(() => rerender(), 50)">
                                         </label>
                                     </div>
+                                </div>
+                                <div class="mood-chooser-open" @click="formShowMoods[comment.id] = !formShowMoods[comment.id];rerender()">Moods {{ formShowMoods[comment.id] ? '⯆' : '⯈' }}</div>
+                                <div :key="renderKey" v-show="formShowMoods[comment.id]" class="mood-chooser-moods" style="display:block">
+                                    <template v-for="char in moodChars">
+                                        <div v-for="mood in char.moodsList" class="mood-choice" v-if="char.id == formChars[comment.id]">
+                                            <label>
+                                                <input type="radio" :value="mood.id" name="mood" v-model="formMoods[comment.id]">
+                                                <img :src="'/assets/mood/' + mood.id" :alt="mood.name">
+                                            </label>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                             <br>
@@ -129,21 +149,35 @@ var pageSize = pageSize
 
 <%- include('../../partials/_authscript.ejs', { authed, user }) %>
 <script>
-    const pageSize = <%= pageSize %>
-    const itemId = <%= item.id %>
-    const itemMime = "<%= item.mime %>"
+    // Comments widget data
+    const pageSize = <%= pageSize %>;
+    const itemId = <%= item.id %>;
+    const itemMime = "<%= item.mime %>";
     const itemDimensions = {
         width: <%= item.width || 'null' %>,
         height: <%= item.height || 'null' %>
-    }
+    };
     <% if(authed) { %>
-    const defaultMood = <%= user.characterDefault %>
-    const moods = [
-        <% for(const mood of user.characterMoods) { %>{
-            id: <%= mood.id %>,
-            name: '<%= mood.name %>'
-        },
-        <% } %>
-    ]
+    const defaultChar = <%= user.character %>;
+    const defaultMood = <%= user.characterDefault %>;
+    const chars = <%-
+        JSON.stringify(
+            moodChars.map(char => ({
+                id: char.id,
+                name: char.name,
+                'default': 51,
+                defaultMood: {
+                    id: char.defaultMood.id,
+                    name: char.defaultMood.name,
+                    key: char.defaultMood.key,
+                },
+                moodsList: char.moodsList.map(mood => ({
+                    id: mood.id,
+                    name: mood.name,
+                    key: mood.key,
+                })),
+            })),
+        ).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
+    %>;
     <% } %>
 </script>

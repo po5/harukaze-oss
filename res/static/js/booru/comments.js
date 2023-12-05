@@ -8,7 +8,7 @@ async function main() {
             authed,
             user: authed ? user : {},
             defaultMood: authed ? defaultMood : -1,
-            moods: authed ? moods : [],
+            moodChars: authed ? chars : [],
             error: null,
             loading: true,
             posting: false,
@@ -17,6 +17,7 @@ async function main() {
             currentPage: 1,
             comments: [],
 
+            mainFormChar: authed ? defaultChar : -1,
             mainFormMood: authed ? defaultMood : -1,
             mainFormShowMoods: false,
 
@@ -64,11 +65,13 @@ async function main() {
 
                         this.formShowMoods = {}
                         this.formShowReply = {}
+                        this.formChars = {}
                         this.formMoods = {}
                         this.formContent = {}
                         for(let comment of res.comments) {
                             this.formShowMoods[comment.id] = false
                             this.formShowReply[comment.id] = false
+                            this.formChars[comment.id] = defaultChar
                             this.formMoods[comment.id] = this.defaultMood
                             this.formContent[comment.id] = ''
                         }
@@ -162,8 +165,14 @@ async function main() {
             },
             rerender() {
                 this.renderKey = Math.random()
-            }
-        }
+            },
+        },
+        watch: {
+            mainFormChar(val) {
+                const char = this.moodChars.find(c => c.id === val)
+                this.mainFormMood = char.defaultMood.id
+            },
+        },
     })
 
     app.loadComments().catch(console.error)
