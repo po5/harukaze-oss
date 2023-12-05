@@ -6,6 +6,10 @@
     background-image: url('/static/img/interview-icon.png') !important;
     background-size: contain;
 }
+.sceditor-button-szurubooru div {
+    background-image: url('/static/img/szurubooru-icon.png') !important;
+    background-size: contain;
+}
 .media-nav {
     text-align: center;
 }

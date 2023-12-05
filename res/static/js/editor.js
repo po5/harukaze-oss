@@ -1,4 +1,6 @@
 /* START UTILS */
+const szEnabled = typeof isSzurubooruEnabled !== 'undefined' && isSzurubooruEnabled;
+
 function attr(node, attr, value) {
     if (arguments.length < 3) {
         return node.getAttribute(attr);
@@ -79,8 +81,12 @@ const mediaPickerVue = `
 </div>
 `
 
-const defaultToolbar = sceditor.defaultOptions.toolbar+'|media,interview'
+let defaultToolbar = sceditor.defaultOptions.toolbar+'|media,interview'
 const pageSize = 6
+
+if (szEnabled) {
+    defaultToolbar += ',szurubooru'
+}
 
 sceditor.formats.bbcode.set('video', {
     tags: {
@@ -440,6 +446,130 @@ sceditor.command.set('interview', {
 	},
 	tooltip: 'Insert Interview'
 })
+
+if (szEnabled) {
+    sceditor.command.set('szurubooru', {
+        exec: function(caller) {
+            var editor = this
+
+            let html = `
+        <div id="szurubooru-insert">
+            <template>
+                <h3>Enter post ID</h3>
+                <form @submit.prevent="insert">
+                    <input type="text" v-model="itemId">
+                    <br>
+                    <input type="submit" value="Insert" :disabled="insertDisabled">
+                </form>
+                <div v-if="item !== null">
+                    <div v-if="isSupportedType" class="szurubooru-post-preview">
+                        <video v-if="item.type === 'video'" :cover="itemThumbnailUrl" :src="itemContentUrl" controls style="max-width: 600px; max-height: 300px"></video>
+                        <img v-else-if="item.type === 'animation'" :src="itemContentUrl" alt="item thumbnail" style="max-width: 600px; max-height: 300px" />
+                        <img v-else :src="itemThumbnailUrl" alt="item thumbnail" />
+                    </div>
+                    <p v-else>Unsupported post type ({{ item.type }})</p>
+                </div>
+            </template>
+        </div>
+        `
+
+            let elem = document.createElement('div')
+            elem.innerHTML = html
+            this.createDropDown(caller, 'mediapicker', elem)
+
+            let app = new Vue({
+                el: '#szurubooru-insert',
+                data: {
+                    itemId: '',
+                    item: null,
+                },
+                computed: {
+                    isSupportedType: {
+                        get() {
+                            return this.item !== null && ['image', 'animation', 'video'].includes(this.item.type)
+                        }
+                    },
+                    insertDisabled: {
+                        get() {
+                            return this.item === null && this.isSupportedType
+                        },
+                    },
+                    itemContentUrl: {
+                        get() {
+                            if (this.item === null) {
+                                return null
+                            } else {
+                                return szurubooruBaseUrl + '/' + this.item.contentUrl
+                            }
+                        },
+                    },
+                    itemThumbnailUrl: {
+                        get() {
+                            if (this.item === null) {
+                                return null
+                            } else {
+                                return szurubooruBaseUrl + '/' + this.item.thumbnailUrl
+                            }
+                        },
+                    },
+                },
+                methods: {
+                    handleError(err) {
+                        console.error('Error occurred:', err)
+
+                        this.error = 'Error occurred!'
+
+                        if(!(err instanceof Error))
+                            this.error += ' API returned error: ' + err.error
+                    },
+                    insert() {
+                        let toInsert = null
+
+                        const contentUrl = this.itemContentUrl
+
+                        switch (this.item.type) {
+                            case 'image':
+                            case 'animation':
+                                toInsert = `\n[img]${contentUrl}[/img]\n`
+                                break
+                            case 'video':
+                                toInsert = `\n[video]${contentUrl}[/video]\n`
+                                break
+                            default:
+                                break
+                        }
+
+                        if (toInsert !== null)
+                            editor.insert(toInsert)
+
+                        editor.closeDropDown()
+                    }
+                },
+                watch: {
+                    async itemId() {
+                        try {
+                            if (isNaN(this.itemId))
+                                return
+
+                            this.item = null
+
+                            let res = await api.get('/api/szurubooru/post/' + this.itemId)
+
+                            if (res.status === 'success') {
+                                this.item = res.post
+                            } else {
+                                this.handleError(res)
+                            }
+                        } catch (err) {
+                            this.handleError(err)
+                        }
+                    }
+                }
+            })
+        },
+        tooltip: 'Insert Interview'
+    })
+}
 
 // Load Vue if not present
 if(typeof Vue == 'undefined') {

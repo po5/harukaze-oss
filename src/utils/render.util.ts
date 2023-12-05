@@ -8,6 +8,7 @@ import { AppGlobal } from 'types/misc.types'
 import { fetchContributorInfos } from 'models/users.model'
 import { englishPlural, toIsoStringWithOffset } from 'utils/misc.util'
 import { getUsableCharacters } from 'utils/moods.util'
+import { appSzurubooruClient } from 'utils/szurubooru.util'
 
 /**
  * Inserts essential state required for controllers and views into a Context object
@@ -44,6 +45,10 @@ export async function putEssentialState(ctx: Context, fetchContributors = true) 
 
     // All usable mood chars
     ctx.state.moodChars = await getUsableCharacters()
+
+    // Whether szurubooru is enabled
+    ctx.state.isSzurubooruEnabled = appSzurubooruClient !== null
+    ctx.state.szurubooruBaseUrl = appSzurubooruClient?.baseUrl ?? null
 
     // Date util
     /**

@@ -32,6 +32,10 @@
     <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
+    <script>
+        const isSzurubooruEnabled = <%= isSzurubooruEnabled %>;
+        const szurubooruBaseUrl = <%- JSON.stringify(szurubooruBaseUrl) %>;
+    </script>
     <%- include('./partials/_authscript.ejs', { authed, user }) %>
     <%- include('./partials/_sidenav.ejs') %>
 

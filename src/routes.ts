@@ -42,6 +42,8 @@ import * as apiBansController from 'controllers/api/bans.controller'
 import * as apiUsersController from 'controllers/api/users.controller'
 import * as apiMoodsController from 'controllers/api/moods.controller'
 import * as apiPagesController from 'controllers/api/pages.controller'
+import * as apiSzurubooruController from 'controllers/api/szurubooru.controller'
+import { appSzurubooruClient } from 'utils/szurubooru.util'
 
 /**
  * Renders a template with the provided context
@@ -521,4 +523,15 @@ export function routes(router: Router) {
         }
         apiRes(ctx)
     })
+
+    if (appSzurubooruClient !== null) {
+        router.get('/api/szurubooru/post/:id', async (ctx, next) => {
+            try {
+                await apiSzurubooruController.getPost(ctx, next)
+            } catch(err: any) {
+                apiError(ctx, err)
+            }
+            apiRes(ctx)
+        })
+    }
 }

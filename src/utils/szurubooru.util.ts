@@ -1280,6 +1280,24 @@ export class SzurubooruClient {
     public async createUser(data: SzurubooruUserCreateRequest): Promise<SzurubooruUserResource> | never {
         return this.request<SzurubooruUserResource>('POST', '/users', undefined, data)
     }
+
+    /**
+     * Returns the post with the specified ID
+     * @param id The post's ID
+     * @returns {} The post
+     */
+    public async getPost(id: number): Promise<SzurubooruPostResource> | never {
+        return this.request<SzurubooruPostResource>('GET', '/post/' + id)
+    }
+
+    /**
+     * Returns the post with the specified ID, or null if none was found
+     * @param id The post's ID
+     * @returns {} The post or null if none was found
+     */
+    public async getPostOrNull(id: number): Promise<SzurubooruPostResource | null> | never {
+        return this.requestOrNullIf404<SzurubooruPostResource>('GET', '/post/' + id)
+    }
 }
 
 let appSzurubooruClientImpl: SzurubooruClient | null
