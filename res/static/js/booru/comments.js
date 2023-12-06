@@ -1,4 +1,6 @@
 async function main() {
+    var adjustSidebarHeight = typeof adjustSidebarHeight === 'undefined' ? function () {} : adjustSidebarHeight
+
     const app = new Vue({
         el: '#item-comments-container',
         updated() {
@@ -52,7 +54,7 @@ async function main() {
                     this.loading = true
 
                     let res = await api.get('/booru/ajax/comments', {
-                        id: itemId,
+                        id: commentItemId,
                         offset: (this.currentPage-1)*pageSize,
                         limit: pageSize,
                         order: 1
@@ -94,7 +96,7 @@ async function main() {
                 this.loading = true
 
                 const res = await api.post('/booru/ajax/comments/create', {
-                    id: itemId,
+                    id: commentItemId,
                     content,
                     mood,
                     parent: parentId == null ? undefined : parentId

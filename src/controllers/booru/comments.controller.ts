@@ -9,6 +9,7 @@ import {
 import { fetchBooruVisibleMediaInfoById } from 'models/media.model'
 import { getMoodById } from 'utils/moods.util'
 import { UserRoles } from 'utils/users.util'
+import { appSzurubooruClient } from 'utils/szurubooru.util'
 
 /**
  * GET controller for returning booru comments
@@ -33,12 +34,14 @@ export async function getComments(ctx: Context, _next: Next) {
         return
     }
 
-    // Check if booru post exists
-    const media = await fetchBooruVisibleMediaInfoById(id)
+    // Check if booru post exists, unless szurubooru is present
+    if (appSzurubooruClient === null) {
+        const media = await fetchBooruVisibleMediaInfoById(id)
 
-    if (media === null) {
-        ctx.apiError('invalid_id')
-        return
+        if(media === null) {
+            ctx.apiError('invalid_id')
+            return
+        }
     }
 
     // Fetch total comments
@@ -115,10 +118,12 @@ export async function postCreateComment(ctx: Context, _next: Next) {
         return
     }
 
-    // Check if item exists
-    if(await fetchBooruVisibleMediaInfoById(id) === null) {
-        ctx.apiError('invalid_item_id')
-        return
+    // Check if item exists, unless szurubooru is enabled
+    if (appSzurubooruClient === null) {
+        if(await fetchBooruVisibleMediaInfoById(id) === null) {
+            ctx.apiError('invalid_item_id')
+            return
+        }
     }
 
     // Create comment
@@ -147,20 +152,20 @@ export async function postDeleteComment(ctx: Context, _next: Next) {
     const id = parseInt(body.id, 10)
 
     // Make sure it's valid
-    if(isNaN(id)) {
+    if (isNaN(id)) {
         ctx.apiError('invalid_id')
         return
     }
 
     // Check if comment exists
     const [ comment ] = await fetchCommentInfoById(id)
-    if(!comment) {
+    if (!comment) {
         ctx.apiError('invalid_id')
         return
     }
 
     // Check for permission
-    if(user.id !== comment.author && user.role < UserRoles.ADMIN) {
+    if (user.id !== comment.author && user.role < UserRoles.ADMIN) {
         ctx.status = 403
         return
     }

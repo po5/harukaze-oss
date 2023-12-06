@@ -68,14 +68,20 @@
 <%- include('./partials/_comments.ejs', {
     authed,
     user,
-    item,
     pageSize,
+    itemId: item.id,
 }) %>
 
 <script>
     // Code relating to image scaling
     // This needs to be done here so that it can cancel the loading of the original image
     // The image loading could be postponed until item.js loads, but that would make things slower and also make the page broken without Javascript
+    const itemId = <%= item.id %>;
+    const itemMime = "<%= item.mime %>";
+    const itemDimensions = {
+        width: <%= item.width || 'null' %>,
+        height: <%= item.height || 'null' %>
+    };
     const contentWidth = document.getElementById('content').offsetWidth-40
     const contentScaled = itemDimensions.width > contentWidth
     const contentUrl = '/assets/media/<%= item.id %>/<%= encodeURIComponent(item.filename) %>'

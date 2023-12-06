@@ -150,13 +150,8 @@ var pageSize = pageSize
 <%- include('../../partials/_authscript.ejs', { authed, user }) %>
 <script>
     // Comments widget data
+    const commentItemId = <%= itemId %>;
     const pageSize = <%= pageSize %>;
-    const itemId = <%= item.id %>;
-    const itemMime = "<%= item.mime %>";
-    const itemDimensions = {
-        width: <%= item.width || 'null' %>,
-        height: <%= item.height || 'null' %>
-    };
     <% if(authed) { %>
     const defaultChar = <%= user.character %>;
     const defaultMood = <%= user.characterDefault %>;
