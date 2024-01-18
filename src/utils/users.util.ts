@@ -152,7 +152,7 @@ export async function syncSzurubooruUser(user: UserBasicInfo, password?: string,
             rank: roleToSzurubooruUserRank(user.role, user.isBanned),
         }, version)
     } catch (err) {
-        if (err instanceof SzurubooruClientError && password !== undefined && err.response.name !== SzurubooruErrorName.UserNotFoundError) {
+        if (err instanceof SzurubooruClientError && password !== undefined && err.response.name === SzurubooruErrorName.UserNotFoundError) {
             // User was not found, but we have enough information to create a new user
             await appSzurubooruClient.createUser({
                 password,
