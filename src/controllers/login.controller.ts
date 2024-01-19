@@ -188,6 +188,7 @@ export async function postLogin(ctx: Context, _next: Next) {
         ctx.cookies.set(
             config.szurubooru.authCookieName,
             await appSzurubooruClient!.createUserTokenCookieString(user.user_username, true, 'Web Login Token'),
+            { httpOnly: false },
         )
     }
 
