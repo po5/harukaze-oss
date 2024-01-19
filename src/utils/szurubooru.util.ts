@@ -1305,12 +1305,30 @@ export class SzurubooruClient {
      * @param enabled Whether the option is enabled (optional, defaults to true)
      * @param note The note to assign to the token (optional)
      * @param expirationTime The time the token should expire (optional)
+     * @returns The newly created user token
      */
-    public async createUserToken(username: string, enabled?: boolean, note?: string, expirationTime?: Date) {
+    public async createUserToken(username: string, enabled?: boolean, note?: string, expirationTime?: Date): Promise<SzurubooruUserTokenResource> {
         return this.request<SzurubooruUserTokenResource>('POST', '/user-token/' + username, undefined, {
             enabled,
             note,
             expirationTime: expirationTime?.toISOString(),
+        })
+    }
+
+    /**
+     * Creates a new user login token, and returns the cookie string to set to allow a browser to be logged in
+     * @param username The user's username
+     * @param enable Whether the option is enabled (optional, defaults to true)
+     * @param note The note to assign to the token (optional)
+     * @param expirationTime The time the token should expire (optional)
+     * @returns The cookie string
+     */
+    public async createUserTokenCookieString(username: string, enable?: boolean, note?: string, expirationTime?: Date): Promise<string> {
+        const { token } = await this.createUserToken(username, enable, note, expirationTime)
+
+        return JSON.stringify({
+            token,
+            user: username,
         })
     }
 }

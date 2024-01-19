@@ -5,6 +5,8 @@ import { createUser, isUsernameValid, UserRoles } from 'utils/users.util'
 import { fetchBanByIp } from 'models/ipbans.model'
 import { fetchUserByUsername } from 'models/users.model'
 import { createLogin } from 'models/userlogins.model'
+import config from '../../config.json'
+import { appSzurubooruClient } from 'utils/szurubooru.util'
 
 // Puts boilerplate context data
 async function setupCtx(ctx: Context) {
@@ -147,6 +149,13 @@ export async function postSignup(ctx: Context, _next: Next) {
 
         // Set user ID in session
         (ctx.session as Session).id = newUser.id
+
+        if (config.szurubooru.enable) {
+            ctx.cookies.set(
+                config.szurubooru.authCookieName,
+                await appSzurubooruClient!.createUserTokenCookieString(newUser.user_username, true, 'Web Login Token'),
+            )
+        }
     }
 
     // Redirect to next
