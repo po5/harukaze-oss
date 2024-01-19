@@ -566,3 +566,18 @@ export function userRowToBasicInfo(row: UserRow): UserBasicInfo {
         createdOn: new Date(row.user_created_on),
     }
 }
+
+/**
+ * Converts a {@link UserInfo} object to a {@link UserBasicInfo} object
+ * @param info The {@link UserInfo} object
+ * @returns The resulting {@link UserBasicInfo} object
+ */
+export function userInfoToUserBasicInfo(info: UserInfo): UserBasicInfo {
+    return {
+        id: info.id,
+        username: info.username,
+        role: info.role,
+        isBanned: info.banned,
+        createdOn: info.created_on,
+    }
+}

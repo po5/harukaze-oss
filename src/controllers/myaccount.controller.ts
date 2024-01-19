@@ -7,7 +7,7 @@ import {
     fetchUserByUsername,
     updateUserAvatarKeyById,
     updateUserInfoById,
-    updateUserUsernameById, userRowToBasicInfo
+    updateUserUsernameById, userInfoToUserBasicInfo, userRowToBasicInfo
 } from 'models/users.model'
 import formidable from 'formidable'
 import { generateAlphanumericString } from 'utils/misc.util'
@@ -187,7 +187,7 @@ export async function postMyAccount(ctx: Context, next: Next) {
             }
 
             // All is well; apply the new username
-            await updateUserUsername(userRowToBasicInfo(ctx.state.user), newUsername)
+            await updateUserUsername(userInfoToUserBasicInfo(ctx.state.user), newUsername)
             ctx.state.user.username = newUsername
 
             // Re-setup context with new username and tell the page to reload
