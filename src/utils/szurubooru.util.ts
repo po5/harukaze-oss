@@ -1298,6 +1298,21 @@ export class SzurubooruClient {
     public async getPostOrNull(id: number): Promise<SzurubooruPostResource | null> | never {
         return this.requestOrNullIf404<SzurubooruPostResource>('GET', '/post/' + id)
     }
+
+    /**
+     * Creates a new user login token
+     * @param username The user's username
+     * @param enabled Whether the option is enabled (optional, defaults to true)
+     * @param note The note to assign to the token (optional)
+     * @param expirationTime The time the token should expire (optional)
+     */
+    public async createUserToken(username: string, enabled?: boolean, note?: string, expirationTime?: Date) {
+        return this.request<SzurubooruUserTokenResource>('POST', '/user-token/' + username, undefined, {
+            enabled,
+            note,
+            expirationTime: expirationTime?.toISOString(),
+        })
+    }
 }
 
 let appSzurubooruClientImpl: SzurubooruClient | null

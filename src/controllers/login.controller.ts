@@ -1,9 +1,11 @@
+import config from '../../config.json'
 import argon2 from 'argon2'
 import { createBan } from 'models/ipbans.model'
 import { Context, Next } from 'koa'
 import { fetchUserAndIpBanByUsername, userRowToBasicInfo } from 'models/users.model'
 import { changeUserPassword, syncSzurubooruUser } from 'utils/users.util'
 import { createLogin } from 'models/userlogins.model'
+import { appSzurubooruClient } from 'utils/szurubooru.util'
 
 // IP address rate limiting
 const ipLimits: {
@@ -181,6 +183,17 @@ export async function postLogin(ctx: Context, _next: Next) {
 
     // Create login record
     await createLogin(user.id, ctx.ip)
+
+    if (config.szurubooru.enable) {
+        const szuruToken = await appSzurubooruClient?.createUserToken(user.user_username, true, 'Web Login Token')
+        ctx.cookies.set(
+            config.szurubooru.authCookieName,
+            JSON.stringify({
+                user: user.user_username,
+                token: szuruToken,
+            }),
+        )
+    }
 
     // Redirect to next
     ctx.state.noRender = true

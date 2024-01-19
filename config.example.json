@@ -40,7 +40,8 @@
             "username": "admin",
             "password": null,
             "token": "abcdefghijklmnopqrstuvwxyz"
-        }
+        },
+        "authCookieName": "auth"
     },
     "knex": {
         "client": "mysql",
