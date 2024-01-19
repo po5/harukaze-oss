@@ -209,5 +209,10 @@ export async function updateUserRole(user: UserBasicInfo, role: UserRoles) {
 export async function updateUserUsername(user: UserBasicInfo, newUsername: string) {
     await updateUserUsernameById(user.id, newUsername)
 
-    await syncSzurubooruUser({ ...user, username: newUsername })
+    if (appSzurubooruClient !== null) {
+        await appSzurubooruClient.updateUser(user.username, {
+            name: newUsername,
+            rank: roleToSzurubooruUserRank(user.role, user.isBanned),
+        })
+    }
 }

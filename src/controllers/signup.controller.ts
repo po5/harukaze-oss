@@ -150,10 +150,10 @@ export async function postSignup(ctx: Context, _next: Next) {
         // Set user ID in session
         (ctx.session as Session).id = newUser.id
 
-        if (config.szurubooru.enable) {
+        if (appSzurubooruClient !== null) {
             ctx.cookies.set(
                 config.szurubooru.authCookieName,
-                await appSzurubooruClient!.createUserTokenCookieString(newUser.user_username, true, 'Web Login Token'),
+                await appSzurubooruClient.createUserTokenCookieString(newUser.user_username, true, 'Web Login Token'),
                 { httpOnly: false },
             )
         }
