@@ -14,6 +14,8 @@ import { generateAlphanumericString } from 'utils/misc.util'
 import { generateAvatar } from 'utils/media.util'
 import { unlink } from 'fs/promises'
 import { MAX_USER_AVATAR_SIZE, MAX_USER_BIO_LENGTH } from 'root/constants'
+import { appSzurubooruClient } from 'utils/szurubooru.util'
+import config from '../../config.json'
 
 // Puts boilerplate context data
 async function setupCtx(ctx: Context) {
@@ -189,6 +191,15 @@ export async function postMyAccount(ctx: Context, next: Next) {
             // All is well; apply the new username
             await updateUserUsername(userInfoToUserBasicInfo(ctx.state.user), newUsername)
             ctx.state.user.username = newUsername
+
+            if (appSzurubooruClient !== null) {
+                // Szurubooru cookie needs to be reissued
+                ctx.cookies.set(
+                    config.szurubooru.authCookieName,
+                    await appSzurubooruClient.createUserTokenCookieString(newUsername, true, 'Web Login Token'),
+                    { httpOnly: false },
+                )
+            }
 
             // Re-setup context with new username and tell the page to reload
             await setupCtx(ctx)
