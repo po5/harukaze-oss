@@ -185,13 +185,13 @@ export async function postLogin(ctx: Context, _next: Next) {
     await createLogin(user.id, ctx.ip)
 
     if (config.szurubooru.enable) {
-        const szuruToken = await appSzurubooruClient?.createUserToken(user.user_username, true, 'Web Login Token')
+        const szuruToken = await appSzurubooruClient!.createUserToken(user.user_username, true, 'Web Login Token')
         ctx.cookies.set(
             config.szurubooru.authCookieName,
-            JSON.stringify({
+            encodeURIComponent(JSON.stringify({
                 user: user.user_username,
-                token: szuruToken,
-            }),
+                token: szuruToken.token,
+            })),
         )
     }
 
