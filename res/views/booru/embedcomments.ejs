@@ -4,13 +4,15 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <base target="_parent">
 
+    <link rel="stylesheet" href="/booru/css/app.min.css">
     <link rel="stylesheet" href="/static/css/booru/styles.css">
     <link rel="stylesheet" href="/static/css/booru/comments.css">
 
     <title><%= pageTitle %></title>
 </head>
-<body class="no-bg">
+<body class="no-bg <%= commDark %>">
     <%- include('./partials/_comments.ejs', {
         authed,
         user,
@@ -18,5 +20,6 @@
         itemId,
     }) %>
     <script src="/static/js/booru/comments.js" async defer></script>
+    <script src="/static/js/booru/iframeResizer.contentWindow.min.js"></script>
 </body>
 </html>

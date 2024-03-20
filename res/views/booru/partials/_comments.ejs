@@ -22,7 +22,7 @@ var item = item
  */
 var pageSize = pageSize
 %>
-<div id="item-comments-container">
+<div id="item-comments-container" data-iframe-height>
     <div v-if="loading" id="item-comments-loading">
         Loading comments...
     </div>
@@ -59,14 +59,14 @@ var pageSize = pageSize
             </form>
             <p v-else><a href="/login">Log in</a> to post your own comments!</p>
         </div>
-        <br><br>
+        <br>
         <div v-if="comments.length > 0" id="item-comments">
             <div class="item-comments-nav">
                 <span class="page-arrow" @click="lastPage()" v-if="currentPage > 1">&lt;</span>
                 <span class="page-number">Page {{ currentPage }} of {{ pages }}</span>
                 <span class="page-arrow" @click="nextPage()" v-if="currentPage < pages">&gt;</span>
             </div>
-            <br><br>
+            <br>
             <div v-for="comment in comments" class="item-comment">
                 <div class="comment container" :id="'comment-'+comment.id">
                     <div style="float: right">
@@ -134,7 +134,7 @@ var pageSize = pageSize
                     </div>
                 </div>
             </div>
-            <br><br>
+            <br>
             <div class="item-comments-nav">
                 <span class="page-arrow" @click="lastPage()" v-if="currentPage > 1">&lt;</span>
                 <span class="page-number">Page {{ currentPage }} of {{ pages }}</span>
@@ -174,5 +174,9 @@ var pageSize = pageSize
             })),
         ).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
     %>;
+    <% } else { %>
+    const defaultChar = -1;
+    const defaultMood = -1;
+    const chars = [];
     <% } %>
 </script>

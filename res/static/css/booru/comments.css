@@ -1,8 +1,13 @@
+body {
+    overflow: auto;
+}
 .char-chooser {
     margin-top: 5px;
 }
 .mood-char {
     display: inline-block;
+    margin-right: 4px;
+    margin-bottom: 4px;
 }
 .mood-char img {
     height: 50px;
@@ -15,6 +20,8 @@
 }
 .mood-choice {
     display: inline-block;
+    margin-right: 4px;
+    margin-bottom: 4px;
 }
 .mood-choice img {
     width: 50px;
@@ -53,14 +60,14 @@
 .comment-content {
     margin-left: 4px;
     font-size: 14px;
-    color: #555;
+    /*color: #555;*/
     margin-bottom:4px;
     white-space: pre-wrap;
 }
 .commentdate {
     margin-right: 4px;
     font-size: 11px;
-    color: #555;
+    /*color: #555;*/
     margin-bottom:4px;
     font-weight: bold;
     text-align: right;
@@ -75,7 +82,7 @@
 }
 .comment-reply-content {
     margin-left: 10px;
-    color: #555;
+    /*color: #555;*/
     margin-bottom:4px;
     white-space: pre-wrap;
 }
@@ -102,4 +109,20 @@
 .commentreplyicon img {
     width: 24px;
     height: 24px;
+}
+#item-comments-container {
+    margin-left: 20px;
+    padding: 0;
+    padding-bottom: 1em;
+}
+form {
+    width: calc(100vw - 40px);
+}
+.item-comment {
+    max-width: calc(100vw - 40px);
+}
+.darktheme .item-comment .comment, .darktheme .item-comment .comment-reply {
+    border: 2px solid #3b3b3b;
+    background: #3e3e3e;
+    color: #e6e6e6;
 }
