@@ -15,7 +15,7 @@ export async function getRss(ctx: Context, _next: Next) {
     ctx.type = 'application/rss+xml'
 
     // Figure out site root
-    const root = `${ctx.protocol}://${ctx.host}`
+    const root = `https://www.visuabusters.com`
 
     // Date format util
     function fmtDate(date: Date) {
