@@ -5,6 +5,7 @@ import {
     updateUserHashById,
     updateUserRoleById,
     updateUserUsernameById,
+    fetchUserInfoByUsername,
     UserBasicInfo
 } from '../models/users.model'
 import { Context } from 'koa'
@@ -145,11 +146,18 @@ export async function syncSzurubooruUser(user: UserBasicInfo, password?: string,
     if (appSzurubooruClient === null)
         return
 
+    let charDefault = 5;
+
     try {
+        const [ userInfo ] = await fetchUserInfoByUsername(user.username);
+        if (userInfo) {
+            charDefault = userInfo.character_default || 5;
+        }
         await appSzurubooruClient.updateUser(user.username, {
             password,
             name: user.username,
             rank: roleToSzurubooruUserRank(user.role, user.isBanned),
+            avatarStyle: `mood_${charDefault}`,
         }, version)
     } catch (err) {
         if (err instanceof SzurubooruClientError && password !== undefined && err.response.name === SzurubooruErrorName.UserNotFoundError) {
@@ -158,6 +166,7 @@ export async function syncSzurubooruUser(user: UserBasicInfo, password?: string,
                 password,
                 name: user.username,
                 rank: roleToSzurubooruUserRank(user.role, user.isBanned),
+                avatarStyle: `mood_${charDefault}`,
             })
         } else {
             throw err

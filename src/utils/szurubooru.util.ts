@@ -69,21 +69,6 @@ export enum SzurubooruUserRank {
 }
 
 /**
- * Possible szurubooru avatar styles
- */
-export enum SzurubooruUserAvatarStyle {
-    /**
-     * The user uses Gravatar
-     */
-    Gravatar = 'gravatar',
-
-    /**
-     * The user has uploaded a picture manually
-     */
-    Manual = 'manual',
-}
-
-/**
  * Possible szurubooru safety ratings
  */
 export enum SzurubooruSafetyRating {
@@ -370,7 +355,7 @@ export interface SzurubooruUserResource extends SzurubooruMicroUserResource, Szu
     /**
      * The user's avatar style
      */
-    avatarStyle: SzurubooruUserAvatarStyle
+    avatarStyle: string
 
     /**
      * The number of comments the user has created
@@ -1001,10 +986,10 @@ export interface SzurubooruUserUpdateData {
     /**
      * The user's new avatar style
      */
-    avatarStyle?: SzurubooruUserAvatarStyle
+    avatarStyle?: string
 
     /**
-     * The URL to the user's new avatar (only required if {@link avatarStyle}'s value is {@link SzurubooruUserAvatarStyle.Manual})
+     * The URL to the user's new avatar (only required if {@link avatarStyle}'s value is 'manual')
      */
     avatarUrl?: string
 
@@ -1043,10 +1028,10 @@ export interface SzurubooruUserCreateRequest {
     /**
      * The user's new avatar style
      */
-    avatarStyle?: SzurubooruUserAvatarStyle
+    avatarStyle?: string
 
     /**
-     * The URL to the user's new avatar (only required if {@link avatarStyle}'s value is {@link SzurubooruUserAvatarStyle.Manual})
+     * The URL to the user's new avatar (only required if {@link avatarStyle}'s value is 'manual')
      */
     avatarUrl?: string
 
@@ -1356,3 +1341,4 @@ let appSzurubooruClientImpl: SzurubooruClient | null
  * If the application has not enabled szurubooru, it will be null.
  */
 export const appSzurubooruClient = appSzurubooruClientImpl
+
