@@ -81,6 +81,7 @@ export function booruRoutes(router: Router) {
             await embedCommentsController.getEmbedComments(ctx, next)
 
             // Render the page without layout
+            ctx.state.commDark = ctx.request.query?.darktheme && "darktheme" || "";
             ctx.type = 'text/html; charset=utf-8'
             ctx.body = await renderTemplate('./booru/embedcomments', ctx.state)
         })
