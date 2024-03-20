@@ -1,5 +1,7 @@
+import config from '../../config.json'
 import { Context, Next } from 'koa'
 import { Session } from 'koa-session'
+import { appSzurubooruClient } from 'utils/szurubooru.util'
 
 /**
  * GET controller for log out page
@@ -15,6 +17,14 @@ export async function getLogout(ctx: Context, _next: Next) {
 
     // Remove user ID from session
     delete (ctx.session as Session).id
+
+    if (appSzurubooruClient !== null) {
+        ctx.cookies.set(
+            config.szurubooru.authCookieName,
+            '{}',
+            { httpOnly: false },
+        )
+    }
 
     // Redirect
     ctx.redirect(next)
