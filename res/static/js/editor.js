@@ -543,6 +543,8 @@ if (szEnabled) {
 
                         switch (this.item.type) {
                             case 'image':
+                                toInsert = `\n[url=${contentUrl}][img]${contentUrl.replace('/booru/data/posts/', '/resize/')}[/img][/url]\n`
+                                break
                             case 'animation':
                                 toInsert = `\n[img]${contentUrl}[/img]\n`
                                 break
