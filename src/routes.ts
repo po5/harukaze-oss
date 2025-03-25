@@ -1,6 +1,7 @@
 import { Context } from 'koa'
 import Router from 'koa-router'
 import { apiRes, apiError } from 'utils/api.util'
+import { fetchPostInfoById } from 'models/posts.model'
 
 // Middleware imports
 import { renderDataMiddleware } from 'middleware/renderdata.middleware'
@@ -167,6 +168,18 @@ export function routes(router: Router) {
         await render('editblog', ctx)
     })
 
+    router.get('/blogid/:blogid', async (ctx, next) => {
+        const [ post ] = await fetchPostInfoById(true, ctx.params.blogid)
+        if(post) {
+            ctx.state.noRender = true
+            ctx.redirect('/blog/'+post.slug)
+        } else {
+            // Not found
+            ctx.state.noRender = true
+            await next()
+            return null
+        }
+    })
     router.get('/blog/:slug', async (ctx, next) => {
         await blogController.getBlog(ctx, next)
         await render('blog', ctx)
