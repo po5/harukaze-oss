@@ -535,6 +535,26 @@ input {
 	}
 }
 
+.safety-warning .blogdesc div, .safety-warning .blogdesc div > a {
+    position: relative;
+    display: inline-block;
+}
+.safety-warning .blogdesc div:has(> img)::before, .safety-warning .blogdesc span:has(> img)::before, .safety-warning .blogdesc span > a:has(> img)::before, .safety-warning .blogdesc div > a:has(> img)::before, .safety-warning .blogdesc div:has(> video)::before, .safety-warning .blogdesc span:has(> video)::before, .safety-warning .blogdesc span > a:has(> video)::before, .safety-warning .blogdesc div > a:has(> video)::before {
+    content: "NFSW - Click to reveal";
+    background-image: repeating-linear-gradient(45deg, #fff, #fff 10px, #e6e6e6 10px, #e6e6e6 20px);
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+    cursor: pointer;
+    font-size: 2em;
+    text-align: center;
+    display: inline-block;
+}
+
 /* Mobile view */
 @media screen and (max-width: 975px) {
 	#site-logo {

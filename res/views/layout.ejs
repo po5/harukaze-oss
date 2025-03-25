@@ -42,8 +42,25 @@
     <div id="main">
         <%- include('./partials/_header.ejs') %>
 
+        <% if(!authed) { %>
+        <script>
+        if ((window.location.pathname + "/blog/").match(/^(\/\d+)?\/?\/blog\//)) {
+            document.getElementById("main").classList.add("safety-warning");
+        }
+        </script>
+        <% } %>
+
         <%- body %>
 
+        <% if(!authed) { %>
+        <script>
+        document.querySelectorAll(".blogdesc > div, .blogdesc > span, .blogdesc > div > a").forEach(img => img.addEventListener("click", e => {
+            const main = document.getElementById("main");
+            if (main.classList.contains("safety-warning")) e.preventDefault();
+            main.classList.remove("safety-warning");
+        }));
+        </script>
+        <% } %>
         <%- include('./partials/_footer.ejs') %>
     </div>
 </body>
