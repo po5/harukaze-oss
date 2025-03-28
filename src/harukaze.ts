@@ -22,6 +22,7 @@ import koaMount from 'koa-mount'
 // Middleware imports
 import { authMiddleware } from 'middleware/auth.middleware'
 import { protectMiddleware } from 'middleware/protect.middleware'
+import { noCacheMiddleware } from 'middleware/nocache.middleware'
 
 // Route register functions
 import { routes } from './routes'
@@ -165,6 +166,10 @@ async function main(args: string[]) {
     app.use(protectMiddleware([ // Apply protection on all API routes
         [/\/api\/.*/, UserRoles.CONTRIBUTOR],
         [/\/api\/admin\/.*/, UserRoles.ADMIN]
+    ]))
+    app.use(noCacheMiddleware([ // Disable caching on all API routes
+        /\/api\/.*/,
+        /\/booru\/ajax\/.*/
     ]))
     app.use(koaJson())
     app.use(koaBody({

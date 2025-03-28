@@ -6,10 +6,6 @@ import { Context, Next } from 'koa'
  * @param next The next function
  */
 export async function apiUtilsMiddleware(ctx: Context, next: Next) {
-    // Disable caching
-    ctx.res.setHeader('Cache-control', 'no-store')
-    ctx.res.setHeader('Pragma', 'no-cache')
-
     ctx.apiError = function(msg: string, extra: any = {}) {
         ctx.state.json = {
             status: 'error',
