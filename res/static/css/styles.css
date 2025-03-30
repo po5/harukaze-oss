@@ -299,7 +299,7 @@ input {
 	display: none;
 }
 .mood-char input:checked + img {
-	outline: 2px solid red;
+	outline: 2px solid #24aadd;
 }
 .mood-choice {
 	display: inline-block;
