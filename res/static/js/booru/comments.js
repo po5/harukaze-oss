@@ -18,6 +18,7 @@ async function main() {
             pages: 1,
             currentPage: 1,
             comments: [],
+            itemId: commentItemId,
 
             mainFormChar: authed ? defaultChar : -1,
             mainFormMood: authed ? defaultMood : -1,

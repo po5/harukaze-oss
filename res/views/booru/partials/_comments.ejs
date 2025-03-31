@@ -57,7 +57,7 @@ var pageSize = pageSize
                 <br>
                 <input type="submit" value="Post that!">
             </form>
-            <p v-else><a href="/login">Log in</a> to post your own comments!</p>
+            <p v-else><a :href="'/login?next=/booru/post/' + itemId">Log in</a> to post your own comments!</p>
         </div>
         <br>
         <div v-if="comments.length > 0" id="item-comments">
