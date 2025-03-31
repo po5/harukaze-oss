@@ -23,6 +23,8 @@ function notFound(ctx: Context) {
  * @param _next The next function
  */
 export async function getMedia(ctx: Context, _next: Next) {
+    ctx.res.setHeader('Cache-control', 'public, max-age=86400')
+
     const id = parseInt(ctx.params.id, 10)
 
     // Make sure ID is numeric
@@ -133,6 +135,8 @@ export async function getMedia(ctx: Context, _next: Next) {
  * @param _next The next function
  */
 export async function getThumbnail(ctx: Context, _next: Next) {
+    ctx.res.setHeader('Cache-control', 'public, max-age=86400')
+
     const id = parseInt(ctx.params.id, 10)
 
     // Make sure ID is numeric
@@ -178,6 +182,8 @@ export async function getThumbnail(ctx: Context, _next: Next) {
  * @param _next The next function
  */
 export async function getAvatar(ctx: Context, _next: Next) {
+    ctx.res.setHeader('Cache-control', 'public, max-age=86400')
+
     const username = ctx.params.username
 
     // Fetch user
@@ -223,6 +229,8 @@ export async function getAvatar(ctx: Context, _next: Next) {
  * @param _next The next function
  */
 export async function getMood(ctx: Context, _next: Next) {
+    ctx.res.setHeader('Cache-control', 'public, max-age=86400')
+
     const id = parseInt(ctx.params.id, 10)
 
     // Make sure ID is numeric
