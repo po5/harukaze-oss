@@ -1,5 +1,6 @@
 import config from '../../knexfile'
 import Knex, { Knex as KnexType } from 'knex'
+import { fetchPostInfoById } from 'models/posts.model'
 
 const knex = Knex(config)
 
@@ -201,9 +202,17 @@ function commentInfo(type: CommentType | null): KnexType.QueryInterface {
 /**
  * @param rows
  */
-function processCommentInfoRows(rows: any[]): CommentInfo[] {
-    for(const row of rows)
+async function processCommentInfoRows(rows: any[]): Promise<CommentInfo[]> {
+    for(const row of rows) {
         row.created_on = new Date(row.created_on)
+        if(row.post_slug === null && row.type === CommentType.POST) {
+            const [ post ] = await fetchPostInfoById(false, row.post)
+            if (post) {
+                row.post_slug = post.slug
+                row.post_title = post.title
+            }
+        }
+    }
     return rows
 }
 /**
@@ -248,7 +257,7 @@ export async function createComment(post: number, parent: number | null, author:
  * @returns All comments' info
  */
 export async function fetchCommentInfos(type: CommentType | null, offset: number, limit: number, order: CommentOrder): Promise<CommentInfo[]> {
-    return processCommentInfoRows(
+    return await processCommentInfoRows(
         await commentInfo(type)
             .offset(offset)
             .limit(limit)
@@ -266,7 +275,7 @@ export async function fetchCommentInfos(type: CommentType | null, offset: number
  * @returns All normal comments' info
  */
 export async function fetchNormalCommentInfosByPost(post: number, type: CommentType, offset: number, limit: number, order: CommentOrder): Promise<CommentInfo[]> {
-    return processCommentInfoRows(
+    return await processCommentInfoRows(
         await commentInfo(type)
             .whereNull('comment_parent')
             .andWhere('comment_post', post)
@@ -284,7 +293,7 @@ export async function fetchNormalCommentInfosByPost(post: number, type: CommentT
  * @returns All reply comments' info
  */
 export async function fetchReplyCommentsByParentIds(ids: number[], type: CommentType | null = null): Promise<CommentInfo[]> {
-    return processCommentInfoRows(
+    return await processCommentInfoRows(
         await commentInfo(type)
             .whereIn('comment_parent', ids)
     )
@@ -297,7 +306,7 @@ export async function fetchReplyCommentsByParentIds(ids: number[], type: Comment
  * @returns An array with the row containing the comment's info or an empty array if none exists
  */
 export async function fetchCommentInfoById(id: number, type: CommentType | null = null): Promise<[ CommentInfo? ]> {
-    return processCommentInfoRows(
+    return await processCommentInfoRows(
         await commentInfo(type)
             .where('comments.id', id)
     ) as [ CommentInfo? ]

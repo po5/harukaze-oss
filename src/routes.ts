@@ -169,7 +169,14 @@ export function routes(router: Router) {
     })
 
     router.get('/blogid/:blogid', async (ctx, next) => {
-        const [ post ] = await fetchPostInfoById(true, ctx.params.blogid)
+        const blogid = parseInt(ctx.params.blogid, 10)
+        if(isNaN(blogid)) {
+            // Not found
+            ctx.state.noRender = true
+            await next()
+            return null
+        }
+        const [ post ] = await fetchPostInfoById(false, blogid)
         if(post) {
             ctx.state.noRender = true
             ctx.redirect('/blog/'+post.slug)

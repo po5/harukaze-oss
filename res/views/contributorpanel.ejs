@@ -98,7 +98,7 @@
                             <div class="speech-bubble-point"></div>
                             <div class="speech-bubble-content">{{ comment.content }}</div>
                         </div>
-                        <p v-if="comment.type === 0" class="comment-listing-attribution">on blog post <a :href="'/blogid/'+comment.post">#{{ comment.post }}</a> at {{ date(comment.created_on) }}</p>
+                        <p v-if="comment.type === 0" class="comment-listing-attribution">on blog post <a :href="'/blog/'+comment.post_slug">{{ comment.post_title }}</a> at {{ date(comment.created_on) }}</p>
                         <p v-else class="comment-listing-attribution">on booru item <a :href="'/booru/post/'+comment.post">#{{ comment.post }}</a> at {{ date(comment.created_on) }}</p>
                     </div>
                 </div>
