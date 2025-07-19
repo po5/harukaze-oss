@@ -210,6 +210,9 @@ async function processCommentInfoRows(rows: any[]): Promise<CommentInfo[]> {
             if (post) {
                 row.post_slug = post.slug
                 row.post_title = post.title
+            } else {
+                row.post_slug = `../blogid/${row.post}`
+                row.post_title = `#${row.post}`
             }
         }
     }
