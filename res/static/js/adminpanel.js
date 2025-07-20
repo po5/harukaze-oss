@@ -49,6 +49,14 @@ function main() {
                 this.currentUserBansPage = Math.max(this.currentUserBansPage-1, 0)
                 await this.loadUserBans()
             },
+            async nextIpBansPage() {
+                this.currentIpBansPage = Math.min(this.currentIpBansPage+1, this.ipBansPages)
+                await this.loadIpBans()
+            },
+            async lastIpBansPage() {
+                this.currentIpBansPage = Math.max(this.currentIpBansPage-1, 0)
+                await this.loadIpBans()
+            },
             async loadUserBans() {
                 try {
                     this.userBansLoading = true
