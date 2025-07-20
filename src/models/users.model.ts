@@ -359,6 +359,7 @@ export async function fetchBannedUserInfos(offset: number, limit: number): Promi
             .where('user_banned', true)
             .offset(offset)
             .limit(limit)
+            .orderBy('created_on', 'desc')
     )
 }
 

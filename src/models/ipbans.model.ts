@@ -23,6 +23,7 @@ function banInfo(): KnexType.QueryInterface {
     return knex('ipbans')
         .select('ip')
         .select(knex.ref('ban_created_on').as('created_on'))
+        .orderBy('created_on', 'desc')
 }
 function processBanInfoRows(rows: any[]): IpBanInfo[] {
     for(const row of rows)
