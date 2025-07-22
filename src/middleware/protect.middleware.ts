@@ -33,7 +33,7 @@ export function protectMiddleware(routes: [ (string | RegExp), UserRoles ][], us
                 : route === path
 
             // Send forbidden if requirements aren't met
-            if(matches && ctx.state.user?.role < role) {
+            if(matches && (!ctx.state.authed || ctx.state.user.role < role)) {
                 if(useRedirectOrNext) {
                     if(ctx.state.authed)
                         await next()
