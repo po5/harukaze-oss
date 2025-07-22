@@ -62,6 +62,7 @@ export async function createLogin(user: string, ip: string) {
  * @returns All logins
  */
 export async function fetchUniqueIpLoginsByUser(user: number): Promise<any[]> {
+    // TODO: update query to work with ONLY_FULL_GROUP_BY
     return knex('userlogins')
         .select('*')
         .where('login_user', user)
@@ -74,6 +75,7 @@ export async function fetchUniqueIpLoginsByUser(user: number): Promise<any[]> {
  * @returns All logins' info
  */
 export async function fetchUniqueIpLoginInfosByUser(user: number): Promise<UserLoginInfo[]> {
+    // TODO: update query to work with ONLY_FULL_GROUP_BY
     return processLoginInfoRows(
         await loginInfo()
             .where('login_user', user)
