@@ -29,6 +29,7 @@ import * as blogtagController from 'controllers/blogtag.controller'
 import * as moodspanelController from 'controllers/moodspanel.controller'
 import * as logospanelController from 'controllers/logospanel.controller'
 import * as blogsearchController from 'controllers/blogsearch.controller'
+import * as commentsController from 'controllers/comments.controller'
 import * as rssController from 'controllers/rss.controller'
 import * as pageController from 'controllers/page.controller'
 import * as newpageController from 'controllers/newpage.controller'
@@ -282,6 +283,19 @@ export function routes(router: Router) {
     router.get('/search/:page', async (ctx, next) => {
         await blogsearchController.getBlogSearch(ctx, next)
         await render('blogsearch', ctx)
+    })
+
+    router.get('/comments', async (ctx, next) => {
+        await commentsController.getCommentsPage(ctx, next)
+        await render('comments', ctx)
+    })
+    router.get('/comments/list', async (ctx, next) => {
+        try {
+            await apiCommentsController.getCommentsList(ctx, next)
+        } catch(err: any) {
+            apiError(ctx, err)
+        }
+        apiRes(ctx)
     })
 
     router.get('/rss', async (ctx, next) => {

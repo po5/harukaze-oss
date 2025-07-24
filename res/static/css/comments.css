@@ -1,0 +1,42 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+} 
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.page-arrow {
+    cursor: pointer;
+    font-weight: bold;
+}
+.comment-listing-left, .comment-listing-right {
+    display: inline-block;
+}
+.comment-listing-left {
+    text-align: center;
+}
+.comment-listing-right {
+    max-width: calc(100% - 190px);
+}
+.comment-listing-attribution {
+    margin-left: 25px;
+}
+
+#container {
+    margin-top: 10px;
+}
+#error {
+    margin-top: 20px;
+    background: rgb(255, 45, 45);
+    border: 1px solid rgb(100, 0, 0);
+    border-radius: 5px;
+    padding: 5px;
+    color: white;
+}

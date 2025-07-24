@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="/static/css/comments.css">
+
+<h1>Comments</h1>
+<div id="app">
+    <div class="container">
+        <div class="container-header">Latest Comments</div>
+
+        <template v-if="commentsLoading">
+            <h1>Loading...</h1>
+        </template>
+        <template v-else>
+            <div class="comments-nav">
+                <span class="page-arrow" @click="lastCommentsPage()" v-if="currentCommentsPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentCommentsPage }} of {{ commentsPages }}</span>
+                <span class="page-arrow" @click="nextCommentsPage()" v-if="currentCommentsPage < commentsPages">&gt;</span>
+            </div>
+            <div id="posts-stats">Total comments: {{ totalComments }}</div>
+            <br>
+            <template v-if="comments.length > 0">
+                <div v-for="comment in comments" :id="'comment-'+comment.id" class="comment-listing">
+                    <div class="comment-listing-left">
+                        <img :src="'/assets/mood/'+comment.mood" :alt="comment.author_username+'\'s character'">
+                        <br>
+                        <b>{{ comment.author_username }}</b>
+                    </div>
+                    <div class="comment-listing-right">
+                        <div class="speech-bubble speech-bubble-left">
+                            <div class="speech-bubble-point"></div>
+                            <div class="speech-bubble-content">{{ comment.content }}</div>
+                        </div>
+                        <p v-if="comment.type === 0" class="comment-listing-attribution">on blog post <a :href="'/blog/'+comment.post_slug">{{ comment.post_title }}</a> at {{ date(comment.created_on) }}</p>
+                        <p v-else class="comment-listing-attribution">on booru item <a :href="'/booru/post/'+comment.post">#{{ comment.post }}</a> at {{ date(comment.created_on) }}</p>
+                    </div>
+                </div>
+            </template>
+            <i v-else>No comments yet...</i>
+            <br>
+            <div class="comments-nav">
+                <span class="page-arrow" @click="lastCommentsPage()" v-if="currentCommentsPage > 1">&lt;</span>
+                <span class="page-number">Page {{ currentCommentsPage }} of {{ commentsPages }}</span>
+                <span class="page-arrow" @click="nextCommentsPage()" v-if="currentCommentsPage < commentsPages">&gt;</span>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/comments.js"></script>
